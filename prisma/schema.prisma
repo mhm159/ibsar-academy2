@@ -1,11 +1,10 @@
 // ============================================================
-// Ibsar Academy — Prisma Schema (Phase 1: Foundation)
+// Ibsar Academy — Prisma Schema (Phase 1 + 2)
 // ============================================================
 // Notes:
 // - SQLite is used locally; can migrate to PostgreSQL at deployment.
 // - Enums are represented as String (SQLite-friendly) with @default.
 // - All timestamps stored as ISO DateTime.
-// - Phase 2+ will add: Courses, Sessions, Transactions, Reviews, etc.
 // ============================================================
 
 generator client {
@@ -43,6 +42,8 @@ model User {
   student Student?
   parent  Parent?
   otpCodes OtpCode[]
+  notifications Notification[]
+  transactions Transaction[]
 
   @@index([role])
   @@index([phone])
@@ -74,6 +75,11 @@ model Teacher {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  courses        Course[]
+  sessions       Session[]
+  availabilities Availability[]
+  progressReports ProgressReport[]
+
   @@index([status])
   @@index([isFeatured])
 }
@@ -97,6 +103,9 @@ model Student {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  bookings        Booking[]
+  progressReports ProgressReport[]
+
   @@index([parentId])
 }
 
@@ -108,6 +117,7 @@ model Parent {
   userId        String   @unique
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   students      Student[]
+  transactions  Transaction[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -150,8 +160,198 @@ model NotificationLog {
   @@index([status])
 }
 
-/* TODO(phase-2): Add Course, Session, Attendance, Recording models.
- * TODO(phase-3): Add Transaction, Escrow, Settlement, Coupon, Campaign models.
+// ============================================================
+// Phase 2 models
+// ============================================================
+
+// -----------------------------
+// Course — a bookable learning package
+// -----------------------------
+model Course {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // track: PROGRAMMING | ROBOTICS | MENTAL_MATH
+  track         String
+  title         String
+  titleAr       String?
+  description   String?
+  descriptionAr String?
+  // level: BEGINNER | INTERMEDIATE | ADVANCED
+  level         String   @default("BEGINNER")
+  ageMin        Int      @default(6)
+  ageMax        Int      @default(16)
+  totalSessions Int      @default(8)
+  sessionDurationMins Int @default(60)
+  priceEGP      Int      @default(499)
+  priceUSD      Int      @default(29)
+  // status: DRAFT | PUBLISHED | ARCHIVED
+  status        String   @default("PUBLISHED")
+  thumbnailUrl  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+
+  @@index([teacherId])
+  @@index([track])
+  @@index([status])
+}
+
+// -----------------------------
+// Session — a scheduled class instance
+// -----------------------------
+model Session {
+  id            String   @id @default(cuid())
+  courseId      String?
+  course        Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  title         String
+  // track context (denormalized for quick filtering)
+  track         String
+  startTime     DateTime
+  endTime       DateTime
+  durationMins  Int      @default(60)
+  // status: SCHEDULED | COMPLETED | CANCELLED | IN_PROGRESS
+  status        String   @default("SCHEDULED")
+  meetingUrl    String?  // Daily.co room URL (Phase 4)
+  recordingUrl  String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookings        Booking[]
+  progressReports ProgressReport[]
+
+  @@index([teacherId, startTime])
+  @@index([status])
+  @@index([startTime])
+}
+
+// -----------------------------
+// Booking — links a student to a session
+// -----------------------------
+model Booking {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  // status: CONFIRMED | CANCELLED | COMPLETED | NO_SHOW
+  status        String   @default("CONFIRMED")
+  priceEGP      Int      @default(0)
+  priceUSD      Int      @default(0)
+  transactionId String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([sessionId])
+  @@index([studentId])
+  @@index([status])
+}
+
+// -----------------------------
+// Availability — teacher weekly recurring slots
+// -----------------------------
+model Availability {
+  id          String   @id @default(cuid())
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // dayOfWeek: 0 (Sunday) .. 6 (Saturday)
+  dayOfWeek   Int
+  startHour   Int      // 0-23
+  endHour     Int      // 1-24
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([teacherId, dayOfWeek, startHour, endHour])
+  @@index([teacherId])
+}
+
+// -----------------------------
+// Transaction — payment record (Phase 3 will add Escrow/Settlement)
+// -----------------------------
+model Transaction {
+  id            String   @id @default(cuid())
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  // userId for quick lookup (the parent's user)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // type: SESSION_BOOKING | PACKAGE | SUBSCRIPTION | REFUND
+  type          String   @default("SESSION_BOOKING")
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  currency      String   @default("EGP")
+  // status: PENDING | PAID | FAILED | REFUNDED | SETTLED
+  status        String   @default("PENDING")
+  // provider: PAYMOB | STRIPE | MANUAL
+  provider      String   @default("MANUAL")
+  providerRef   String?  // provider transaction id
+  description   String?
+  bookingId     String?  @unique
+  booking       Booking?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([userId])
+  @@index([status])
+}
+
+// -----------------------------
+// ProgressReport — per-session per-student progress
+// -----------------------------
+model ProgressReport {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // attendance: PRESENT | ABSENT | LATE
+  attendance    String   @default("PRESENT")
+  // score 0-100
+  score         Int      @default(0)
+  // skill ratings 1-5
+  engagement    Int      @default(3)
+  understanding Int      @default(3)
+  homework      Int      @default(3)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([sessionId, studentId])
+  @@index([studentId])
+  @@index([teacherId])
+}
+
+// -----------------------------
+// Notification — in-app notifications
+// -----------------------------
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // type: SESSION_REMINDER | BOOKING_CONFIRMED | PAYMENT_RECEIVED | TEACHER_APPROVED | etc.
+  type      String
+  title     String
+  body      String
+  // link to navigate when clicked
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+/* TODO(phase-3): Add Escrow, Settlement, Coupon, Campaign models.
  * TODO(phase-4): Add ChatMessage, WhiteboardSession models.
  * TODO(phase-5): Add Review, RecommendationLog, LinkFilterLog models.
  */

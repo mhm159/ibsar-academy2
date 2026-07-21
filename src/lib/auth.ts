@@ -47,8 +47,9 @@ export function normalizePhone(input: string): string {
   const trimmed = input.replace(/[\s\-()]/g, '')
   if (trimmed.startsWith('+')) return trimmed
   if (trimmed.startsWith('00')) return '+' + trimmed.slice(2)
-  if (trimmed.startsWith('0')) return '+2' + trimmed // Egypt default
-  return '+2' + trimmed
+  // Egyptian local number starts with 0 — strip it, prepend +20
+  if (trimmed.startsWith('0')) return '+20' + trimmed.slice(1)
+  return '+20' + trimmed
 }
 
 /** Validate Egyptian / international phone (loose) */
