@@ -1,0 +1,359 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   Ibsar Academy — Egyptian Brand Design Tokens
+   Pharaonic gold + Nile azure + Ivory + Emerald + Kids palette
+   ============================================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-tajawal);
+  --font-display: var(--font-cairo);
+  --font-mono: var(--font-mono);
+
+  /* Brand palette (mapped to shadcn token system) */
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-azure: var(--azure);
+  --color-azure-foreground: var(--azure-foreground);
+  --color-ivory: var(--ivory);
+  --color-emerald-egypt: var(--emerald-egypt);
+  --color-night: var(--night);
+  --color-kids-red: var(--kids-red);
+  --color-kids-teal: var(--kids-teal);
+  --color-kids-yellow: var(--kids-yellow);
+
+  /* shadcn semantic tokens */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/* ============ LIGHT (default — Ivory base) ============ */
+:root {
+  --radius: 0.875rem;
+
+  /* Brand palette */
+  --gold: #C9A84C;
+  --gold-foreground: #1a1208;
+  --azure: #1B6CA8;
+  --azure-foreground: #f0f7ff;
+  --ivory: #F5F0E8;
+  --emerald-egypt: #2D6A4F;
+  --night: #0F1923;
+  --kids-red: #FF6B6B;
+  --kids-teal: #4ECDC4;
+  --kids-yellow: #FFE66D;
+
+  /* Semantic tokens — Egyptian palette */
+  --background: #F5F0E8;            /* ivory */
+  --foreground: #0F1923;            /* night */
+  --card: #FFFFFF;
+  --card-foreground: #0F1923;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F1923;
+
+  /* Primary = Pharaonic gold */
+  --primary: #C9A84C;
+  --primary-foreground: #1a1208;
+  /* Secondary = Nile azure */
+  --secondary: #1B6CA8;
+  --secondary-foreground: #f0f7ff;
+  /* Accent = Emerald */
+  --accent: #2D6A4F;
+  --accent-foreground: #f0fff6;
+
+  --muted: #ECE5D8;
+  --muted-foreground: #6b5d45;
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --border: #DDD3BE;
+  --input: #DDD3BE;
+  --ring: #C9A84C;
+
+  --chart-1: #C9A84C;
+  --chart-2: #1B6CA8;
+  --chart-3: #2D6A4F;
+  --chart-4: #FF6B6B;
+  --chart-5: #4ECDC4;
+
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F1923;
+  --sidebar-primary: #C9A84C;
+  --sidebar-primary-foreground: #1a1208;
+  --sidebar-accent: #F5F0E8;
+  --sidebar-accent-foreground: #0F1923;
+  --sidebar-border: #DDD3BE;
+  --sidebar-ring: #C9A84C;
+}
+
+/* ============ DARK (Night base) ============ */
+.dark {
+  --gold: #E0C56E;
+  --gold-foreground: #1a1208;
+  --azure: #4A9DD8;
+  --azure-foreground: #0a1929;
+  --ivory: #1a2330;
+  --emerald-egypt: #52B788;
+  --night: #0F1923;
+  --kids-red: #FF8585;
+  --kids-teal: #6FE0D7;
+  --kids-yellow: #FFE66D;
+
+  --background: #0F1923;
+  --foreground: #F5F0E8;
+  --card: #16222E;
+  --card-foreground: #F5F0E8;
+  --popover: #16222E;
+  --popover-foreground: #F5F0E8;
+
+  --primary: #E0C56E;
+  --primary-foreground: #1a1208;
+  --secondary: #4A9DD8;
+  --secondary-foreground: #0a1929;
+  --accent: #52B788;
+  --accent-foreground: #0a1f15;
+
+  --muted: #1E2D3A;
+  --muted-foreground: #9aa3ad;
+  --destructive: #e74c3c;
+  --destructive-foreground: #ffffff;
+  --border: #2A3B47;
+  --input: #2A3B47;
+  --ring: #E0C56E;
+
+  --chart-1: #E0C56E;
+  --chart-2: #4A9DD8;
+  --chart-3: #52B788;
+  --chart-4: #FF8585;
+  --chart-5: #6FE0D7;
+
+  --sidebar: #16222E;
+  --sidebar-foreground: #F5F0E8;
+  --sidebar-primary: #E0C56E;
+  --sidebar-primary-foreground: #1a1208;
+  --sidebar-accent: #1E2D3A;
+  --sidebar-accent-foreground: #F5F0E8;
+  --sidebar-border: #2A3B47;
+  --sidebar-ring: #E0C56E;
+}
+
+/* ============================================================
+   Base layer — RTL, fonts, scrollbar
+   ============================================================ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "kern", "liga", "calt";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Better RTL number rendering */
+  body[dir="rtl"] {
+    text-align: right;
+  }
+  /* Selection color */
+  ::selection {
+    background-color: color-mix(in srgb, var(--gold) 30%, transparent);
+    color: var(--foreground);
+  }
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--muted);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--gold) 60%, var(--muted));
+    border-radius: 8px;
+    border: 2px solid var(--muted);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+  }
+}
+
+/* ============================================================
+   Neumorphism + Glassmorphism utility classes
+   ============================================================ */
+@layer utilities {
+  /* Glassmorphism — frosted glass card */
+  .glass {
+    background: color-mix(in srgb, var(--card) 65%, transparent);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+  }
+  .glass-strong {
+    background: color-mix(in srgb, var(--card) 80%, transparent);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+
+  /* Neumorphism — soft raised surface (light mode) */
+  .neu {
+    background: var(--card);
+    box-shadow:
+      8px 8px 18px rgba(15, 25, 35, 0.10),
+      -8px -8px 18px rgba(255, 255, 255, 0.85);
+  }
+  .neu-sm {
+    background: var(--card);
+    box-shadow:
+      4px 4px 10px rgba(15, 25, 35, 0.08),
+      -4px -4px 10px rgba(255, 255, 255, 0.80);
+  }
+  .neu-inset {
+    background: var(--card);
+    box-shadow:
+      inset 5px 5px 12px rgba(15, 25, 35, 0.10),
+      inset -5px -5px 12px rgba(255, 255, 255, 0.80);
+  }
+  .dark .neu,
+  .dark .neu-sm {
+    background: var(--card);
+    box-shadow:
+      8px 8px 18px rgba(0, 0, 0, 0.40),
+      -8px -8px 18px rgba(60, 80, 95, 0.12);
+  }
+  .dark .neu-inset {
+    background: var(--card);
+    box-shadow:
+      inset 5px 5px 12px rgba(0, 0, 0, 0.45),
+      inset -5px -5px 12px rgba(60, 80, 95, 0.10);
+  }
+
+  /* Gold gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, var(--gold) 0%, #E8D488 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .text-gradient-azure-gold {
+    background: linear-gradient(135deg, var(--azure) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Pharaonic pattern background */
+  .bg-pharaonic {
+    background-color: var(--background);
+    background-image:
+      radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--gold) 12%, transparent) 0%, transparent 45%),
+      radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--azure) 12%, transparent) 0%, transparent 45%);
+  }
+  .bg-hieroglyphs {
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 18px, color-mix(in srgb, var(--gold) 4%, transparent) 18px 19px),
+      repeating-linear-gradient(-45deg, transparent 0 18px, color-mix(in srgb, var(--gold) 4%, transparent) 18px 19px);
+  }
+
+  /* Animated gradient border */
+  .border-glow {
+    position: relative;
+  }
+  .border-glow::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--gold), var(--azure), var(--emerald-egypt));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Kids hover bounce */
+  .hover-bounce {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .hover-bounce:hover {
+    transform: translateY(-6px);
+  }
+
+  /* Float animation */
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .animate-float-soft {
+    animation: float-soft 6s ease-in-out infinite;
+  }
+
+  /* Shine sweep */
+  @keyframes shine-sweep {
+    0% { transform: translateX(-150%) skewX(-20deg); }
+    100% { transform: translateX(250%) skewX(-20deg); }
+  }
+  .shine::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shine-sweep 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* TODO(phase-2): Add dashboard-specific neumorphic variants when dashboards are built.
+ * TODO(phase-3): Add payment button states (escrow/pending/settled).
+ * TODO(phase-4): Add classroom video layout utility classes.
+ */

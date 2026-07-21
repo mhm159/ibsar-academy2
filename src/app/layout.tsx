@@ -1,0 +1,95 @@
+import type { Metadata, Viewport } from "next";
+import { Tajawal, Cairo } from "next/font/google";
+import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+
+const tajawal = Tajawal({
+  variable: "--font-tajawal",
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "700", "800"],
+  display: "swap",
+});
+
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "أكاديمية إبصار | Ibsar Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
+  description:
+    "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي. تدريس البرمجة، الروبوتيكس، والحساب الذهني أونلاين مع نخبة المعلمين ونظام دفع محلي ودولي آمن.",
+  keywords: [
+    "أكاديمية إبصار",
+    "Ibsar Academy",
+    "تعليم الأطفال",
+    "البرمجة للأطفال",
+    "الروبوتيكس",
+    "الحساب الذهني",
+    "تعليم أونلاين",
+    "مصر",
+    "العالم العربي",
+    "كورسات برمجة",
+  ],
+  authors: [{ name: "Ibsar Academy" }],
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.svg",
+  },
+  openGraph: {
+    title: "أكاديمية إبصار | Ibsar Academy",
+    description:
+      "منصة تعليمية متكاملة للأطفال لتعلّم البرمجة والروبوتيكس والحساب الذهني أونلاين.",
+    siteName: "Ibsar Academy",
+    type: "website",
+    locale: "ar_EG",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "أكاديمية إبصار",
+    description: "تعلّم البرمجة والروبوتيكس والحساب الذهني للأطفال أونلاين.",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F5F0E8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F1923" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body
+        className={`${tajawal.variable} ${cairo.variable} font-sans antialiased bg-background text-foreground min-h-screen`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+          <Sonner position="top-center" dir="rtl" />
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+
+/* TODO(phase-1): Add structured data (JSON-LD) for SEO + Arabic locale metadata.
+ * TODO(phase-2): Add dashboard layout group with sidebar once auth flows land.
+ */

@@ -1,0 +1,19 @@
+{
+  "name": "أكاديمية إبصار",
+  "short_name": "إبصار",
+  "description": "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#C9A84C",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+'use client'
+
+import Link from 'next/link'
+import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Send } from 'lucide-react'
+import { Logo } from './logo'
+import { APP } from '@/lib/constants'
+
+const FOOTER_LINKS = [
+  {
+    title: 'الأكاديمية',
+    links: [
+      { label: 'المواد', href: '#tracks' },
+      { label: 'المعلمون', href: '#teachers' },
+      { label: 'الأسعار', href: '#pricing' },
+      { label: 'كيف نعمل', href: '#how' },
+    ],
+  },
+  {
+    title: 'الحساب',
+    links: [
+      { label: 'تسجيل طالب', href: '/auth/register/student' },
+      { label: 'تسجيل معلم', href: '/auth/register/teacher' },
+      { label: 'تسجيل الدخول', href: '/auth/login' },
+    ],
+  },
+  {
+    title: 'الدعم',
+    links: [
+      { label: 'الأسئلة الشائعة', href: '#faq' },
+      { label: 'واتساب', href: 'https://wa.me/201000000000' },
+      { label: 'الدعم الفني', href: `mailto:${APP.supportEmail}` },
+    ],
+  },
+]
+
+const SOCIAL = [
+  { icon: Facebook, href: 'https://facebook.com', label: 'فيسبوك' },
+  { icon: Instagram, href: 'https://instagram.com', label: 'انستجرام' },
+  { icon: Youtube, href: 'https://youtube.com', label: 'يوتيوب' },
+  { icon: Send, href: 'https://t.me', label: 'تيليجرام' },
+]
+
+export function SiteFooter() {
+  return (
+    <footer className="mt-auto relative border-t border-border bg-card">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="grid gap-10 lg:gap-8 lg:grid-cols-12">
+          {/* Brand column */}
+          <div className="lg:col-span-4">
+            <Logo size={44} />
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-sm">
+              {APP.description}
+            </p>
+
+            {/* Contact */}
+            <ul className="mt-5 space-y-2 text-sm">
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Phone className="h-4 w-4 text-gold shrink-0" />
+                <span dir="ltr">{APP.supportPhone}</span>
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Mail className="h-4 w-4 text-gold shrink-0" />
+                <span dir="ltr">{APP.supportEmail}</span>
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4 text-gold shrink-0" />
+                <span>القاهرة، مصر</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Links columns */}
+          <div className="lg:col-span-6 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {FOOTER_LINKS.map((col) => (
+              <div key={col.title}>
+                <h3 className="font-display font-bold text-sm mb-4 text-foreground">
+                  {col.title}
+                </h3>
+                <ul className="space-y-2.5">
+                  {col.links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Newsletter + social */}
+          <div className="lg:col-span-2">
+            <h3 className="font-display font-bold text-sm mb-4 text-foreground">تابعنا</h3>
+            <div className="flex flex-wrap gap-2">
+              {SOCIAL.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-xl glass border-gold/15 hover:border-gold/40 hover:bg-gold/10 transition-colors"
+                >
+                  <s.icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} {APP.name}. جميع الحقوق محفوظة.
+          </p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-gold transition-colors">
+              سياسة الخصوصية
+            </Link>
+            <Link href="/terms" className="hover:text-gold transition-colors">
+              الشروط والأحكام
+            </Link>
+            <span className="hidden sm:inline">صُنع بـ ❤️ في مصر</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+/* TODO(phase-2): Add newsletter subscription form with email capture + welcome flow. */
