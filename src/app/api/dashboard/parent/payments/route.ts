@@ -47,6 +47,7 @@ export async function GET() {
       createdAt: t.createdAt,
       booking: t.booking
         ? {
+            bookingId: t.booking.id,
             sessionTitle: t.booking.session.title,
             track: t.booking.session.track,
             sessionDate: t.booking.session.startTime,

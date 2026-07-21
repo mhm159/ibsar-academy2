@@ -79,6 +79,9 @@ model Teacher {
   sessions       Session[]
   availabilities Availability[]
   progressReports ProgressReport[]
+  walletAccounts  WalletAccount[]
+  payouts         Payout[]
+  escrows         Escrow[]
 
   @@index([status])
   @@index([isFeatured])
@@ -118,6 +121,7 @@ model Parent {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   students      Student[]
   transactions  Transaction[]
+  refundRequests RefundRequest[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -247,6 +251,7 @@ model Booking {
   updatedAt     DateTime @updatedAt
 
   transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  escrow        Escrow?
 
   @@index([sessionId])
   @@index([studentId])
@@ -295,12 +300,28 @@ model Transaction {
   description   String?
   bookingId     String?  @unique
   booking       Booking?
+  escrow        Escrow?
+  couponId      String?
+  coupon        Coupon?  @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  refundRequest RefundRequest?
+  // breakdown: original amount, discount, platform fee
+  originalAmountEGP Int @default(0)
+  originalAmountUSD Int @default(0)
+  discountEGP   Int      @default(0)
+  discountUSD   Int      @default(0)
+  platformFeeEGP Int     @default(0)
+  platformFeeUSD Int     @default(0)
+  // buyer country + payment method details
+  buyerCountry  String?
+  paymentMethod String?  // CARD | FAWRY | VODAFONE_CASH | etc.
+  checkoutUrl   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([parentId])
   @@index([userId])
   @@index([status])
+  @@index([provider])
 }
 
 // -----------------------------
@@ -351,7 +372,170 @@ model Notification {
   @@index([createdAt])
 }
 
-/* TODO(phase-3): Add Escrow, Settlement, Coupon, Campaign models.
- * TODO(phase-4): Add ChatMessage, WhiteboardSession models.
- * TODO(phase-5): Add Review, RecommendationLog, LinkFilterLog models.
- */
+// ============================================================
+// Phase 3 models — Payments, Escrow, Payouts, Wallets
+// ============================================================
+
+// -----------------------------
+// WalletAccount — teacher payout destinations
+// -----------------------------
+model WalletAccount {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // type: VODAFONE_CASH | ETISALAT_CASH | ORANGE_CASH | FAWRY | BANK_TRANSFER | PAYPAL | WISE
+  type          String
+  // human-readable label e.g. "محفظتي فودافون"
+  label         String?
+  // the destination identifier (phone number, IBAN, email, account number)
+  identifier    String
+  // holder name (for bank transfers)
+  holderName    String?
+  // additional info JSON (bank name, branch, swift code, etc.)
+  detailsJson   String?
+  // currency this wallet prefers
+  currency      String   @default("EGP")
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payouts Payout[]
+
+  @@index([teacherId])
+  @@index([type])
+}
+
+// -----------------------------
+// Payout — teacher withdrawal request + execution
+// -----------------------------
+model Payout {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // requested amount (in teacher's preferred currency)
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  currency      String   @default("EGP")
+  // status: PENDING | APPROVED | PROCESSING | COMPLETED | REJECTED | FAILED
+  status        String   @default("PENDING")
+  // payout method
+  walletAccountId String?
+  walletAccount WalletAccount? @relation(fields: [walletAccountId], references: [id], onDelete: SetNull)
+  // admin who approved/processed
+  processedById String?
+  processedAt   DateTime?
+  // provider reference (e.g. Fawry ref, bank transfer ref)
+  providerRef   String?
+  // admin notes / rejection reason
+  notes         String?
+  // breakdown: which transactions are being settled
+  transactionIdsJson String? // JSON array of transaction IDs
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([teacherId, status])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// Escrow — funds held until session completion
+// -----------------------------
+model Escrow {
+  id            String   @id @default(cuid())
+  transactionId String  @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  bookingId     String?  @unique
+  booking       Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // amounts held
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  platformFeeEGP Int     @default(0) // commission
+  platformFeeUSD Int     @default(0)
+  teacherShareEGP Int    @default(0) // amount teacher will receive
+  teacherShareUSD Int    @default(0)
+  // status: HELD | RELEASED | REFUNDED
+  status        String   @default("HELD")
+  // when funds were released to teacher
+  releasedAt    DateTime?
+  payoutId      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([teacherId, status])
+  @@index([status])
+}
+
+// -----------------------------
+// CurrencyRate — cached exchange rates (base: USD)
+// -----------------------------
+model CurrencyRate {
+  id        String   @id @default(cuid())
+  code      String   @unique // USD, EGP, SAR, AED, KWD, QAR, BHD, OMR, JOD
+  name      String
+  nameAr    String
+  symbol    String
+  // rate relative to USD (1 USD = rate X)
+  rateToUSD Float
+  // supported payment methods (comma-separated): PAYMOB,STRIPE
+  providers String  @default("")
+  updatedAt DateTime @updatedAt
+}
+
+// -----------------------------
+// Coupon — discount codes
+// -----------------------------
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  // type: PERCENTAGE | FIXED_AMOUNT
+  type          String
+  value         Float    // percentage 0-100 OR fixed amount
+  currency      String   @default("EGP")
+  // usage limits
+  maxUses       Int      @default(100)
+  usedCount     Int      @default(0)
+  // validity
+  validFrom     DateTime @default(now())
+  validUntil    DateTime?
+  isActive      Boolean  @default(true)
+  // applicable tracks (empty = all)
+  tracksJson    String   @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transactions Transaction[]
+
+  @@index([code])
+  @@index([isActive])
+}
+
+// -----------------------------
+// RefundRequest — parent refund requests
+// -----------------------------
+model RefundRequest {
+  id            String   @id @default(cuid())
+  transactionId String  @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  // reason categories
+  reason        String
+  details       String?
+  // status: PENDING | APPROVED | REJECTED | PROCESSED
+  status        String   @default("PENDING")
+  processedById String?
+  processedAt   DateTime?
+  adminNotes    String?
+  // refund amount (may be partial)
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([status])
+}

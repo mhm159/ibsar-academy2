@@ -9,6 +9,8 @@ import {
   Settings,
   Wallet,
   ClipboardList,
+  ShieldCheck,
+  RotateCcw,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -22,6 +24,7 @@ export const PARENT_NAV: NavItem[] = [
   { href: '/parent/students', label: 'أبنائي', icon: Users },
   { href: '/parent/sessions', label: 'الحصص والحجوزات', icon: CalendarDays },
   { href: '/parent/payments', label: 'المدفوعات', icon: CreditCard },
+  { href: '/parent/refunds', label: 'الاسترجاعات', icon: RotateCcw },
   { href: '/parent/reports', label: 'التقارير', icon: FileBarChart },
 ]
 
@@ -29,6 +32,7 @@ export const TEACHER_NAV: NavItem[] = [
   { href: '/teacher', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/teacher/schedule', label: 'جدول الحصص', icon: CalendarDays },
   { href: '/teacher/students', label: 'الطلاب', icon: Users },
+  { href: '/teacher/payouts', label: 'المحافظ والسحب', icon: Wallet },
   { href: '/teacher/profile', label: 'الملف الشخصي', icon: Settings },
 ]
 
@@ -37,6 +41,9 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/approvals', label: 'اعتماد المعلمين', icon: UserCheck },
   { href: '/admin/users', label: 'المستخدمون', icon: Users },
   { href: '/admin/transactions', label: 'المعاملات', icon: Wallet },
+  { href: '/admin/escrow', label: 'الضمان (Escrow)', icon: ShieldCheck },
+  { href: '/admin/payouts', label: 'طلبات السحب', icon: CreditCard },
+  { href: '/admin/financials', label: 'التقارير المالية', icon: ClipboardList },
 ]
 
 export function getNavForRole(role: string): NavItem[] {

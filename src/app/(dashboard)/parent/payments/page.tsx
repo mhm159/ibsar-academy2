@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Wallet, TrendingUp, Clock, RotateCcw } from 'lucide-react'
+import { Wallet, TrendingUp, Clock, RotateCcw, CreditCard } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, StatCard, StatusBadge, TrackBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 interface PaymentsData {
   summary: {
@@ -24,6 +26,7 @@ interface PaymentsData {
     description: string | null
     createdAt: string
     booking: {
+      bookingId: string
       sessionTitle: string
       track: string
       sessionDate: string
@@ -106,6 +109,7 @@ function PaymentsView() {
                   <th className="px-4 py-3 font-bold text-muted-foreground">المبلغ</th>
                   <th className="px-4 py-3 font-bold text-muted-foreground">الحالة</th>
                   <th className="px-4 py-3 font-bold text-muted-foreground hidden sm:table-cell">التاريخ</th>
+                  <th className="px-4 py-3 font-bold text-muted-foreground">إجراء</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
@@ -134,6 +138,31 @@ function PaymentsView() {
                         month: 'short',
                         year: 'numeric',
                       })}
+                    </td>
+                    <td className="px-4 py-3">
+                      {(t.status === 'PENDING' || t.status === 'FAILED') && t.booking && (
+                        <Link href={`/checkout?booking=${t.booking.bookingId ?? ''}`}>
+                          <Button
+                            size="sm"
+                            className="gap-1 bg-gradient-to-l from-gold to-[#E8D488] text-night h-8"
+                          >
+                            <CreditCard className="h-3.5 w-3.5" />
+                            ادفع
+                          </Button>
+                        </Link>
+                      )}
+                      {t.status === 'PAID' && (
+                        <Link href="/parent/refunds">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10 h-8"
+                          >
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            استرجاع
+                          </Button>
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))}
