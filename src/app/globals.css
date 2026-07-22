@@ -353,6 +353,300 @@
   }
 }
 
+/* ============================================================
+   KIDS MODE — vibrant, playful, joyful design for ages 6-16
+   Activated via <html data-mode="kids">
+   ============================================================ */
+
+[data-mode="kids"] {
+  --radius: 1.25rem;
+  --background: #FFF9F0;
+  --foreground: #2D1B4E;
+  --card: #FFFFFF;
+  --card-foreground: #2D1B4E;
+  --primary: #FF6B6B;
+  --primary-foreground: #FFFFFF;
+  --secondary: #4ECDC4;
+  --secondary-foreground: #FFFFFF;
+  --accent: #FFE66D;
+  --accent-foreground: #2D1B4E;
+  --muted: #FFF0E0;
+  --muted-foreground: #8B6F47;
+  --border: #FFD9A8;
+  --input: #FFD9A8;
+  --ring: #FF6B6B;
+}
+
+[data-mode="kids"] .dark {
+  --background: #1A0F2E;
+  --foreground: #FFE6F0;
+  --card: #2D1B4E;
+  --card-foreground: #FFE6F0;
+  --primary: #FF8E8E;
+  --secondary: #6FE0D7;
+  --accent: #FFE66D;
+  --muted: #3D2960;
+  --muted-foreground: #B89DD9;
+  --border: #4D3580;
+}
+
+/* Kids gradient backgrounds */
+.kids-bg-rainbow {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #6C5CE7 75%, #FF6B6B 100%);
+  background-size: 400% 400%;
+  animation: rainbow-shift 8s ease infinite;
+}
+@keyframes rainbow-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.kids-bg-sky {
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 50%, #E0F6FF 100%);
+}
+
+.kids-bg-candy {
+  background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 50%, #FFE4E1 100%);
+}
+
+.kids-bg-sunset {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 50%, #FFA07A 100%);
+}
+
+.kids-bg-ocean {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A8B3 50%, #2C7A8C 100%);
+}
+
+/* Kids card — extra rounded with playful shadow */
+.kids-card {
+  border-radius: 1.5rem;
+  background: var(--card);
+  box-shadow:
+    0 4px 0 color-mix(in srgb, var(--primary) 80%, transparent),
+    0 8px 24px rgba(255, 107, 107, 0.15);
+  border: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+}
+.kids-card:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow:
+    0 8px 0 color-mix(in srgb, var(--primary) 80%, transparent),
+    0 16px 32px rgba(255, 107, 107, 0.25);
+}
+
+/* Kids button — bouncy with 3D effect */
+.kids-btn {
+  border-radius: 1rem;
+  font-weight: 800;
+  padding: 0.75rem 1.5rem;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+.kids-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+}
+.kids-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.kids-btn-primary {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+}
+.kids-btn-secondary {
+  background: linear-gradient(135deg, #4ECDC4, #44A8B3);
+  color: white;
+}
+.kids-btn-accent {
+  background: linear-gradient(135deg, #FFE66D, #FFC93C);
+  color: #2D1B4E;
+}
+.kids-btn-purple {
+  background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+  color: white;
+}
+
+/* Kids stat card with big number + emoji */
+.kids-stat {
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.kids-stat::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Animated bouncy emoji */
+@keyframes kids-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(-5deg); }
+  75% { transform: translateY(-4px) rotate(5deg); }
+}
+.kids-bounce {
+  animation: kids-bounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Wiggle on hover */
+@keyframes kids-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+.kids-wiggle:hover {
+  animation: kids-wiggle 0.4s ease-in-out;
+}
+
+/* Pop in animation for new elements */
+@keyframes kids-pop-in {
+  0% { transform: scale(0) rotate(180deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(-5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.kids-pop-in {
+  animation: kids-pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Confetti burst */
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  animation: confetti-fall 3s linear forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Star burst for achievements */
+@keyframes star-burst {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+  100% { transform: scale(2) rotate(360deg); opacity: 0; }
+}
+.star-burst {
+  animation: star-burst 1s ease-out forwards;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Kids progress bar — chunky + animated */
+.kids-progress {
+  height: 16px;
+  border-radius: 999px;
+  background: var(--muted);
+  overflow: hidden;
+  border: 2px solid var(--border);
+}
+.kids-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #FF6B6B, #FFE66D, #4ECDC4);
+  background-size: 200% 100%;
+  animation: progress-flow 2s linear infinite;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes progress-flow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* Kids badge */
+.kids-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border: 2px solid;
+}
+
+/* Speaking indicator (classroom) */
+@keyframes speaking-wave {
+  0%, 100% { height: 8px; }
+  50% { height: 20px; }
+}
+.speaking-bar {
+  width: 4px;
+  background: #4ECDC4;
+  border-radius: 2px;
+  animation: speaking-wave 0.6s ease-in-out infinite;
+}
+.speaking-bar:nth-child(2) { animation-delay: 0.1s; }
+.speaking-bar:nth-child(3) { animation-delay: 0.2s; }
+.speaking-bar:nth-child(4) { animation-delay: 0.3s; }
+.speaking-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* Floating decorations */
+.kids-float-1 { animation: float-soft 4s ease-in-out infinite; }
+.kids-float-2 { animation: float-soft 5s ease-in-out infinite 0.5s; }
+.kids-float-3 { animation: float-soft 6s ease-in-out infinite 1s; }
+
+/* Sparkle animation */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+.sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Kids text styles */
+.kids-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #FF6B6B, #6C5CE7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.kids-title-yellow {
+  background: linear-gradient(135deg, #FFE66D, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Reward ribbon */
+.kids-ribbon {
+  position: absolute;
+  top: 8px;
+  right: -8px;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transform: rotate(8deg);
+}
+
+/* TODO(phase-future): Add more kids-mode seasonal themes (Ramadan, back-to-school). */
+
+
 /* TODO(phase-2): Add dashboard-specific neumorphic variants when dashboards are built.
  * TODO(phase-3): Add payment button states (escrow/pending/settled).
  * TODO(phase-4): Add classroom video layout utility classes.

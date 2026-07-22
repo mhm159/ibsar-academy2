@@ -10,11 +10,14 @@ import {
   ArrowLeft,
   Star,
   TrendingUp,
+  Sparkles,
 } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { StatCard, PageHeader, TrackBadge, StarRating, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useMode } from '@/components/use-mode'
+import { Mascot, triggerConfetti } from '@/components/site/kids-effects'
 
 interface OverviewData {
   stats: {
@@ -64,6 +67,7 @@ export default function ParentOverviewPage() {
 }
 
 function ParentOverviewContent() {
+  const { isKids } = useMode()
   const [data, setData] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -91,6 +95,19 @@ function ParentOverviewContent() {
     return <p className="text-muted-foreground">تعذّر تحميل البيانات</p>
   }
 
+  // Render kids version if kids mode
+  if (isKids) {
+    return <KidsOverview data={data} />
+  }
+
+  // Professional version (original)
+  return <ProOverview data={data} />
+}
+
+/* ============================================================
+   PRO MODE — elegant professional layout
+   ============================================================ */
+function ProOverview({ data }: { data: OverviewData }) {
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short' })
   const fmtTime = (iso: string) =>
@@ -111,7 +128,6 @@ function ParentOverviewContent() {
         }
       />
 
-      {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
         <StatCard icon={Users} label="عدد الأبناء" value={data.stats.studentsCount} color="var(--azure)" />
         <StatCard icon={CalendarClock} label="حصص قادمة" value={data.stats.upcomingSessions} color="var(--gold)" />
@@ -126,7 +142,6 @@ function ParentOverviewContent() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Upcoming sessions */}
         <Card className="p-5 glass border-gold/15">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display font-bold">الحصص القادمة</h3>
@@ -150,10 +165,7 @@ function ParentOverviewContent() {
           ) : (
             <ul className="space-y-3">
               {data.upcomingSessions.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-start gap-3 rounded-xl bg-muted/30 p-3 hover:bg-muted/50 transition-colors"
-                >
+                <li key={s.id} className="flex items-start gap-3 rounded-xl bg-muted/30 p-3 hover:bg-muted/50 transition-colors">
                   <div className="flex flex-col items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-gold/20 to-azure/20 shrink-0">
                     <span className="text-xs font-bold text-gold">{fmtDate(s.startTime).split(' ')[0]}</span>
                     <span className="text-lg font-extrabold leading-none">
@@ -171,12 +183,7 @@ function ParentOverviewContent() {
                     </p>
                   </div>
                   {s.meetingUrl && (
-                    <a
-                      href={s.meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-azure hover:underline shrink-0"
-                    >
+                    <a href={s.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-azure hover:underline shrink-0">
                       دخول
                     </a>
                   )}
@@ -186,7 +193,6 @@ function ParentOverviewContent() {
           )}
         </Card>
 
-        {/* Recent reports */}
         <Card className="p-5 glass border-gold/15">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display font-bold">أحدث تقارير التقدّم</h3>
@@ -195,18 +201,11 @@ function ParentOverviewContent() {
             </Link>
           </div>
           {data.recentReports.length === 0 ? (
-            <EmptyState
-              icon={TrendingUp}
-              title="لا توجد تقارير بعد"
-              description="ستظهر تقارير تقدّم أبنائك بعد إكمال الحصص"
-            />
+            <EmptyState icon={TrendingUp} title="لا توجد تقارير بعد" description="ستظهر تقارير تقدّم أبنائك بعد إكمال الحصص" />
           ) : (
             <ul className="space-y-3">
               {data.recentReports.map((r) => (
-                <li
-                  key={r.id}
-                  className="rounded-xl bg-muted/30 p-3 hover:bg-muted/50 transition-colors"
-                >
+                <li key={r.id} className="rounded-xl bg-muted/30 p-3 hover:bg-muted/50 transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
                       <TrackBadge track={r.track} />
@@ -225,9 +224,7 @@ function ParentOverviewContent() {
                       فهم: {r.understanding}/5
                     </span>
                   </div>
-                  {r.notes && (
-                    <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{r.notes}</p>
-                  )}
+                  {r.notes && <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{r.notes}</p>}
                 </li>
               ))}
             </ul>
@@ -235,7 +232,6 @@ function ParentOverviewContent() {
         </Card>
       </div>
 
-      {/* Children quick view */}
       {data.students.length > 0 && (
         <Card className="p-5 glass border-gold/15 mt-6">
           <div className="flex items-center justify-between mb-4">
@@ -264,3 +260,237 @@ function ParentOverviewContent() {
     </>
   )
 }
+
+/* ============================================================
+   KIDS MODE — vibrant playful layout for children
+   ============================================================ */
+function KidsOverview({ data }: { data: OverviewData }) {
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' })
+  const fmtTime = (iso: string) =>
+    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+
+  const handleCelebrate = () => {
+    triggerConfetti(60, 4000)
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Hero banner with mascot */}
+      <div className="relative rounded-3xl overflow-hidden kids-bg-sky p-6 lg:p-8">
+        {/* Floating decorations */}
+        <div className="absolute top-4 left-4 text-4xl kids-float-1 opacity-70">☁️</div>
+        <div className="absolute top-8 right-12 text-3xl kids-float-2 opacity-70">⭐</div>
+        <div className="absolute bottom-4 left-8 text-3xl kids-float-3 opacity-70">🌈</div>
+
+        <div className="relative flex items-center gap-4 flex-wrap">
+          <Mascot mood="waving" size={90} className="shrink-0 kids-bounce" />
+          <div className="flex-1 min-w-0">
+            <h1 className="kids-title text-3xl lg:text-4xl font-extrabold mb-1">
+              أهلاً يا أبطال! 🎉
+            </h1>
+            <p className="text-[#2D1B4E]/80 text-sm lg:text-base font-bold">
+              يلا نتعلم ونلعب ونستمتع! عندك {data.stats.upcomingSessions} حصص قادمة
+            </p>
+          </div>
+          <button
+            onClick={handleCelebrate}
+            className="kids-btn kids-btn-accent kids-wiggle"
+          >
+            🎉 احتفل!
+          </button>
+        </div>
+      </div>
+
+      {/* Stats — colorful cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KidsStatCard
+          emoji="👶"
+          value={data.stats.studentsCount}
+          label="أبنائك"
+          bgClass="bg-gradient-to-br from-[#FFB6C1] to-[#FFC0CB]"
+        />
+        <KidsStatCard
+          emoji="📅"
+          value={data.stats.upcomingSessions}
+          label="حصص قادمة"
+          bgClass="bg-gradient-to-br from-[#FFE66D] to-[#FFC93C]"
+        />
+        <KidsStatCard
+          emoji="🏆"
+          value={data.stats.completedSessions}
+          label="حصص مكتملة"
+          bgClass="bg-gradient-to-br from-[#4ECDC4] to-[#44A8B3]"
+          onClick={() => triggerConfetti(40)}
+        />
+        <KidsStatCard
+          emoji="💰"
+          value={data.stats.totalSpentEGP}
+          label="ج.م مدفوع"
+          bgClass="bg-gradient-to-br from-[#6C5CE7] to-[#A29BFE]"
+        />
+      </div>
+
+      {/* Upcoming sessions — playful cards */}
+      <div>
+        <h2 className="kids-title text-2xl font-extrabold mb-3 flex items-center gap-2">
+          <span className="kids-bounce">📚</span>
+          حصصك القادمة
+        </h2>
+        {data.upcomingSessions.length === 0 ? (
+          <div className="kids-card p-8 text-center">
+            <div className="text-6xl mb-3 kids-bounce">🎯</div>
+            <p className="text-lg font-bold text-[#2D1B4E] mb-2">مفيش حصص قادمة دلوقتي</p>
+            <p className="text-sm text-[#8B6F47] mb-4">احجز أول حصة وابدأ المغامرة!</p>
+            <Link href="/parent/sessions">
+              <button className="kids-btn kids-btn-primary">
+                🚀 احجز حصة
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-3">
+            {data.upcomingSessions.map((s, i) => {
+              const trackEmoji = s.track === 'PROGRAMMING' ? '💻' : s.track === 'ROBOTICS' ? '🤖' : '🧮'
+              const trackColor = s.track === 'PROGRAMMING' ? 'from-[#4ECDC4] to-[#44A8B3]'
+                : s.track === 'ROBOTICS' ? 'from-[#FF6B6B] to-[#FF8E53]'
+                : 'from-[#FFE66D] to-[#FFC93C]'
+              return (
+                <div
+                  key={s.id}
+                  className={`kids-card p-4 bg-gradient-to-br ${trackColor} text-white kids-pop-in`}
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="text-4xl kids-bounce">{trackEmoji}</div>
+                    <div className="flex-1">
+                      <p className="font-extrabold text-lg leading-tight">{s.title}</p>
+                      <p className="text-xs opacity-90">{s.studentName} • {s.teacherName}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/20 rounded-xl p-2 text-sm font-bold">
+                    📅 {fmtDate(s.startTime)}
+                  </div>
+                  <div className="bg-white/20 rounded-xl p-2 text-sm font-bold mt-1">
+                    🕐 {fmtTime(s.startTime)} - {fmtTime(s.endTime)}
+                  </div>
+                  {s.meetingUrl && (
+                    <a
+                      href={s.meetingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="kids-btn kids-btn-accent w-full mt-3 text-center block text-sm"
+                    >
+                      🎥 ادخل الحصة
+                    </a>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Recent achievements — star cards */}
+      {data.recentReports.length > 0 && (
+        <div>
+          <h2 className="kids-title text-2xl font-extrabold mb-3 flex items-center gap-2">
+            <span className="kids-bounce">🏆</span>
+            أحدث إنجازاتك
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {data.recentReports.map((r, i) => {
+              const isHighScore = r.score >= 80
+              return (
+                <div
+                  key={r.id}
+                  className={`kids-card p-4 ${isHighScore ? 'bg-gradient-to-br from-[#FFE66D] to-[#FFC93C]' : 'bg-white'} kids-pop-in`}
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  {isHighScore && <div className="kids-ribbon">⭐ ممتاز!</div>}
+                  <div className="text-center">
+                    <div className="text-5xl mb-2 kids-bounce">
+                      {r.score >= 90 ? '🌟' : r.score >= 80 ? '⭐' : r.score >= 60 ? '👍' : '💪'}
+                    </div>
+                    <p className="text-3xl font-extrabold text-[#2D1B4E]">{r.score}%</p>
+                    <p className="text-sm font-bold text-[#2D1B4E]/70 mt-1">{r.sessionTitle}</p>
+                    <p className="text-xs text-[#8B6F47] mt-1">{r.studentName}</p>
+                    <div className="flex justify-center gap-1 mt-2">
+                      {Array.from({ length: 5 }).map((_, idx) => (
+                        <span key={idx} className="text-lg">
+                          {idx < Math.round(r.engagement) ? '⭐' : '☆'}
+                        </span>
+                      ))}
+                    </div>
+                    {r.notes && (
+                      <p className="text-xs text-[#8B6F47] mt-2 bg-white/50 rounded-lg p-2 line-clamp-2">
+                        💬 {r.notes}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Children cards */}
+      {data.students.length > 0 && (
+        <div>
+          <h2 className="kids-title text-2xl font-extrabold mb-3 flex items-center gap-2">
+            <span className="kids-bounce">👨‍👩‍👧‍👦</span>
+            أبنائك
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {data.students.map((s, i) => {
+              const emoji = s.gender === 'FEMALE' ? '👧' : '👦'
+              return (
+                <div
+                  key={s.id}
+                  className="kids-card p-4 bg-gradient-to-br from-[#A29BFE] to-[#6C5CE7] text-white kids-pop-in"
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-5xl kids-bounce">{emoji}</div>
+                    <div>
+                      <p className="font-extrabold text-lg">{s.name}</p>
+                      <p className="text-xs opacity-90">{s.grade ?? 'طالب'}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function KidsStatCard({
+  emoji,
+  value,
+  label,
+  bgClass,
+  onClick,
+}: {
+  emoji: string
+  value: number | string
+  label: string
+  bgClass: string
+  onClick?: () => void
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={`kids-stat ${bgClass} text-white ${onClick ? 'cursor-pointer kids-wiggle' : ''}`}
+    >
+      <div className="text-4xl mb-1 kids-bounce">{emoji}</div>
+      <div className="text-3xl font-extrabold">{value}</div>
+      <div className="text-xs font-bold opacity-90">{label}</div>
+    </div>
+  )
+}
+
+/* TODO: Add more kids-mode pages (sessions, reports) with playful variants. */

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Menu, X, GraduationCap } from 'lucide-react'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
+import { KidsModeToggle } from '@/components/site/kids-mode-toggle'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -62,6 +63,7 @@ export function SiteHeader() {
 
           {/* Left: actions */}
           <div className="flex items-center gap-2">
+            <KidsModeToggle />
             <ThemeToggle />
             <Link href="/auth/login" className="hidden sm:block">
               <Button variant="ghost" size="sm" className="font-medium">

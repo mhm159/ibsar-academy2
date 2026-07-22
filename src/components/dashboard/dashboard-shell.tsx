@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, LogOut, Bell, ChevronLeft, Home } from 'lucide-react'
 import { Logo } from '@/components/site/logo'
 import { ThemeToggle } from '@/components/site/theme-toggle'
+import { KidsModeToggle } from '@/components/site/kids-mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
@@ -118,6 +119,7 @@ export function DashboardShell({ role, children, title }: DashboardShellProps) {
               <Bell className="h-5 w-5" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-kids-red" />
             </Button>
+            <KidsModeToggle />
             <ThemeToggle />
             <Button
               variant="ghost"
