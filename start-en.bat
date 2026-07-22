@@ -1,151 +1,148 @@
 @echo off
-title Ibsar Academy - Server Launcher
+title Ibsar Academy Server
 color 0A
+cd /d "%~dp0"
 
 echo.
 echo  ============================================================
-echo                                                           
-echo            IBRAR ACADEMY - Full Platform Launcher          
-echo            One-click setup ^& run                         
-echo                                                           
+echo            IBRAR ACADEMY - Server Launcher
 echo  ============================================================
 echo.
 
 :: Check Node.js
 where node >nul 2>&1
-if %errorlevel% neq 0 (
+if errorlevel 1 (
     echo  [ERROR] Node.js is not installed.
     echo  Download from: https://nodejs.org
     echo.
     pause
-    exit /b 1
+    goto :eof
 )
+echo  [OK] Node.js found
 
 :: Check Bun
+set "CMD=npm"
 where bun >nul 2>&1
-if %errorlevel% neq 0 (
-    echo  [WARN] Bun is not installed - will use npm instead
-    set USE_BUN=0
+if not errorlevel 1 (
+    echo  [OK] Bun found - using bun
+    set "CMD=bun"
 ) else (
-    echo  [OK] Bun detected - will use it for faster performance
-    set USE_BUN=1
+    echo  [INFO] Bun not found - using npm
 )
-echo.
 
 :: Check .env
 if not exist ".env" (
     echo  [INFO] Creating .env from template...
-    copy .env.example .env >nul
-    echo  [OK] .env created - edit values before production
-    echo.
+    if exist ".env.example" (
+        copy .env.example .env >nul
+    ) else (
+        echo DATABASE_URL="file:./db/custom.db" > .env
+        echo NEXTAUTH_SECRET="dev-secret-change-me" >> .env
+        echo OTP_SECRET="dev-otp-secret-change-me" >> .env
+    )
+    echo  [OK] .env created
 )
-
-:: Step 1: Install dependencies
-echo  ============================================================
-echo  [1/5] Installing dependencies...
-echo  ============================================================
-if %USE_BUN% equ 1 (
-    bun install
-) else (
-    npm install
-)
-if %errorlevel% neq 0 (
-    echo  [ERROR] Failed to install dependencies
-    pause
-    exit /b 1
-)
-echo  [OK] Dependencies installed
 echo.
 
-:: Step 2: Generate Prisma Client
-echo  ============================================================
+:: Step 1: Install
+echo  [1/5] Installing dependencies (this may take a few minutes)...
+%CMD% install
+if errorlevel 1 (
+    echo  [ERROR] Install failed. Trying with npm...
+    npm install
+    if errorlevel 1 (
+        echo  [ERROR] npm install also failed
+        pause
+        goto :eof
+    )
+    set "CMD=npm"
+)
+echo  [OK] Done
+echo.
+
+:: Step 2: Prisma generate
 echo  [2/5] Generating Prisma Client...
-echo  ============================================================
-if %USE_BUN% equ 1 (
+if "%CMD%"=="bun" (
     bun run db:generate
 ) else (
     npx prisma generate
 )
-if %errorlevel% neq 0 (
-    echo  [ERROR] Failed to generate Prisma
+if errorlevel 1 (
+    echo  [ERROR] Prisma generate failed
     pause
-    exit /b 1
+    goto :eof
 )
-echo  [OK] Prisma Client generated
+echo  [OK] Done
 echo.
 
-:: Step 3: Push database schema
-echo  ============================================================
+:: Step 3: Database
 echo  [3/5] Creating database...
-echo  ============================================================
-if %USE_BUN% equ 1 (
+if "%CMD%"=="bun" (
     bun run db:push
 ) else (
     npx prisma db push --accept-data-loss
 )
-if %errorlevel% neq 0 (
-    echo  [ERROR] Failed to create database
+if errorlevel 1 (
+    echo  [ERROR] Database creation failed
     pause
-    exit /b 1
+    goto :eof
 )
-echo  [OK] Database created
+echo  [OK] Done
 echo.
 
 :: Step 4: Seed data
-echo  ============================================================
 echo  [4/5] Seeding initial data...
-echo  ============================================================
-if %USE_BUN% equ 1 (
-    bun run prisma/seed.ts
-    bun run prisma/seed-payments.ts
-    bun run prisma/seed-gamification.ts
+if "%CMD%"=="bun" (
+    bun run prisma/seed.ts 2>nul
+    bun run prisma/seed-payments.ts 2>nul
+    bun run prisma/seed-gamification.ts 2>nul
 ) else (
-    npx tsx prisma/seed.ts
-    npx tsx prisma/seed-payments.ts
-    npx tsx prisma/seed-gamification.ts
+    npx tsx prisma/seed.ts 2>nul
+    npx tsx prisma/seed-payments.ts 2>nul
+    npx tsx prisma/seed-gamification.ts 2>nul
 )
-echo  [OK] Data seeded
+echo  [OK] Done
 echo.
 
-:: Step 5: Start servers
-echo  ============================================================
+:: Step 5: Start classroom service in background
 echo  [5/5] Starting servers...
-echo  ============================================================
 echo.
-echo  Starting classroom service (port 3003)...
-start "Ibsar Classroom Service (3003)" /min cmd /c "cd /d %CD%\mini-services\classroom-service && bun run dev"
+echo  Starting classroom service on port 3003...
+start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install && %CMD% run dev"
 
-echo  Waiting 3 seconds...
-timeout /t 3 /nobreak >nul
+echo  Waiting 4 seconds for classroom service...
+timeout /t 4 /nobreak >nul
 
-echo  Starting main platform (port 3000)...
 echo.
 echo  ============================================================
-echo                                                           
-echo  SUCCESS! Platform is running!                            
-echo                                                           
-echo  Open browser: http://localhost:3000                       
-echo                                                           
-echo  Demo accounts:                                            
-echo    Admin:    01000000001                                   
-echo    Teacher:  01000000010                                   
-echo    Parent:   01012345678                                   
-echo                                                           
-echo  OTP code will show in yellow box on the page              
-echo                                                           
-echo  Press Ctrl+C to stop                                      
-echo                                                           
+echo            SUCCESS! Platform is running!
 echo  ============================================================
 echo.
+echo  Open this URL in your browser:
+echo     http://localhost:3000
+echo.
+echo  Demo accounts (phone numbers):
+echo     Admin:    01000000001
+echo     Teacher:  01000000010
+echo     Parent:   01012345678
+echo.
+echo  NOTE: OTP code appears in a yellow box on the login page
+echo.
+echo  Press Ctrl+C in this window to stop the server
+echo  ============================================================
+echo.
+echo  Starting main server on port 3000...
+echo.
 
-if %USE_BUN% equ 1 (
+if "%CMD%"=="bun" (
     bun run dev
 ) else (
     npm run dev
 )
 
+:: If we reach here, server stopped or failed
 echo.
-echo  Server stopped.
-echo  Close the "Ibsar Classroom Service" window to stop port 3003.
+echo  [INFO] Server stopped.
+echo  To stop classroom service, close the "Ibsar Classroom (3003)" window.
 echo.
 pause
