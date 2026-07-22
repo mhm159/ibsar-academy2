@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useMode } from '@/components/use-mode'
 import { Mascot, triggerConfetti } from '@/components/site/kids-effects'
+import { SeasonalBanner } from '@/components/site/seasonal-banner'
 
 interface OverviewData {
   stats: {
@@ -115,6 +116,7 @@ function ProOverview({ data }: { data: OverviewData }) {
 
   return (
     <>
+      <SeasonalBanner />
       <PageHeader
         title="مرحباً بك 👋"
         description="نظرة عامة على نشاط أبنائك في أكاديمية إبصار"
@@ -276,6 +278,7 @@ function KidsOverview({ data }: { data: OverviewData }) {
 
   return (
     <div className="space-y-6">
+      <SeasonalBanner />
       {/* Hero banner with mascot */}
       <div className="relative rounded-3xl overflow-hidden kids-bg-sky p-6 lg:p-8">
         {/* Floating decorations */}

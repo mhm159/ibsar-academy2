@@ -14,6 +14,9 @@ import {
   Sparkles,
   Star,
   AlertTriangle,
+  Trophy,
+  Medal,
+  Calendar,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -26,6 +29,9 @@ export const PARENT_NAV: NavItem[] = [
   { href: '/parent', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/parent/students', label: 'أبنائي', icon: Users },
   { href: '/parent/sessions', label: 'الحصص والحجوزات', icon: CalendarDays },
+  { href: '/parent/calendar', label: 'التقويم', icon: Calendar },
+  { href: '/parent/gamification', label: 'الإنجازات', icon: Trophy },
+  { href: '/parent/leaderboard', label: 'المتصدرون', icon: Medal },
   { href: '/parent/payments', label: 'المدفوعات', icon: CreditCard },
   { href: '/parent/refunds', label: 'الاسترجاعات', icon: RotateCcw },
   { href: '/parent/recommendations', label: 'توصيات AI', icon: Sparkles },
