@@ -46,12 +46,17 @@ echo.
 
 :: Step 1: Install
 echo  [1/5] Installing dependencies (this may take a few minutes)...
-%CMD% install
+if "%CMD%"=="bun" (
+    bun install
+) else (
+    npm install
+)
 if errorlevel 1 (
-    echo  [ERROR] Install failed. Trying with npm...
+    echo  [WARN] First install failed, trying npm...
     npm install
     if errorlevel 1 (
         echo  [ERROR] npm install also failed
+        echo  Please check your internet connection
         pause
         goto :eof
     )
@@ -63,7 +68,7 @@ echo.
 :: Step 2: Prisma generate
 echo  [2/5] Generating Prisma Client...
 if "%CMD%"=="bun" (
-    bun run db:generate
+    bunx prisma generate
 ) else (
     npx prisma generate
 )
@@ -78,7 +83,7 @@ echo.
 :: Step 3: Database
 echo  [3/5] Creating database...
 if "%CMD%"=="bun" (
-    bun run db:push
+    bunx prisma db push --accept-data-loss
 ) else (
     npx prisma db push --accept-data-loss
 )
@@ -108,14 +113,14 @@ echo.
 echo  [5/5] Starting servers...
 echo.
 echo  Starting classroom service on port 3003...
-start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install && %CMD% run dev"
+start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install 2>nul && %CMD% run dev"
 
-echo  Waiting 4 seconds for classroom service...
-timeout /t 4 /nobreak >nul
+echo  Waiting 5 seconds for classroom service...
+timeout /t 5 /nobreak >nul
 
 echo.
 echo  ============================================================
-echo            SUCCESS! Platform is running!
+echo            SUCCESS! Platform is starting...
 echo  ============================================================
 echo.
 echo  Open this URL in your browser:
@@ -132,17 +137,23 @@ echo  Press Ctrl+C in this window to stop the server
 echo  ============================================================
 echo.
 echo  Starting main server on port 3000...
+echo  (this window must stay open while server is running)
 echo.
 
+:: Run next dev directly (avoids the 'tee' issue in package.json dev script)
 if "%CMD%"=="bun" (
-    bun run dev
+    bunx next dev -p 3000
 ) else (
-    npm run dev
+    npx next dev -p 3000
 )
 
-:: If we reach here, server stopped or failed
+:: If we reach here, server stopped or crashed
 echo.
-echo  [INFO] Server stopped.
-echo  To stop classroom service, close the "Ibsar Classroom (3003)" window.
+echo  ============================================================
+echo  [INFO] Server stopped or crashed.
+echo  ============================================================
+echo.
+echo  If you see an error above, please copy it and report it.
+echo  If the server started fine, just close this window.
 echo.
 pause
