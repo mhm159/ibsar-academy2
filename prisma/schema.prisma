@@ -379,8 +379,119 @@ model Notification {
 }
 
 // ============================================================
-// Phase 3 models — Payments, Escrow, Payouts, Wallets
+// Phase 5 models — Reviews, AI Recommendations, Moderation, Alerts
 // ============================================================
+
+// -----------------------------
+// Review — mutual reviews (teacher ↔ student/parent)
+// -----------------------------
+model Review {
+  id            String   @id @default(cuid())
+  sessionId     String
+  // who is being reviewed (the subject)
+  reviewedId    String   // userId of the reviewed person
+  reviewedRole  String   // TEACHER | PARENT
+  // who wrote the review
+  reviewerId    String   // userId of the reviewer
+  reviewerRole  String   // TEACHER | PARENT
+  reviewerName  String
+  // ratings 1-5
+  rating        Int
+  // review text
+  comment       String?
+  // category tags (comma-separated): PATIENCE | PROFESSIONALISM | PUNCTUALITY | ENGAGEMENT | PROGRESS | COMMUNICATION
+  tags          String   @default("")
+  // moderation
+  isApproved    Boolean  @default(true) // auto-approved unless flagged
+  isFlagged     Boolean  @default(false)
+  flagReason    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([sessionId, reviewerId, reviewedId]) // one review per session per direction
+  @@index([reviewedId])
+  @@index([reviewerId])
+  @@index([isFlagged])
+}
+
+// -----------------------------
+// RecommendationLog — AI recommendations given to a student
+// -----------------------------
+model RecommendationLog {
+  id            String   @id @default(cuid())
+  studentId     String
+  // type: TEACHER | COURSE | TRACK
+  type          String
+  // the recommended entity id (teacherId/courseId/track)
+  entityId      String
+  entityName    String
+  // AI reasoning (why this was recommended)
+  reason        String
+  // AI confidence 0-100
+  score         Int      @default(50)
+  // did the parent act on it?
+  clicked       Boolean  @default(false)
+  booked        Boolean  @default(false)
+  // the full AI response (JSON)
+  aiResponseJson String?
+  createdAt     DateTime @default(now())
+
+  @@index([studentId, type])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// LinkFilterLog — blocked/flagged chat messages
+// -----------------------------
+model LinkFilterLog {
+  id            String   @id @default(cuid())
+  sessionId     String
+  userId        String
+  userName      String
+  // original message text
+  originalText  String
+  // filtered/cleaned text
+  filteredText  String
+  // what was detected: EXTERNAL_LINK | INAPPROPRIATE | PROFANITY | SPAM | PERSONAL_INFO
+  category      String
+  // AI confidence 0-100
+  confidence    Int      @default(80)
+  // was the message blocked entirely or just filtered?
+  action        String   @default("FILTERED") // FILTERED | BLOCKED
+  createdAt     DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([category])
+}
+
+// -----------------------------
+// BehaviorAlert — AI-detected concerns about a student
+// -----------------------------
+model BehaviorAlert {
+  id            String   @id @default(cuid())
+  studentId     String
+  studentName   String
+  parentId      String
+  // type: LOW_ENGAGEMENT | STRUGGLING | ABSENT | BEHIND | EXCELLENT_PROGRESS
+  type          String
+  // severity: LOW | MEDIUM | HIGH
+  severity      String   @default("MEDIUM")
+  // AI-generated description
+  description   String
+  // recommended action
+  recommendation String
+  // AI analysis JSON (scores, patterns)
+  analysisJson  String?
+  // status
+  status        String   @default("NEW") // NEW | ACKNOWLEDGED | RESOLVED
+  acknowledgedAt DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([studentId])
+  @@index([parentId, status])
+  @@index([status])
+}
 
 // -----------------------------
 // WalletAccount — teacher payout destinations

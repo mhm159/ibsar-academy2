@@ -11,6 +11,9 @@ import {
   ClipboardList,
   ShieldCheck,
   RotateCcw,
+  Sparkles,
+  Star,
+  AlertTriangle,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -25,6 +28,7 @@ export const PARENT_NAV: NavItem[] = [
   { href: '/parent/sessions', label: 'الحصص والحجوزات', icon: CalendarDays },
   { href: '/parent/payments', label: 'المدفوعات', icon: CreditCard },
   { href: '/parent/refunds', label: 'الاسترجاعات', icon: RotateCcw },
+  { href: '/parent/recommendations', label: 'توصيات AI', icon: Sparkles },
   { href: '/parent/reports', label: 'التقارير', icon: FileBarChart },
 ]
 
@@ -32,6 +36,7 @@ export const TEACHER_NAV: NavItem[] = [
   { href: '/teacher', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/teacher/schedule', label: 'جدول الحصص', icon: CalendarDays },
   { href: '/teacher/students', label: 'الطلاب', icon: Users },
+  { href: '/teacher/reviews', label: 'التقييمات', icon: Star },
   { href: '/teacher/payouts', label: 'المحافظ والسحب', icon: Wallet },
   { href: '/teacher/profile', label: 'الملف الشخصي', icon: Settings },
 ]
@@ -44,6 +49,8 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/escrow', label: 'الضمان (Escrow)', icon: ShieldCheck },
   { href: '/admin/payouts', label: 'طلبات السحب', icon: CreditCard },
   { href: '/admin/financials', label: 'التقارير المالية', icon: ClipboardList },
+  { href: '/admin/reviews', label: 'التقييمات', icon: Star },
+  { href: '/admin/alerts', label: 'تنبيهات AI', icon: AlertTriangle },
 ]
 
 export function getNavForRole(role: string): NavItem[] {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { moderateChatMessage } from '@/lib/ai/moderation'
 
 /**
  * GET /api/classroom/chat?session=<id>
@@ -120,8 +121,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   }
 
-  // Basic link filter (Phase 5 will add AI-based content moderation)
-  const filteredText = filterExternalLinks(text)
+  // Phase 5: AI-powered content moderation (kid safety)
+  const moderation = await moderateChatMessage(text, user.role)
+
+  // If blocked entirely, reject
+  if (!moderation.allowed) {
+    // Log the blocked message
+    await db.linkFilterLog.create({
+      data: {
+        sessionId,
+        userId: session.userId,
+        userName: user.name ?? 'مشارك',
+        originalText: text,
+        filteredText: moderation.filteredText,
+        category: moderation.category ?? 'UNKNOWN',
+        confidence: moderation.confidence,
+        action: 'BLOCKED',
+      },
+    })
+    return NextResponse.json(
+      { error: moderation.reason ?? 'تم حظر الرسالة لانتهاكها سياسة الاستخدام' },
+      { status: 400 },
+    )
+  }
+
+  // If filtered, log the filter action
+  if (moderation.action === 'FILTERED') {
+    await db.linkFilterLog.create({
+      data: {
+        sessionId,
+        userId: session.userId,
+        userName: user.name ?? 'مشارك',
+        originalText: text,
+        filteredText: moderation.filteredText,
+        category: moderation.category ?? 'UNKNOWN',
+        confidence: moderation.confidence,
+        action: 'FILTERED',
+      },
+    })
+  }
 
   const message = await db.chatMessage.create({
     data: {
@@ -129,22 +167,13 @@ export async function POST(req: NextRequest) {
       userId: session.userId,
       senderName: user.name ?? 'مشارك',
       senderRole: user.role,
-      text: filteredText,
+      text: moderation.filteredText,
       attachmentUrl,
       attachmentType,
     },
   })
 
-  return NextResponse.json({ ok: true, message }, { status: 201 })
+  return NextResponse.json({ ok: true, message, moderation: { action: moderation.action, category: moderation.category } }, { status: 201 })
 }
 
-/**
- * Phase 5 preview: filter external links from chat messages.
- * Replaces http/https URLs with a placeholder (kids safety).
- */
-function filterExternalLinks(text: string): string {
-  // Block URLs that aren't ibsar-academy.com
-  return text.replace(/https?:\/\/(?!ibsar-academy\.com)[^\s]+/gi, '[رابط محظور]')
-}
-
-/* TODO(phase-5): Add AI-powered content moderation (profanity + inappropriate content filter). */
+/* TODO(phase-5): Add image moderation for attachment uploads. */
