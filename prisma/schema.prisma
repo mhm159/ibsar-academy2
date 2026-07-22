@@ -222,6 +222,12 @@ model Session {
   meetingUrl    String?  // Daily.co room URL (Phase 4)
   recordingUrl  String?
   notes         String?
+  // Phase 4: Daily.co room
+  dailyRoomName String?  @unique
+  dailyRoomUrl  String?
+  recordingStatus String? @default("NONE") // NONE | STARTED | STOPPED | PROCESSING | READY
+  chatMessages  ChatMessage[]
+  whiteboard    WhiteboardState?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -538,4 +544,45 @@ model RefundRequest {
 
   @@index([parentId])
   @@index([status])
+}
+
+// ============================================================
+// Phase 4 models — Realtime chat + whiteboard
+// ============================================================
+
+// -----------------------------
+// ChatMessage — persisted chat messages per session
+// -----------------------------
+model ChatMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String
+  // sender name denormalized for quick display
+  senderName  String
+  senderRole  String   // TEACHER | PARENT | STUDENT | ADMIN
+  text        String
+  // optional attachment URL (file upload via Supabase Storage later)
+  attachmentUrl String?
+  attachmentType String? // IMAGE | FILE | AUDIO
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([userId])
+}
+
+// -----------------------------
+// WhiteboardState — snapshot of whiteboard elements per session
+// -----------------------------
+model WhiteboardState {
+  id          String   @id @default(cuid())
+  sessionId   String  @unique
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  // Excalidraw elements JSON (array of elements)
+  elementsJson String  @default("[]")
+  // app state JSON (scroll, zoom)
+  appStateJson String  @default("{}")
+  updatedAt    DateTime @updatedAt
+
+  @@index([sessionId])
 }

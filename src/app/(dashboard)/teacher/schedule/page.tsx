@@ -164,14 +164,16 @@ function SessionRow({ session }: { session: Session }) {
             </p>
           )}
         </div>
-        {session.meetingUrl && isLive && (
-          <a href={session.meetingUrl} target="_blank" rel="noopener noreferrer">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-egypt text-white text-xs font-bold">
+        {session.status === 'SCHEDULED' || session.status === 'IN_PROGRESS' ? (
+          <a href={`/classroom/${session.id}`}>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+              isLive ? 'bg-emerald-egypt text-white animate-pulse' : 'bg-gradient-to-l from-gold to-[#E8D488] text-night'
+            }`}>
               <Video className="h-3.5 w-3.5" />
-              دخول الحصة
+              {isLive ? 'دخول الحصة (مباشر)' : 'دخول الغرفة'}
             </span>
           </a>
-        )}
+        ) : null}
         {session.recordingUrl && (
           <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-azure text-white text-xs font-bold">

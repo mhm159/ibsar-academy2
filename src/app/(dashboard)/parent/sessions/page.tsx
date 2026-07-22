@@ -277,8 +277,8 @@ function BookingCard({ booking }: { booking: SessionData['myBookings'][number] }
           {booking.studentName} • {booking.session.teacherName}
         </p>
       </div>
-      {booking.session.meetingUrl && booking.session.status === 'SCHEDULED' && new Date(booking.session.startTime) <= new Date(Date.now() + 15 * 60 * 1000) && (
-        <a href={booking.session.meetingUrl} target="_blank" rel="noopener noreferrer">
+      {(booking.session.status === 'SCHEDULED' || booking.session.status === 'IN_PROGRESS') && (
+        <a href={`/classroom/${booking.session.id}`}>
           <Button size="sm" className="gap-1.5 bg-emerald-egypt text-white">
             <Video className="h-4 w-4" />
             دخول الحصة

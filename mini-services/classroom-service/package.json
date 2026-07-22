@@ -1,0 +1,13 @@
+{
+  "name": "ibsar-classroom-service",
+  "version": "1.0.0",
+  "description": "Ibsar Academy — Realtime classroom service (chat + whiteboard + presence) via socket.io",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.3"
+  },
+  "module": "esnext",
+  "target": "esnext"
+}
