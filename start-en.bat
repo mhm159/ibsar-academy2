@@ -49,9 +49,15 @@ echo  [OK] Database created
 echo.
 
 echo  [4/6] Seeding data...
-call %CMD% run prisma/seed.ts
-call %CMD% run prisma/seed-comprehensive.ts
-call %CMD% run prisma/fix-accounts.ts
+if "%CMD%"=="bun" (
+    call bun run prisma/seed.ts
+    call bun run prisma/seed-comprehensive.ts
+    call bun run prisma/fix-accounts.ts
+) else (
+    call npx tsx prisma/seed.ts
+    call npx tsx prisma/seed-comprehensive.ts
+    call npx tsx prisma/fix-accounts.ts
+)
 echo  [OK] Data seeded
 echo.
 
