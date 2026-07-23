@@ -1,5 +1,5 @@
 /**
- * Abdaa Academy — Advanced Notification System
+ * Ibdaa Academy — Advanced Notification System
  *
  * Multi-channel notifications:
  *   - In-app (real-time via socket.io + persisted in DB)

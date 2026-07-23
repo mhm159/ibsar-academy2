@@ -6,7 +6,7 @@ color 0E
 echo.
 echo  ╔══════════════════════════════════════════════════════════╗
 echo  ║                                                          ║
-echo  ║          🎓 أكاديمية إبداع | Abdaa Academy               ║
+echo  ║          🎓 أكاديمية إبداع | Ibdaa Academy               ║
 echo  ║          تشغيل المنصة الكاملة من ملف واحد                ║
 echo  ║                                                          ║
 echo  ╚══════════════════════════════════════════════════════════╝
@@ -129,7 +129,7 @@ echo  🚀 الخطوة 5/5: تشغيل الخوادم...
 echo  ══════════════════════════════════════════════════════════
 echo.
 echo  📡 تشغيل خدمة الغرفة الافتراضية (Port 3003)...
-start "Abdaa Classroom Service (3003)" /min cmd /c "cd /d %CD%\mini-services\classroom-service && bun run dev"
+start "Ibdaa Classroom Service (3003)" /min cmd /c "cd /d %CD%\mini-services\classroom-service && bun run dev"
 
 echo  ⏳ انتظار 3 ثوانٍ...
 timeout /t 3 /nobreak >nul
@@ -164,6 +164,6 @@ if %USE_BUN% equ 1 (
 :: عند الإيقاف
 echo.
 echo  🛑 تم إيقاف المنصة
-echo  💡 لإيقاف خدمة الغرفة الافتراضية، أغلق نافذة "Abdaa Classroom Service"
+echo  💡 لإيقاف خدمة الغرفة الافتراضية، أغلق نافذة "Ibdaa Classroom Service"
 echo.
 pause

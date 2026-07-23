@@ -20,12 +20,12 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "أكاديمية إبداع | Abdaa Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
+  title: "أكاديمية إبداع | Ibdaa Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي. تدريس البرمجة، الروبوتيكس، والحساب الذهني أونلاين مع نخبة المعلمين ونظام دفع محلي ودولي آمن.",
   keywords: [
     "أكاديمية إبداع",
-    "Abdaa Academy",
+    "Ibdaa Academy",
     "تعليم الأطفال",
     "البرمجة للأطفال",
     "الروبوتيكس",
@@ -35,16 +35,16 @@ export const metadata: Metadata = {
     "العالم العربي",
     "كورسات برمجة",
   ],
-  authors: [{ name: "Abdaa Academy" }],
+  authors: [{ name: "Ibdaa Academy" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "أكاديمية إبداع | Abdaa Academy",
+    title: "أكاديمية إبداع | Ibdaa Academy",
     description:
       "منصة تعليمية متكاملة للأطفال لتعلّم البرمجة والروبوتيكس والحساب الذهني أونلاين.",
-    siteName: "Abdaa Academy",
+    siteName: "Ibdaa Academy",
     type: "website",
     locale: "ar_EG",
   },

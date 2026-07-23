@@ -102,7 +102,7 @@ export function triggerStarBurst(element: HTMLElement, count = 8) {
 }
 
 /**
- * Mascot — Abdaa's friendly owl mascot.
+ * Mascot — Ibdaa's friendly owl mascot.
  * Shows different expressions based on mood.
  */
 export function Mascot({

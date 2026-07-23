@@ -11,7 +11,7 @@ interface UseModeReturn {
   isKids: boolean
 }
 
-const MODE_KEY = 'abdaa-mode'
+const MODE_KEY = 'ibdaa-mode'
 
 /**
  * useMode — manages pro/kids UI mode.

@@ -1,4 +1,4 @@
-# أكاديمية إبداع | Abdaa Academy
+# أكاديمية إبداع | Ibdaa Academy
 
 <div dir="rtl">
 
@@ -36,8 +36,8 @@
 
 ```bash
 # 1. فك ضغط الملف
-unzip abdaa-academy-phase1.zip -d abdaa-academy
-cd abdaa-academy
+unzip ibdaa-academy-phase1.zip -d ibdaa-academy
+cd ibdaa-academy
 
 # 2. تثبيت الحزم
 bun install
@@ -68,12 +68,12 @@ bun run dev
 بعد فك الضغط محلياً:
 
 ```bash
-cd abdaa-academy
+cd ibdaa-academy
 git init
 git add -A
-git commit -m "feat: Phase 1 — Foundation (Abdaa Academy)"
+git commit -m "feat: Phase 1 — Foundation (Ibdaa Academy)"
 git branch -M main
-git remote add origin https://github.com/mhm159/abdaa-academy2.git
+git remote add origin https://github.com/mhm159/ibdaa-academy2.git
 git push -u origin main
 ```
 
@@ -161,7 +161,7 @@ OTP_SECRET="your-otp-secret-here"
 
 ## 📞 الدعم
 
-- 📧 الإيميل: support@abdaa-academy.com
+- 📧 الإيميل: support@ibdaa-academy.com
 - 📱 واتساب: +20 100 000 0000
 
 ---

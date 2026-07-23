@@ -1,5 +1,5 @@
 @echo off
-title Abdaa Academy Server
+title Ibdaa Academy Server
 cd /d "%~dp0"
 color 0A
 
@@ -57,7 +57,7 @@ echo  [OK] Data seeded
 echo.
 
 echo  [5/6] Starting classroom service (port 3003)...
-start "Abdaa Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"
+start "Ibdaa Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"
 
 echo  Waiting 5 seconds...
 timeout /t 5 /nobreak >nul

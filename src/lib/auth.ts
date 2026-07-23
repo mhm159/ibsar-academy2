@@ -1,5 +1,5 @@
 /**
- * Abdaa Academy — Auth helpers (Phase 1)
+ * Ibdaa Academy — Auth helpers (Phase 1)
  *
  * Strategy:
  * - OTP-based auth for phone (SMS via Twilio/Vonage — placeholder) and email.
@@ -15,7 +15,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { sendWhatsAppOtp } from '@/lib/whatsapp'
 
-const SESSION_COOKIE = 'abdaa_session'
+const SESSION_COOKIE = 'ibdaa_session'
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7 // 7 days
 
 /** Generate a 6-digit OTP code */

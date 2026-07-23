@@ -1,5 +1,5 @@
 /**
- * Abdaa Academy — Stripe Payment Provider (Gulf countries)
+ * Ibdaa Academy — Stripe Payment Provider (Gulf countries)
  *
  * Stripe flow (Checkout Sessions):
  *   1. Create a Checkout Session with line items

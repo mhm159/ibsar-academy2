@@ -1,5 +1,5 @@
 /**
- * Abdaa Academy — WhatsApp OTP Provider (via Twilio)
+ * Ibdaa Academy — WhatsApp OTP Provider (via Twilio)
  *
  * Sends OTP codes via WhatsApp Business API using Twilio.
  *

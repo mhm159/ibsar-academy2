@@ -1,17 +1,17 @@
 /**
- * Abdaa Academy — Brand constants & app-wide config
+ * Ibdaa Academy — Brand constants & app-wide config
  * Single source of truth for branding, tracks, currencies, etc.
  */
 
 export const APP = {
   name: "أكاديمية إبداع",
-  nameEn: "Abdaa Academy",
+  nameEn: "Ibdaa Academy",
   tagline: "نُبصرُ مستقبلَ طفلِك",
   taglineEn: "We envision your child's future",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.",
-  url: "https://abdaa-academy.vercel.app",
-  supportEmail: "support@abdaa-academy.com",
+  url: "https://ibdaa-academy.vercel.app",
+  supportEmail: "support@ibdaa-academy.com",
   supportPhone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",
 } as const;
