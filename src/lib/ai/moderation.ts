@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — AI Content Moderation for Chat
+ * Abdaa Academy — AI Content Moderation for Chat
  *
  * Uses z-ai-web-dev-sdk LLM to detect:
  *   - External links (block — kid safety)
@@ -83,8 +83,8 @@ export async function moderateChatMessage(
 
 /** Fast regex-based filter for obvious violations */
 function regexFilter(text: string): ModerationResult {
-  // External links (http/https/www) — block unless it's ibsar-academy.com
-  const urlRegex = /https?:\/\/(?!ibsar-academy\.com)[^\s]+|www\.(?!ibsar-academy\.com)[^\s]+/gi
+  // External links (http/https/www) — block unless it's abdaa-academy.com
+  const urlRegex = /https?:\/\/(?!abdaa-academy\.com)[^\s]+|www\.(?!abdaa-academy\.com)[^\s]+/gi
   if (urlRegex.test(text)) {
     const filtered = text.replace(urlRegex, '[رابط محظور]')
     return {

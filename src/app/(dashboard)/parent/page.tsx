@@ -120,7 +120,7 @@ function ProOverview({ data }: { data: OverviewData }) {
       <SeasonalBanner />
       <PageHeader
         title="مرحباً بك 👋"
-        description="نظرة عامة على نشاط أبنائك في أكاديمية إبصار"
+        description="نظرة عامة على نشاط أبنائك في أكاديمية إبداع"
         action={
           <Link href="/parent/sessions">
             <Button className="gap-1.5 bg-gradient-to-l from-gold to-[#E8D488] text-night">

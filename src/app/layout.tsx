@@ -20,12 +20,12 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "أكاديمية إبصار | Ibsar Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
+  title: "أكاديمية إبداع | Abdaa Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي. تدريس البرمجة، الروبوتيكس، والحساب الذهني أونلاين مع نخبة المعلمين ونظام دفع محلي ودولي آمن.",
   keywords: [
-    "أكاديمية إبصار",
-    "Ibsar Academy",
+    "أكاديمية إبداع",
+    "Abdaa Academy",
     "تعليم الأطفال",
     "البرمجة للأطفال",
     "الروبوتيكس",
@@ -35,22 +35,22 @@ export const metadata: Metadata = {
     "العالم العربي",
     "كورسات برمجة",
   ],
-  authors: [{ name: "Ibsar Academy" }],
+  authors: [{ name: "Abdaa Academy" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "أكاديمية إبصار | Ibsar Academy",
+    title: "أكاديمية إبداع | Abdaa Academy",
     description:
       "منصة تعليمية متكاملة للأطفال لتعلّم البرمجة والروبوتيكس والحساب الذهني أونلاين.",
-    siteName: "Ibsar Academy",
+    siteName: "Abdaa Academy",
     type: "website",
     locale: "ar_EG",
   },
   twitter: {
     card: "summary_large_image",
-    title: "أكاديمية إبصار",
+    title: "أكاديمية إبداع",
     description: "تعلّم البرمجة والروبوتيكس والحساب الذهني للأطفال أونلاين.",
   },
 };

@@ -57,7 +57,7 @@ export function FeaturesSection() {
       <div className="absolute inset-0 bg-hieroglyphs opacity-50 pointer-events-none" aria-hidden />
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="لماذا إبصار؟"
+          eyebrow="لماذا إبداع؟"
           title="كل ما يحتاجه طفلك في مكان واحد"
           description="بُنيت المنصة بمعايير عالمية وتصميم عربي يُلامس احتياجات أولياء الأمور في مصر والعالم العربي."
         />

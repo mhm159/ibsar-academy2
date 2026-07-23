@@ -58,7 +58,7 @@ function LeaderboardView() {
   return (
     <>
       <PageHeader
-        title={isKids ? '🏆 أبطال إبصار' : 'لوحة المتصدرين'}
+        title={isKids ? '🏆 أبطال إبداع' : 'لوحة المتصدرين'}
         description={isKids ? 'شوف مين أعلى الأبطال!' : 'ترتيب الطلاب حسب النقاط'}
       />
 

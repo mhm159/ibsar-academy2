@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       amountCents: finalEGP, // already in piasters
       currency: 'EGP',
       merchantOrderId: transaction.id,
-      description: transaction.description ?? 'Ibsar Academy booking',
+      description: transaction.description ?? 'Abdaa Academy booking',
       buyer: {
         name: parent.user.name ?? 'Parent',
         email: parent.user.email ?? undefined,
@@ -224,7 +224,7 @@ export async function POST(req: NextRequest) {
       amountCents: localAmountCents,
       currency: currency as any,
       merchantOrderId: transaction.id,
-      description: transaction.description ?? 'Ibsar Academy booking',
+      description: transaction.description ?? 'Abdaa Academy booking',
       buyer: {
         name: parent.user.name ?? 'Parent',
         email: parent.user.email ?? undefined,

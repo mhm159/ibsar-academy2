@@ -43,7 +43,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className="flex items-center transition-transform hover:scale-[1.02]"
-            aria-label="الصفحة الرئيسية — أكاديمية إبصار"
+            aria-label="الصفحة الرئيسية — أكاديمية إبداع"
           >
             <Logo size={42} />
           </Link>

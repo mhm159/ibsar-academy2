@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — WhatsApp OTP Provider (via Twilio)
+ * Abdaa Academy — WhatsApp OTP Provider (via Twilio)
  *
  * Sends OTP codes via WhatsApp Business API using Twilio.
  *
@@ -76,7 +76,7 @@ export async function sendWhatsAppOtp(params: {
     : purpose === 'RESET' ? 'إعادة تعيين كلمة المرور'
     : 'التحقق'
 
-  const body = `🎓 *أكاديمية إبصار*
+  const body = `🎓 *أكاديمية إبداع*
 
 رمز التحقق الخاص بـ ${purposeText}:
 

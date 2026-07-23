@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ibsar Academy - Full Platform Launcher (English)
+# Abdaa Academy - Full Platform Launcher (English)
 # Usage: ./start-en.sh
 
 set -e

@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — Currency conversion + formatting utilities
+ * Abdaa Academy — Currency conversion + formatting utilities
  *
  * Amounts are stored in DB in TWO bases:
  *   - amountEGP (Int, in piasters: 1 EGP = 100 piasters)

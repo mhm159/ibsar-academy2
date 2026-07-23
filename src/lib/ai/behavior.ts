@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — AI Behavior Analysis
+ * Abdaa Academy — AI Behavior Analysis
  *
  * Analyzes a student's progress reports + attendance patterns to detect:
  *   - LOW_ENGAGEMENT: consistently low engagement scores
@@ -142,7 +142,7 @@ export async function analyzeStudentBehavior(
 
   try {
     const zai = await ZAI.create()
-    const systemPrompt = `أنت مستشار تعليمي خبير في أكاديمية إبصار للأطفال.
+    const systemPrompt = `أنت مستشار تعليمي خبير في أكاديمية إبداع للأطفال.
 حلل بيانات الطفل التالية واكتب:
 1. وصف مختصر بالعربية لحالته (جملة-جملتين)
 2. توصية عملية لولي الأمر (جملة واحدة)

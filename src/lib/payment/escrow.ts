@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — Escrow & Settlement logic
+ * Abdaa Academy — Escrow & Settlement logic
  *
  * Flow:
  *   1. Parent pays → funds held in ESCROW (status: HELD)

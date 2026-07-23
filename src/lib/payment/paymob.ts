@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — PayMob Payment Provider (Egypt)
+ * Abdaa Academy — PayMob Payment Provider (Egypt)
  *
  * PayMob flow (3 steps):
  *   1. Authenticate → get API token
@@ -136,8 +136,8 @@ export async function createPayMobCheckout(
 
     const billingData = {
       first_name: intent.buyer.name.split(' ')[0] ?? 'Parent',
-      last_name: intent.buyer.name.split(' ').slice(1).join(' ') ?? 'Ibsar',
-      email: intent.buyer.email ?? 'parent@ibsar.academy',
+      last_name: intent.buyer.name.split(' ').slice(1).join(' ') ?? 'Abdaa',
+      email: intent.buyer.email ?? 'parent@abdaa.academy',
       phone_number: intent.buyer.phone ?? '01000000000',
       country: intent.buyer.country ?? 'EG',
       city: 'Cairo',

@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — Currency & Country configuration
+ * Abdaa Academy — Currency & Country configuration
  *
  * Maps each supported country to: currency code, payment provider, flag, name.
  * Used by checkout flow to pick the right provider + currency for the parent.

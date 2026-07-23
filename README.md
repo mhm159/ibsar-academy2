@@ -1,4 +1,4 @@
-# أكاديمية إبصار | Ibsar Academy
+# أكاديمية إبداع | Abdaa Academy
 
 <div dir="rtl">
 
@@ -36,8 +36,8 @@
 
 ```bash
 # 1. فك ضغط الملف
-unzip ibsar-academy-phase1.zip -d ibsar-academy
-cd ibsar-academy
+unzip abdaa-academy-phase1.zip -d abdaa-academy
+cd abdaa-academy
 
 # 2. تثبيت الحزم
 bun install
@@ -68,12 +68,12 @@ bun run dev
 بعد فك الضغط محلياً:
 
 ```bash
-cd ibsar-academy
+cd abdaa-academy
 git init
 git add -A
-git commit -m "feat: Phase 1 — Foundation (Ibsar Academy)"
+git commit -m "feat: Phase 1 — Foundation (Abdaa Academy)"
 git branch -M main
-git remote add origin https://github.com/mhm159/ibsar-academy2.git
+git remote add origin https://github.com/mhm159/abdaa-academy2.git
 git push -u origin main
 ```
 
@@ -161,7 +161,7 @@ OTP_SECRET="your-otp-secret-here"
 
 ## 📞 الدعم
 
-- 📧 الإيميل: support@ibsar-academy.com
+- 📧 الإيميل: support@abdaa-academy.com
 - 📱 واتساب: +20 100 000 0000
 
 ---

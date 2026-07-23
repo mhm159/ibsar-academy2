@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — AI Recommendations Engine
+ * Abdaa Academy — AI Recommendations Engine
  *
  * Uses z-ai-web-dev-sdk LLM to analyze a student's profile (age, level,
  * past sessions, progress reports) and recommend the best teachers/courses.
@@ -167,7 +167,7 @@ export async function getRecommendationsForStudent(
   }))
 
   // 3. Build LLM prompt
-  const systemPrompt = `أنت مستشار تعليمي خبير في أكاديمية إبصار لتعليم الأطفال.
+  const systemPrompt = `أنت مستشار تعليمي خبير في أكاديمية إبداع لتعليم الأطفال.
 مهمتك: تحليل ملف الطفل واقتراح أفضل المعلمين/الكورسات المناسبة له.
 
 قواعد التوصية:

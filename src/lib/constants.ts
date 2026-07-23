@@ -1,17 +1,17 @@
 /**
- * Ibsar Academy — Brand constants & app-wide config
+ * Abdaa Academy — Brand constants & app-wide config
  * Single source of truth for branding, tracks, currencies, etc.
  */
 
 export const APP = {
-  name: "أكاديمية إبصار",
-  nameEn: "Ibsar Academy",
+  name: "أكاديمية إبداع",
+  nameEn: "Abdaa Academy",
   tagline: "نُبصرُ مستقبلَ طفلِك",
   taglineEn: "We envision your child's future",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.",
-  url: "https://ibsar-academy.vercel.app",
-  supportEmail: "support@ibsar-academy.com",
+  url: "https://abdaa-academy.vercel.app",
+  supportEmail: "support@abdaa-academy.com",
   supportPhone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",
 } as const;
@@ -203,7 +203,7 @@ export const TESTIMONIALS = [
     id: "tm1",
     name: "أم محمد",
     location: "القاهرة، مصر",
-    text: "ابني محمد (10 سنوات) كان يكره الرياضيات، وبعد 3 شهور مع أكاديمية إبصار بقى بيحب الحساب وبيقولي مسائل بنفسه! ربنا يبارك فيكم.",
+    text: "ابني محمد (10 سنوات) كان يكره الرياضيات، وبعد 3 شهور مع أكاديمية إبداع بقى بيحب الحساب وبيقولي مسائل بنفسه! ربنا يبارك فيكم.",
     rating: 5,
     avatar: "👩",
   },
@@ -261,7 +261,7 @@ export const FAQS = [
   },
   {
     q: "هل يحصل الطفل على شهادة في نهاية الكورس؟",
-    a: "نعم، يحصل كل طالب على شهادة إتمام معتمدة من أكاديمية إبصار بعد إكمال كل مستوى بنجاح، مع تقرير مفصّل عن مهاراته وتقدّمه.",
+    a: "نعم، يحصل كل طالب على شهادة إتمام معتمدة من أكاديمية إبداع بعد إكمال كل مستوى بنجاح، مع تقرير مفصّل عن مهاراته وتقدّمه.",
   },
   {
     q: "ما المعدل المثالي للحصص أسبوعياً؟",

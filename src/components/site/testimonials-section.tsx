@@ -12,7 +12,7 @@ export function TestimonialsSection() {
         <SectionHeading
           eyebrow="قصص نجاح"
           title="ماذا يقول أولياء الأمور؟"
-          description="آلاف العائلات وثقت بأكاديمية إبصار لتعلّم أبنائها. هذه بعض قصصهم."
+          description="آلاف العائلات وثقت بأكاديمية إبداع لتعلّم أبنائها. هذه بعض قصصهم."
         />
 
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

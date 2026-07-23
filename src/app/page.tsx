@@ -11,7 +11,7 @@ import { FaqSection } from '@/components/site/faq-section'
 import { CtaSection } from '@/components/site/cta-section'
 
 /**
- * Ibsar Academy — Landing Page (Phase 1)
+ * Abdaa Academy — Landing Page (Phase 1)
  *
  * Composes all public sections in a single scrollable page.
  * Footer is sticky-to-bottom via the `mt-auto` on the footer + min-h-screen wrapper.
