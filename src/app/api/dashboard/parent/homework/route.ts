@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { sendNotification } from '@/lib/notifications'
+import { autoGradeHomework, type Question } from '@/components/dashboard/interactive-homework-editor'
 
 /**
  * GET /api/dashboard/parent/homework
@@ -52,6 +53,12 @@ export async function GET() {
       feedback: h.feedback,
       reviewedAt: h.reviewedAt,
       createdAt: h.createdAt,
+      // Interactive fields
+      questions: h.questionsJson ? JSON.parse(h.questionsJson) : null,
+      answers: h.answersJson ? JSON.parse(h.answersJson) : null,
+      autoGraded: h.autoGraded,
+      totalPoints: h.totalPoints,
+      earnedPoints: h.earnedPoints,
     })),
     students: parent.students,
   })
@@ -77,11 +84,13 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { homeworkId, submissionText, submissionUrl, submissionName } = body as {
+  const { homeworkId, submissionText, submissionUrl, submissionName, answers } = body as {
     homeworkId: string
     submissionText?: string
     submissionUrl?: string
     submissionName?: string
+    // Interactive: { questionId: answer }
+    answers?: Record<string, string>
   }
 
   if (!homeworkId) {
@@ -112,6 +121,27 @@ export async function POST(req: NextRequest) {
   // Check if late
   const isLate = new Date() > homework.dueDate
 
+  // Auto-grade interactive homework
+  let earnedPoints = 0
+  let grade: number | null = null
+  let newStatus = isLate ? 'LATE' : 'SUBMITTED'
+  let fullyGraded = false
+
+  if (homework.questionsJson && answers) {
+    const questions = JSON.parse(homework.questionsJson) as Question[]
+    const result = autoGradeHomework(questions, answers)
+    earnedPoints = result.earnedPoints
+    fullyGraded = result.fullyGraded
+
+    // If all questions auto-graded, set grade + mark as REVIEWED
+    if (fullyGraded) {
+      grade = homework.totalPoints > 0
+        ? Math.round((earnedPoints / homework.totalPoints) * 100)
+        : 0
+      newStatus = 'REVIEWED'
+    }
+  }
+
   await db.homework.update({
     where: { id: homeworkId },
     data: {
@@ -119,7 +149,10 @@ export async function POST(req: NextRequest) {
       submissionUrl,
       submissionName,
       submittedAt: new Date(),
-      status: isLate ? 'LATE' : 'SUBMITTED',
+      status: newStatus,
+      answersJson: answers ? JSON.stringify(answers) : null,
+      earnedPoints,
+      ...(fullyGraded && { grade, reviewedAt: new Date() }),
     },
   })
 
@@ -133,5 +166,25 @@ export async function POST(req: NextRequest) {
     },
   )
 
-  return NextResponse.json({ ok: true, message: 'تم تسليم الواجب' })
+  // If auto-graded, notify parent with result
+  if (fullyGraded && grade !== null) {
+    const parentUserId = homework.student.parent.userId
+    await sendNotification(
+      parentUserId,
+      'HOMEWORK_REVIEWED',
+      {
+        title: homework.title,
+        grade: String(grade),
+      },
+    )
+  }
+
+  return NextResponse.json({
+    ok: true,
+    message: fullyGraded ? 'تم تسليم وتصحيح الواجب تلقائياً' : 'تم تسليم الواجب',
+    autoGraded: fullyGraded,
+    grade,
+    earnedPoints,
+    totalPoints: homework.totalPoints,
+  })
 }

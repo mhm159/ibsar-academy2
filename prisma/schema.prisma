@@ -793,7 +793,7 @@ model Homework {
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   title         String
   description   String
-  // type: PRACTICAL | WRITTEN | READING | QUIZ | PROJECT
+  // type: PRACTICAL | WRITTEN | READING | QUIZ | PROJECT | INTERACTIVE
   type          String   @default("PRACTICAL")
   // attachment URL (PDF, image, video) from teacher
   attachmentUrl String?
@@ -811,6 +811,19 @@ model Homework {
   grade          Int?     // 0-100
   feedback       String?
   reviewedAt     DateTime?
+  // Phase 6: Interactive homework
+  // questionsJson: JSON array of questions
+  //   [{ id, type: 'MCQ'|'TRUE_FALSE'|'FILL_BLANK'|'ESSAY', question, options?, correctAnswer?, points, explanation? }]
+  questionsJson  String?
+  // answersJson: student's answers (JSON array matching questions)
+  //   [{ questionId, answer }]
+  answersJson    String?
+  // autoGraded: true if all questions are auto-gradable (MCQ + TRUE_FALSE + FILL_BLANK)
+  autoGraded     Boolean  @default(false)
+  // totalPoints: sum of all question points
+  totalPoints    Int      @default(0)
+  // earnedPoints: points earned from auto-graded questions
+  earnedPoints   Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

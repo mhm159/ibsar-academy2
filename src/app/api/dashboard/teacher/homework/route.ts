@@ -49,6 +49,12 @@ export async function GET() {
       feedback: h.feedback,
       reviewedAt: h.reviewedAt,
       createdAt: h.createdAt,
+      // Interactive fields
+      questions: h.questionsJson ? JSON.parse(h.questionsJson) : null,
+      answers: h.answersJson ? JSON.parse(h.answersJson) : null,
+      autoGraded: h.autoGraded,
+      totalPoints: h.totalPoints,
+      earnedPoints: h.earnedPoints,
     })),
   })
 }
@@ -58,10 +64,12 @@ const CreateHomework = z.object({
   sessionId: z.string().optional(),
   title: z.string().min(2).max(120),
   description: z.string().min(5).max(2000),
-  type: z.enum(['PRACTICAL', 'WRITTEN', 'READING', 'QUIZ', 'PROJECT']).default('PRACTICAL'),
+  type: z.enum(['PRACTICAL', 'WRITTEN', 'READING', 'QUIZ', 'PROJECT', 'INTERACTIVE']).default('PRACTICAL'),
   dueDate: z.string().datetime(),
   attachmentUrl: z.string().optional(),
   attachmentName: z.string().optional(),
+  // Interactive homework
+  questions: z.array(z.any()).optional(),
 })
 
 /**
@@ -114,6 +122,14 @@ export async function POST(req: NextRequest) {
       attachmentUrl: parsed.data.attachmentUrl,
       attachmentName: parsed.data.attachmentName,
       status: 'ASSIGNED',
+      // Interactive homework fields
+      ...(parsed.data.questions && parsed.data.questions.length > 0
+        ? {
+            questionsJson: JSON.stringify(parsed.data.questions),
+            totalPoints: (parsed.data.questions as any[]).reduce((sum, q) => sum + (q.points || 0), 0),
+            autoGraded: (parsed.data.questions as any[]).every((q) => q.type !== 'ESSAY'),
+          }
+        : {}),
     },
   })
 
