@@ -4,6 +4,16 @@ import { getSession } from '@/lib/auth'
 import { sendNotification } from '@/lib/notifications'
 import { autoGradeHomework, type Question } from '@/components/dashboard/interactive-homework-editor'
 
+/** Safe JSON parse — returns null on invalid/empty input */
+function safeJsonParse(str: string | null | undefined): any {
+  if (!str || str.trim() === '') return null
+  try {
+    return JSON.parse(str)
+  } catch {
+    return null
+  }
+}
+
 /**
  * GET /api/dashboard/parent/homework
  * Returns homework for parent's children.
@@ -54,8 +64,8 @@ export async function GET() {
       reviewedAt: h.reviewedAt,
       createdAt: h.createdAt,
       // Interactive fields
-      questions: h.questionsJson ? JSON.parse(h.questionsJson) : null,
-      answers: h.answersJson ? JSON.parse(h.answersJson) : null,
+      questions: h.questionsJson ? safeJsonParse(h.questionsJson) : null,
+      answers: h.answersJson ? safeJsonParse(h.answersJson) : null,
       autoGraded: h.autoGraded,
       totalPoints: h.totalPoints,
       earnedPoints: h.earnedPoints,
@@ -128,7 +138,10 @@ export async function POST(req: NextRequest) {
   let fullyGraded = false
 
   if (homework.questionsJson && answers) {
-    const questions = JSON.parse(homework.questionsJson) as Question[]
+    const questions = safeJsonParse(homework.questionsJson) as Question[]
+    if (!questions || !Array.isArray(questions)) {
+      return NextResponse.json({ error: 'بيانات الأسئلة غير صحيحة' }, { status: 400 })
+    }
     const result = autoGradeHomework(questions, answers)
     earnedPoints = result.earnedPoints
     fullyGraded = result.fullyGraded

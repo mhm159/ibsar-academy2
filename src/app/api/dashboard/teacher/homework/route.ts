@@ -4,6 +4,16 @@ import { getSession } from '@/lib/auth'
 import { sendNotification } from '@/lib/notifications'
 import { z } from 'zod'
 
+/** Safe JSON parse — returns null on invalid/empty input */
+function safeJsonParse(str: string | null | undefined): any {
+  if (!str || str.trim() === '') return null
+  try {
+    return JSON.parse(str)
+  } catch {
+    return null
+  }
+}
+
 /**
  * GET /api/dashboard/teacher/homework
  * Returns homework assigned by this teacher.
@@ -50,8 +60,8 @@ export async function GET() {
       reviewedAt: h.reviewedAt,
       createdAt: h.createdAt,
       // Interactive fields
-      questions: h.questionsJson ? JSON.parse(h.questionsJson) : null,
-      answers: h.answersJson ? JSON.parse(h.answersJson) : null,
+      questions: h.questionsJson ? safeJsonParse(h.questionsJson) : null,
+      answers: h.answersJson ? safeJsonParse(h.answersJson) : null,
       autoGraded: h.autoGraded,
       totalPoints: h.totalPoints,
       earnedPoints: h.earnedPoints,

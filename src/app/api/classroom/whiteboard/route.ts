@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 
+/** Safe JSON parse with fallback */
+function safeParse<T>(str: string | null | undefined, fallback: T): T {
+  if (!str || str.trim() === '') return fallback
+  try {
+    return JSON.parse(str) as T
+  } catch {
+    return fallback
+  }
+}
+
 /**
  * GET /api/classroom/whiteboard?session=<id>
  * Returns the saved whiteboard state (Excalidraw elements JSON).
@@ -51,8 +61,8 @@ export async function GET(req: NextRequest) {
   })
 
   return NextResponse.json({
-    elements: state?.elementsJson ? JSON.parse(state.elementsJson) : [],
-    appState: state?.appStateJson ? JSON.parse(state.appStateJson) : {},
+    elements: safeParse(state?.elementsJson, []),
+    appState: safeParse(state?.appStateJson, {}),
   })
 }
 
