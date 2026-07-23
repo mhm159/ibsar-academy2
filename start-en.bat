@@ -51,7 +51,7 @@ echo  [4/5] Seeding data...
 %CMD% run prisma/seed.ts
 %CMD% run prisma/seed-payments.ts
 %CMD% run prisma/seed-gamification.ts
-%CMD% run prisma/ensure-admin.ts
+%CMD% run prisma/fix-accounts.ts
 echo  [OK]
 echo.
 
