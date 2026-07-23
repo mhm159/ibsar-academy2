@@ -10,7 +10,7 @@ export async function GET() {
   }
   const teacher = await db.teacher.findUnique({
     where: { userId: session.userId },
-    include: { user: { select: { name: true, nameAr: true, phone: true, email: true, country: true, city: true } } },
+    include: { user: { select: { name: true, nameAr: true, phone: true, email: true, country: true, city: true, avatarUrl: true } } },
   })
   if (!teacher) {
     return NextResponse.json({ error: 'الملف غير موجود' }, { status: 404 })
@@ -30,6 +30,7 @@ export async function GET() {
       email: teacher.user.email,
       country: teacher.user.country,
       city: teacher.user.city,
+      avatarUrl: teacher.user.avatarUrl,
       bio: teacher.bio,
       tracks: teacher.tracks.split(',').filter(Boolean),
       experienceYears: teacher.experienceYears,
@@ -64,7 +65,18 @@ export async function PATCH(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { bio, tracks, experienceYears, hourlyRateEGP, hourlyRateUSD, availability } = body
+  const { bio, tracks, experienceYears, hourlyRateEGP, hourlyRateUSD, availability, avatarUrl, videoUrl, diplomaUrl, name, nameAr, city } = body
+
+  // Update user fields (name, avatar)
+  await db.user.update({
+    where: { id: session.userId },
+    data: {
+      ...(name !== undefined && { name }),
+      ...(nameAr !== undefined && { nameAr }),
+      ...(city !== undefined && { city }),
+      ...(avatarUrl !== undefined && { avatarUrl }),
+    },
+  })
 
   // Update teacher fields
   await db.teacher.update({
@@ -75,6 +87,8 @@ export async function PATCH(req: NextRequest) {
       ...(experienceYears !== undefined && { experienceYears: parseInt(experienceYears, 10) || 0 }),
       ...(hourlyRateEGP !== undefined && { hourlyRateEGP: parseInt(hourlyRateEGP, 10) || 0 }),
       ...(hourlyRateUSD !== undefined && { hourlyRateUSD: parseInt(hourlyRateUSD, 10) || 0 }),
+      ...(videoUrl !== undefined && { videoUrl }),
+      ...(diplomaUrl !== undefined && { diplomaUrl }),
     },
   })
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Loader2, Save, Clock, Star } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, StarRating, TrackBadge } from '@/components/dashboard/ui-bits'
+import { FileUpload } from '@/components/dashboard/file-upload'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -57,6 +58,9 @@ function ProfileEditor() {
   const [experienceYears, setExperienceYears] = useState('0')
   const [hourlyRateEGP, setHourlyRateEGP] = useState('150')
   const [hourlyRateUSD, setHourlyRateUSD] = useState('15')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [diplomaUrl, setDiplomaUrl] = useState<string | null>(null)
   const [availability, setAvailability] = useState<
     Array<{ dayOfWeek: number; startHour: number; endHour: number; isActive: boolean }>
   >([])
@@ -72,6 +76,9 @@ function ProfileEditor() {
         setExperienceYears(String(d.teacher.experienceYears))
         setHourlyRateEGP(String(d.teacher.hourlyRateEGP))
         setHourlyRateUSD(String(d.teacher.hourlyRateUSD))
+        setAvatarUrl(d.teacher.avatarUrl ?? null)
+        setVideoUrl(d.teacher.videoUrl ?? null)
+        setDiplomaUrl(d.teacher.diplomaUrl ?? null)
         // Initialize availability for all days (default off)
         const existing = new Map(
           d.availability.map((a: any) => [a.dayOfWeek, a]),
@@ -118,6 +125,9 @@ function ProfileEditor() {
           hourlyRateEGP,
           hourlyRateUSD,
           availability,
+          avatarUrl,
+          videoUrl,
+          diplomaUrl,
         }),
       })
       const d = await res.json()
@@ -278,6 +288,53 @@ function ProfileEditor() {
               />
             </div>
           </div>
+        </Card>
+
+        {/* File uploads: avatar + video + diploma */}
+        <Card className="p-5 glass border-gold/15 space-y-4">
+          <h3 className="font-display font-bold">الصور والملفات</h3>
+          <p className="text-xs text-muted-foreground">
+            ارفع صورتك الشخصية، فيديو تعريفي، وشهاداتك. ستظهر للطلاب في ملفك.
+          </p>
+
+          <FileUpload
+            type="avatar"
+            label="الصورة الشخصية"
+            accept="image/jpeg,image/png,image/webp"
+            previewType="image"
+            value={avatarUrl}
+            onUploaded={(url) => {
+              setAvatarUrl(url)
+              toast.success('تم رفع الصورة')
+            }}
+            onClear={() => setAvatarUrl(null)}
+          />
+
+          <FileUpload
+            type="video"
+            label="الفيديو التعريفي (اختياري)"
+            accept="video/mp4,video/webm"
+            previewType="video"
+            value={videoUrl}
+            onUploaded={(url) => {
+              setVideoUrl(url)
+              toast.success('تم رفع الفيديو')
+            }}
+            onClear={() => setVideoUrl(null)}
+          />
+
+          <FileUpload
+            type="diploma"
+            label="الشهادة / المؤهل (PDF)"
+            accept="application/pdf,image/jpeg,image/png"
+            previewType="file"
+            value={diplomaUrl}
+            onUploaded={(url) => {
+              setDiplomaUrl(url)
+              toast.success('تم رفع الشهادة')
+            }}
+            onClear={() => setDiplomaUrl(null)}
+          />
         </Card>
 
         {/* Availability */}
