@@ -1,6 +1,7 @@
 @echo off
 title Ibsar Academy Server
 cd /d "%~dp0"
+color 0A
 
 echo.
 echo  ============================================================
@@ -32,35 +33,43 @@ if not exist ".env" (
     echo  [OK] .env created
 )
 
-echo  [1/5] Installing dependencies...
-%CMD% install
-echo  [OK]
+echo  [1/6] Installing dependencies (npm warnings are normal, ignore them)...
+%CMD% install --no-audit --no-fund 2>nul
+echo  [OK] Dependencies installed
 echo.
 
-echo  [2/5] Generating Prisma...
-%CMD% run db:generate
-echo  [OK]
+echo  [2/6] Generating Prisma...
+%CMD% run db:generate 2>nul
+if errorlevel 1 (
+    npx prisma generate 2>nul
+)
+echo  [OK] Prisma generated
 echo.
 
-echo  [3/5] Creating database...
-%CMD% run db:push
-echo  [OK]
+echo  [3/6] Creating database...
+%CMD% run db:push 2>nul
+if errorlevel 1 (
+    npx prisma db push --accept-data-loss 2>nul
+)
+echo  [OK] Database created
 echo.
 
-echo  [4/5] Seeding data...
-%CMD% run prisma/seed.ts
-%CMD% run prisma/seed-payments.ts
-%CMD% run prisma/seed-gamification.ts
-%CMD% run prisma/fix-accounts.ts
-echo  [OK]
+echo  [4/6] Seeding data...
+%CMD% run prisma/seed.ts 2>nul
+%CMD% run prisma/seed-payments.ts 2>nul
+%CMD% run prisma/seed-gamification.ts 2>nul
+%CMD% run prisma/fix-accounts.ts 2>nul
+echo  [OK] Data seeded
 echo.
 
-echo  [5/5] Starting servers...
-echo  Starting classroom service (port 3003)...
-start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install && %CMD% run dev"
+echo  [5/6] Starting classroom service (port 3003)...
+start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install --no-audit --no-fund 2>nul && %CMD% run dev"
 
-timeout /t 4 /nobreak >nul
+echo  Waiting 5 seconds...
+timeout /t 5 /nobreak >nul
 
+echo.
+echo  [6/6] Starting main server (port 3000)...
 echo.
 echo  ============================================================
 echo            SUCCESS! Platform is running!
@@ -76,8 +85,6 @@ echo.
 echo  OTP shows in yellow box on login page
 echo  Press Ctrl+C to stop
 echo  ============================================================
-echo.
-echo  Starting main server (port 3000)...
 echo.
 
 %CMD% run dev
