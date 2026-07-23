@@ -2,11 +2,12 @@
 import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState } from 'react'
-import { CalendarDays, Video, Clock, Users } from 'lucide-react'
+import { CalendarDays, Video, Clock, Users, CheckCircle2, Loader2 } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, TrackBadge, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { toast } from 'sonner'
 
 interface Session {
   id: string
@@ -134,10 +135,34 @@ function ScheduleView() {
 }
 
 function SessionRow({ session }: { session: Session }) {
-  const fmtTime = (iso: string) =>
-    formatTime(iso)
+  const fmtTime = (iso: string) => formatTime(iso)
+  const [completing, setCompleting] = useState(false)
+  const [completed, setCompleted] = useState(session.status === 'COMPLETED')
 
   const isLive = session.status === 'IN_PROGRESS' || (session.meetingUrl && new Date() >= new Date(session.startTime))
+
+  const handleComplete = async () => {
+    if (!confirm('تأكيد إكمال الحصة؟ سيتم تحرير المدفوعات للمعلم وخصم عمولة الأكاديمية.')) return
+    setCompleting(true)
+    try {
+      const res = await fetch('/api/dashboard/teacher/complete-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id }),
+      })
+      const d = await res.json()
+      if (!res.ok) {
+        toast.error(d.error || 'فشل')
+        return
+      }
+      toast.success(d.message)
+      setCompleted(true)
+    } catch {
+      toast.error('تعذّر الاتصال')
+    } finally {
+      setCompleting(false)
+    }
+  }
 
   return (
     <Card className="p-4 glass border-gold/15">
@@ -149,7 +174,7 @@ function SessionRow({ session }: { session: Session }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <TrackBadge track={session.track} />
-            <StatusBadge status={session.status} />
+            <StatusBadge status={completed ? 'COMPLETED' : session.status} />
           </div>
           <p className="text-sm font-bold">{session.title}</p>
           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
@@ -164,25 +189,56 @@ function SessionRow({ session }: { session: Session }) {
               {session.students.map((s) => s.name).join('، ')}
             </p>
           )}
+          {/* Financial status */}
+          {session.students.length > 0 && (
+            <div className="mt-1 text-xs">
+              <span className="text-muted-foreground">💰 الحالة المالية: </span>
+              <span className={completed ? 'text-emerald-egypt font-bold' : 'text-gold font-bold'}>
+                {completed ? 'تم التحرير للمعلم' : 'بانتظار إكمال الحصة'}
+              </span>
+            </div>
+          )}
         </div>
-        {session.status === 'SCHEDULED' || session.status === 'IN_PROGRESS' ? (
-          <a href={`/classroom/${session.id}`}>
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
-              isLive ? 'bg-emerald-egypt text-white animate-pulse' : 'bg-gradient-to-l from-gold to-[#E8D488] text-night'
-            }`}>
-              <Video className="h-3.5 w-3.5" />
-              {isLive ? 'دخول الحصة (مباشر)' : 'دخول الغرفة'}
-            </span>
-          </a>
-        ) : null}
-        {session.recordingUrl && (
-          <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-azure text-white text-xs font-bold">
-              <Video className="h-3.5 w-3.5" />
-              التسجيل
-            </span>
-          </a>
-        )}
+
+        <div className="flex flex-col gap-1.5 shrink-0">
+          {/* Enter classroom */}
+          {!completed && (session.status === 'SCHEDULED' || session.status === 'IN_PROGRESS') && (
+            <a href={`/classroom/${session.id}`}>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+                isLive ? 'bg-emerald-egypt text-white animate-pulse' : 'bg-gradient-to-l from-gold to-[#E8D488] text-night'
+              }`}>
+                <Video className="h-3.5 w-3.5" />
+                {isLive ? 'دخول (مباشر)' : 'دخول الغرفة'}
+              </span>
+            </a>
+          )}
+
+          {/* Complete session button */}
+          {!completed && (
+            <button
+              onClick={handleComplete}
+              disabled={completing}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-egypt text-white hover:bg-emerald-egypt/90 disabled:opacity-50"
+            >
+              {completing ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-3.5 w-3.5" />
+              )}
+              إكمال الحصة
+            </button>
+          )}
+
+          {/* Recording link */}
+          {session.recordingUrl && (
+            <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-azure text-white text-xs font-bold">
+                <Video className="h-3.5 w-3.5" />
+                التسجيل
+              </span>
+            </a>
+          )}
+        </div>
       </div>
     </Card>
   )

@@ -42,6 +42,11 @@ export async function GET() {
       isFeatured: teacher.isFeatured,
       videoUrl: teacher.videoUrl,
       diplomaUrl: teacher.diplomaUrl,
+      // Pricing controls
+      pricingMode: teacher.pricingMode,
+      maxHourlyRateEGP: teacher.maxHourlyRateEGP,
+      fixedHourlyRateEGP: teacher.fixedHourlyRateEGP,
+      fixedHourlyRateUSD: teacher.fixedHourlyRateUSD,
     },
     availability: availability.map((a) => ({
       id: a.id,
@@ -79,17 +84,50 @@ export async function PATCH(req: NextRequest) {
   })
 
   // Update teacher fields
+  const teacherUpdate: any = {
+    ...(bio !== undefined && { bio }),
+    ...(tracks && { tracks: Array.isArray(tracks) ? tracks.join(',') : tracks }),
+    ...(experienceYears !== undefined && { experienceYears: parseInt(experienceYears, 10) || 0 }),
+    ...(videoUrl !== undefined && { videoUrl }),
+    ...(diplomaUrl !== undefined && { diplomaUrl }),
+  }
+
+  // Pricing enforcement
+  if (hourlyRateEGP !== undefined || hourlyRateUSD !== undefined) {
+    const fullTeacher = await db.teacher.findUnique({ where: { id: teacher.id } })
+    if (fullTeacher) {
+      if (fullTeacher.pricingMode === 'FIXED') {
+        // Teacher can't change price
+        return NextResponse.json(
+          { error: 'لا يمكنك تغيير السعر — الأكاديمية حددت سعراً ثابتاً لك' },
+          { status: 403 },
+        )
+      }
+
+      if (fullTeacher.pricingMode === 'CAPPED' && hourlyRateEGP !== undefined) {
+        const requested = parseInt(hourlyRateEGP, 10) || 0
+        const max = fullTeacher.maxHourlyRateEGP ?? Infinity
+        if (requested > max) {
+          return NextResponse.json(
+            { error: `السعر يتجاوز الحد المسموح (${max / 100} ج.م). الحد الأقصى لك: ${max / 100} ج.م` },
+            { status: 422 },
+          )
+        }
+      }
+
+      // FREE mode: teacher sets whatever they want
+      if (hourlyRateEGP !== undefined) {
+        teacherUpdate.hourlyRateEGP = parseInt(hourlyRateEGP, 10) || 0
+      }
+      if (hourlyRateUSD !== undefined) {
+        teacherUpdate.hourlyRateUSD = parseInt(hourlyRateUSD, 10) || 0
+      }
+    }
+  }
+
   await db.teacher.update({
     where: { id: teacher.id },
-    data: {
-      ...(bio !== undefined && { bio }),
-      ...(tracks && { tracks: Array.isArray(tracks) ? tracks.join(',') : tracks }),
-      ...(experienceYears !== undefined && { experienceYears: parseInt(experienceYears, 10) || 0 }),
-      ...(hourlyRateEGP !== undefined && { hourlyRateEGP: parseInt(hourlyRateEGP, 10) || 0 }),
-      ...(hourlyRateUSD !== undefined && { hourlyRateUSD: parseInt(hourlyRateUSD, 10) || 0 }),
-      ...(videoUrl !== undefined && { videoUrl }),
-      ...(diplomaUrl !== undefined && { diplomaUrl }),
-    },
+    data: teacherUpdate,
   })
 
   // Update availability if provided

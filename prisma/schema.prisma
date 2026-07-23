@@ -72,6 +72,12 @@ model Teacher {
   diplomaUrl      String?
   availabilityJson String? // JSON string for weekly availability
   isFeatured      Boolean  @default(false)
+  // Phase 6: Flexible pricing controls
+  // pricingMode: FREE (teacher sets own price) | CAPPED (up to maxHourlyRateEGP) | FIXED (academy sets price)
+  pricingMode     String   @default("FREE")
+  maxHourlyRateEGP Int?     // when CAPPED: teacher can't exceed this
+  fixedHourlyRateEGP Int?  // when FIXED: academy sets this, teacher can't change
+  fixedHourlyRateUSD Int?  // when FIXED: USD equivalent
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
