@@ -82,6 +82,7 @@ model Teacher {
   walletAccounts  WalletAccount[]
   payouts         Payout[]
   escrows         Escrow[]
+  homeworks       Homework[]
 
   @@index([status])
   @@index([isFeatured])
@@ -108,6 +109,7 @@ model Student {
 
   bookings        Booking[]
   progressReports ProgressReport[]
+  homeworks       Homework[]
 
   @@index([parentId])
 }
@@ -228,6 +230,7 @@ model Session {
   recordingStatus String? @default("NONE") // NONE | STARTED | STOPPED | PROCESSING | READY
   chatMessages  ChatMessage[]
   whiteboard    WhiteboardState?
+  homeworks     Homework[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -771,4 +774,92 @@ model WhiteboardState {
   updatedAt    DateTime @updatedAt
 
   @@index([sessionId])
+}
+
+// ============================================================
+// Phase 6 — Homework system + Financial audit + Notifications
+// ============================================================
+
+// -----------------------------
+// Homework — teacher assigns homework to students
+// -----------------------------
+model Homework {
+  id            String   @id @default(cuid())
+  sessionId     String?
+  session       Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  // type: PRACTICAL | WRITTEN | READING | QUIZ | PROJECT
+  type          String   @default("PRACTICAL")
+  // attachment URL (PDF, image, video) from teacher
+  attachmentUrl String?
+  attachmentName String?
+  // deadline
+  dueDate       DateTime
+  // status: ASSIGNED | SUBMITTED | REVIEWED | LATE | OVERDUE
+  status        String   @default("ASSIGNED")
+  // student submission
+  submissionText  String?
+  submissionUrl   String?  // student's uploaded file
+  submissionName  String?
+  submittedAt     DateTime?
+  // teacher review
+  grade          Int?     // 0-100
+  feedback       String?
+  reviewedAt     DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([teacherId])
+  @@index([studentId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+// -----------------------------
+// FinancialAudit — immutable audit trail for all financial operations
+// -----------------------------
+model FinancialAudit {
+  id            String   @id @default(cuid())
+  // entity type: TRANSACTION | ESCROW | PAYOUT | REFUND
+  entityType    String
+  entityId      String
+  // action: CREATED | UPDATED | RELEASED | REFUNDED | COMPLETED | APPROVED | REJECTED
+  action        String
+  // who performed the action
+  performedById String?
+  // before/after JSON snapshots
+  beforeJson    String?
+  afterJson     String?
+  // metadata
+  description   String
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([performedById])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// NotificationPreference — user's notification channel preferences
+// -----------------------------
+model NotificationPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  // channel preferences
+  inAppEnabled    Boolean  @default(true)
+  whatsappEnabled Boolean  @default(true)
+  emailEnabled    Boolean  @default(false)
+  // type-level overrides (JSON: { "SESSION_REMINDER": { "whatsapp": false } })
+  typeOverridesJson String @default("{}")
+  // quiet hours (don't send between these hours)
+  quietStartHour  Int      @default(22) // 10 PM
+  quietEndHour    Int      @default(7)  // 7 AM
+  updatedAt       DateTime @updatedAt
 }

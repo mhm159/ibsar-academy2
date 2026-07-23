@@ -17,6 +17,7 @@ import {
   Trophy,
   Medal,
   Calendar,
+  BookOpen,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -29,6 +30,7 @@ export const PARENT_NAV: NavItem[] = [
   { href: '/parent', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/parent/students', label: 'أبنائي', icon: Users },
   { href: '/parent/sessions', label: 'الحصص والحجوزات', icon: CalendarDays },
+  { href: '/parent/homework', label: 'الواجبات', icon: BookOpen },
   { href: '/parent/calendar', label: 'التقويم', icon: Calendar },
   { href: '/parent/gamification', label: 'الإنجازات', icon: Trophy },
   { href: '/parent/leaderboard', label: 'المتصدرون', icon: Medal },
@@ -42,6 +44,7 @@ export const TEACHER_NAV: NavItem[] = [
   { href: '/teacher', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/teacher/schedule', label: 'جدول الحصص', icon: CalendarDays },
   { href: '/teacher/students', label: 'الطلاب', icon: Users },
+  { href: '/teacher/homework', label: 'الواجبات', icon: BookOpen },
   { href: '/teacher/reviews', label: 'التقييمات', icon: Star },
   { href: '/teacher/payouts', label: 'المحافظ والسحب', icon: Wallet },
   { href: '/teacher/profile', label: 'الملف الشخصي', icon: Settings },
