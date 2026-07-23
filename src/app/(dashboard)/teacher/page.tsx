@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -83,7 +84,7 @@ function TeacherOverviewContent() {
   if (!data) return <p className="text-muted-foreground">تعذّر التحميل</p>
 
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short' })
 

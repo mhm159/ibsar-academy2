@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState } from 'react'
 import { CalendarDays, Video, Clock, Users } from 'lucide-react'
@@ -134,7 +135,7 @@ function ScheduleView() {
 
 function SessionRow({ session }: { session: Session }) {
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
 
   const isLive = session.status === 'IN_PROGRESS' || (session.meetingUrl && new Date() >= new Date(session.startTime))
 

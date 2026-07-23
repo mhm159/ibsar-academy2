@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -112,7 +113,7 @@ function ProOverview({ data }: { data: OverviewData }) {
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short' })
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
 
   return (
     <>
@@ -270,7 +271,7 @@ function KidsOverview({ data }: { data: OverviewData }) {
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' })
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
 
   const handleCelebrate = () => {
     triggerConfetti(60, 4000)

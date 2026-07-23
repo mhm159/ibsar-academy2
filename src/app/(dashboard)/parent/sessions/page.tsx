@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState } from 'react'
 import { CalendarDays, Loader2, CheckCircle2, Video, Star, Clock } from 'lucide-react'
@@ -152,9 +153,9 @@ function SessionsBrowser() {
                     <TrackBadge track={s.track} />
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
-                      {new Date(s.startTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
+                      {formatTime(s.startTime)}
                       {' - '}
-                      {new Date(s.endTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
+                      {formatTime(s.endTime)}
                     </span>
                   </div>
                   <p className="text-sm font-bold truncate">{s.title}</p>

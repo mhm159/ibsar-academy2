@@ -14,12 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useMode } from '@/components/use-mode'
-
-const MONTHS_AR = [
-  'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
-]
-const DAYS_AR = ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
+import { MONTHS_AR, DAYS_AR, formatTime } from '@/lib/datetime'
 
 const TRACK_COLORS: Record<string, string> = {
   PROGRAMMING: '#4ECDC4',
@@ -221,7 +216,7 @@ function CalendarView() {
                 </div>
                 <div className="text-left shrink-0">
                   <p className="text-xs font-bold" dir="ltr">
-                    {new Date(s.startTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
+                    {formatTime(s.startTime)}
                   </p>
                 </div>
               </Card>

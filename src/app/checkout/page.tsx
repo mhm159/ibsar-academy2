@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -116,7 +117,7 @@ function CheckoutContent() {
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' })
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
 
   return (
     <div className="min-h-screen bg-pharaonic flex flex-col">

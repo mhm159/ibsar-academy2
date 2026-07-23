@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Plus, Users, Pencil, Trash2, Loader2, X } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, EmptyState } from '@/components/dashboard/ui-bits'
+import { calculateAge } from '@/lib/datetime'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,8 +66,7 @@ function StudentsManager() {
 
   const calcAge = (birth: string | null) => {
     if (!birth) return null
-    const diff = Date.now() - new Date(birth).getTime()
-    return Math.floor(diff / (365.25 * 24 * 3600 * 1000))
+    return calculateAge(birth).display
   }
 
   const handleDelete = async (id: string) => {

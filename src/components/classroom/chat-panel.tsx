@@ -1,4 +1,5 @@
 'use client'
+import { formatTime } from '@/lib/datetime'
 
 import { useEffect, useRef, useState } from 'react'
 import { Send, Loader2, MessageCircle, Paperclip } from 'lucide-react'
@@ -57,7 +58,7 @@ export function ChatPanel({
   }
 
   const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    formatTime(iso)
 
   return (
     <div className="flex flex-col h-full glass rounded-2xl border border-gold/20 overflow-hidden">
