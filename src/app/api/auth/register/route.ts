@@ -12,7 +12,7 @@ import { z } from 'zod'
 
 const Body = z.object({
   // Contact (must match the verified target)
-  channel: z.enum(['SMS', 'EMAIL']),
+  channel: z.enum(['SMS', 'EMAIL', 'WHATSAPP']),
   target: z.string().min(4).max(120),
   verificationToken: z.string().min(10),
   // Profile

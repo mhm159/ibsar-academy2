@@ -6,7 +6,7 @@ import { z } from 'zod'
 const Body = z.object({
   target: z.string().min(4).max(120),
   code: z.string().regex(/^\d{6}$/, 'الرمز يجب أن يكون 6 أرقام'),
-  channel: z.enum(['SMS', 'EMAIL']),
+  channel: z.enum(['SMS', 'EMAIL', 'WHATSAPP']),
   purpose: z.enum(['REGISTER', 'LOGIN', 'RESET']).default('REGISTER'),
 })
 

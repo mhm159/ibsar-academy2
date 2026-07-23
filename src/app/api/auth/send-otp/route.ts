@@ -10,7 +10,7 @@ import { z } from 'zod'
 
 const Body = z.object({
   target: z.string().min(4).max(120),
-  channel: z.enum(['SMS', 'EMAIL']),
+  channel: z.enum(['SMS', 'EMAIL', 'WHATSAPP']),
   purpose: z.enum(['REGISTER', 'LOGIN', 'RESET']).default('REGISTER'),
 })
 

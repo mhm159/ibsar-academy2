@@ -19,7 +19,7 @@ import {
 import { COUNTRIES } from '@/lib/constants'
 import { toast } from 'sonner'
 
-type Channel = 'SMS' | 'EMAIL'
+type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
 type Step = 'FORM' | 'OTP'
 
 export default function RegisterStudentPage() {
@@ -116,23 +116,35 @@ export default function RegisterStudentPage() {
           {/* Channel toggle */}
           <div className="space-y-2">
             <Label>طريقة التحقق</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setChannel('SMS')}
-                className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
                   channel === 'SMS'
                     ? 'border-gold bg-gold/10 text-gold'
                     : 'border-border text-muted-foreground hover:border-gold/40'
                 }`}
               >
                 <Phone className="h-4 w-4" />
-                الهاتف
+                SMS
+              </button>
+              <button
+                type="button"
+                onClick={() => setChannel('WHATSAPP')}
+                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                  channel === 'WHATSAPP'
+                    ? 'border-emerald-egypt bg-emerald-egypt/10 text-emerald-egypt'
+                    : 'border-border text-muted-foreground hover:border-emerald-egypt/40'
+                }`}
+              >
+                <span className="text-base">💬</span>
+                واتساب
               </button>
               <button
                 type="button"
                 onClick={() => setChannel('EMAIL')}
-                className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
                   channel === 'EMAIL'
                     ? 'border-gold bg-gold/10 text-gold'
                     : 'border-border text-muted-foreground hover:border-gold/40'
@@ -147,22 +159,24 @@ export default function RegisterStudentPage() {
           {/* Target */}
           <div className="space-y-2">
             <Label htmlFor="target">
-              {channel === 'SMS' ? 'رقم الهاتف' : 'البريد الإلكتروني'}
+              {channel === 'EMAIL' ? 'البريد الإلكتروني' : 'رقم الهاتف'}
             </Label>
             <Input
               id="target"
-              type={channel === 'SMS' ? 'tel' : 'email'}
-              dir={channel === 'SMS' ? 'ltr' : undefined}
-              placeholder={channel === 'SMS' ? '01012345678' : 'you@example.com'}
+              type={channel === 'EMAIL' ? 'email' : 'tel'}
+              dir={channel === 'EMAIL' ? undefined : 'ltr'}
+              placeholder={channel === 'EMAIL' ? 'you@example.com' : '01012345678'}
               value={target}
               onChange={(e) => setTarget(e.target.value)}
               required
               className="h-12 text-base"
             />
             <p className="text-xs text-muted-foreground">
-              {channel === 'SMS'
-                ? 'سنرسل لك رمز تحقق عبر رسالة نصية'
-                : 'سنرسل لك رمز تحقق عبر البريد'}
+              {channel === 'EMAIL'
+                ? 'سنرسل لك رمز تحقق عبر البريد'
+                : channel === 'WHATSAPP'
+                  ? 'سنرسل لك رمز تحقق عبر واتساب'
+                  : 'سنرسل لك رمز تحقق عبر رسالة نصية'}
             </p>
           </div>
 

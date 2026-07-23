@@ -13,7 +13,7 @@ import { z } from 'zod'
 const Body = z.object({
   // Either password login or OTP-based login
   method: z.enum(['PASSWORD', 'OTP']),
-  channel: z.enum(['SMS', 'EMAIL']).optional(),
+  channel: z.enum(['SMS', 'EMAIL', 'WHATSAPP']).optional(),
   target: z.string().min(4).max(120),
   password: z.string().min(1).max(128).optional(),
   verificationToken: z.string().min(10).optional(),

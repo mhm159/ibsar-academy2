@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 
-type Channel = 'SMS' | 'EMAIL'
+type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
 type Step = 'INPUT' | 'OTP'
 
 export default function LoginPage() {
@@ -128,23 +128,35 @@ export default function LoginPage() {
           {step === 'INPUT' ? (
             <form onSubmit={handleSendOtpForLogin} className="space-y-5">
               {/* Channel toggle */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setChannel('SMS')}
-                  className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
                     channel === 'SMS'
                       ? 'border-gold bg-gold/10 text-gold'
                       : 'border-border text-muted-foreground hover:border-gold/40'
                   }`}
                 >
                   <Phone className="h-4 w-4" />
-                  الهاتف
+                  SMS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChannel('WHATSAPP')}
+                  className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                    channel === 'WHATSAPP'
+                      ? 'border-emerald-egypt bg-emerald-egypt/10 text-emerald-egypt'
+                      : 'border-border text-muted-foreground hover:border-emerald-egypt/40'
+                  }`}
+                >
+                  <span className="text-base">💬</span>
+                  واتساب
                 </button>
                 <button
                   type="button"
                   onClick={() => setChannel('EMAIL')}
-                  className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
                     channel === 'EMAIL'
                       ? 'border-gold bg-gold/10 text-gold'
                       : 'border-border text-muted-foreground hover:border-gold/40'
@@ -157,13 +169,13 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="target-otp">
-                  {channel === 'SMS' ? 'رقم الهاتف' : 'البريد الإلكتروني'}
+                  {channel === 'EMAIL' ? 'البريد الإلكتروني' : 'رقم الهاتف'}
                 </Label>
                 <Input
                   id="target-otp"
-                  type={channel === 'SMS' ? 'tel' : 'email'}
-                  dir={channel === 'SMS' ? 'ltr' : undefined}
-                  placeholder={channel === 'SMS' ? '01012345678' : 'you@example.com'}
+                  type={channel === 'EMAIL' ? 'email' : 'tel'}
+                  dir={channel === 'EMAIL' ? undefined : 'ltr'}
+                  placeholder={channel === 'EMAIL' ? 'you@example.com' : '01012345678'}
                   value={target}
                   onChange={(e) => setTarget(e.target.value)}
                   required
