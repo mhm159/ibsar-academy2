@@ -382,9 +382,13 @@ function ProfileEditor() {
                         onChange={(e) => updateHours(slot.dayOfWeek, 'startHour', parseInt(e.target.value, 10))}
                         className="rounded-lg border border-border bg-card px-2 py-1 text-sm"
                       >
-                        {Array.from({ length: 24 }, (_, i) => (
-                          <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
-                        ))}
+                        {Array.from({ length: 24 }, (_, i) => {
+                          const hour12 = i === 0 ? 12 : i > 12 ? i - 12 : i
+                          const period = i < 12 ? 'ص' : 'م'
+                          return (
+                            <option key={i} value={i}>{hour12}:00 {period}</option>
+                          )
+                        })}
                       </select>
                       <span className="text-muted-foreground">إلى</span>
                       <select
@@ -392,9 +396,14 @@ function ProfileEditor() {
                         onChange={(e) => updateHours(slot.dayOfWeek, 'endHour', parseInt(e.target.value, 10))}
                         className="rounded-lg border border-border bg-card px-2 py-1 text-sm"
                       >
-                        {Array.from({ length: 24 }, (_, i) => i + 1).map((i) => (
-                          <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
-                        ))}
+                        {Array.from({ length: 24 }, (_, i) => i + 1).map((i) => {
+                          const h = i === 24 ? 0 : i
+                          const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+                          const period = h < 12 ? 'ص' : 'م'
+                          return (
+                            <option key={i} value={i}>{hour12}:00 {period}</option>
+                          )
+                        })}
                       </select>
                     </div>
                   )}

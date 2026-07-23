@@ -235,7 +235,7 @@ function TeacherOverviewContent() {
                 >
                   <span className="text-sm font-bold">{DAYS_AR[a.dayOfWeek]}</span>
                   <span className="text-sm text-muted-foreground" dir="ltr">
-                    {a.startHour}:00 - {a.endHour}:00
+                    {(() => { const h1 = a.startHour === 0 ? 12 : a.startHour > 12 ? a.startHour - 12 : a.startHour; const p1 = a.startHour < 12 ? 'ص' : 'م'; const h2 = a.endHour === 0 ? 12 : a.endHour > 12 ? a.endHour - 12 : a.endHour; const p2 = a.endHour < 12 ? 'ص' : 'م'; return `${h1}:00 ${p1} - ${h2}:00 ${p2}`; })()}
                   </span>
                 </li>
               ))}
