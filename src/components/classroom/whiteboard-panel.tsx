@@ -259,11 +259,11 @@ export function WhiteboardPanel({
             )}
           </div>
         </div>
-        <div className="flex-1 relative bg-white">
+        <div className="relative w-full overflow-hidden bg-white" style={{ height: '500px', maxHeight: '60vh' }}>
           <canvas
             ref={canvasRef}
-            width={1200}
-            height={700}
+            width={800}
+            height={500}
             className="w-full h-full touch-none"
             style={{ cursor: isTeacher ? 'crosshair' : 'default' }}
             onMouseDown={handleStart}
@@ -303,7 +303,10 @@ export function WhiteboardPanel({
           </Button>
         )}
       </div>
-      <div className="flex-1 relative" style={{ minHeight: '400px' }}>
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ height: '500px', maxHeight: '60vh' }}
+      >
         <ExcalidrawComp
           excalidrawAPI={(api: any) => setExcalidrawAPI(api)}
           initialData={{
