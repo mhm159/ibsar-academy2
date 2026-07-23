@@ -12,10 +12,10 @@ echo.
 where bun >nul 2>&1
 if not errorlevel 1 (
     echo  Running with bun...
-    bun run prisma/fix-accounts.ts
+    call bun run prisma/fix-accounts.ts
 ) else (
     echo  Running with npx tsx...
-    npx tsx prisma/fix-accounts.ts
+    call npx tsx prisma/fix-accounts.ts
 )
 
 echo.

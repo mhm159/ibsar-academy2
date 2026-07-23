@@ -33,37 +33,31 @@ if not exist ".env" (
     echo  [OK] .env created
 )
 
-echo  [1/6] Installing dependencies (npm warnings are normal, ignore them)...
-%CMD% install --no-audit --no-fund 2>nul
+echo  [1/6] Installing dependencies...
+call %CMD% install --no-audit --no-fund
 echo  [OK] Dependencies installed
 echo.
 
 echo  [2/6] Generating Prisma...
-%CMD% run db:generate 2>nul
-if errorlevel 1 (
-    npx prisma generate 2>nul
-)
+call %CMD% run db:generate
 echo  [OK] Prisma generated
 echo.
 
 echo  [3/6] Creating database...
-%CMD% run db:push 2>nul
-if errorlevel 1 (
-    npx prisma db push --accept-data-loss 2>nul
-)
+call %CMD% run db:push
 echo  [OK] Database created
 echo.
 
 echo  [4/6] Seeding data...
-%CMD% run prisma/seed.ts 2>nul
-%CMD% run prisma/seed-payments.ts 2>nul
-%CMD% run prisma/seed-gamification.ts 2>nul
-%CMD% run prisma/fix-accounts.ts 2>nul
+call %CMD% run prisma/seed.ts
+call %CMD% run prisma/seed-payments.ts
+call %CMD% run prisma/seed-gamification.ts
+call %CMD% run prisma/fix-accounts.ts
 echo  [OK] Data seeded
 echo.
 
 echo  [5/6] Starting classroom service (port 3003)...
-start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && %CMD% install --no-audit --no-fund 2>nul && %CMD% run dev"
+start "Ibsar Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"
 
 echo  Waiting 5 seconds...
 timeout /t 5 /nobreak >nul
@@ -87,7 +81,7 @@ echo  Press Ctrl+C to stop
 echo  ============================================================
 echo.
 
-%CMD% run dev
+call %CMD% run dev
 
 echo.
 echo  Server stopped. Press any key to close.
