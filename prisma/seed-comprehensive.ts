@@ -297,6 +297,21 @@ async function main() {
   }
   console.log(`✅ ${bookingCount} حجز + معاملات + ضمانات`)
 
+  // Release escrows for completed sessions (so teachers have available balance)
+  const completedEscrows = await db.escrow.findMany({
+    where: { status: 'HELD', booking: { session: { status: 'COMPLETED' } } },
+    take: 10,
+  })
+  for (const e of completedEscrows) {
+    await db.escrow.update({
+      where: { id: e.id },
+      data: { status: 'RELEASED', releasedAt: new Date() },
+    })
+  }
+  if (completedEscrows.length > 0) {
+    console.log(`✅ ${completedEscrows.length} ضمان متحرر (للحصص المكتملة)`)
+  }
+
   // ============================================================
   // 7. Progress Reports (for completed sessions)
   // ============================================================
