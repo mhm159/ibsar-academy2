@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { getTeacherAvailableBalance } from '@/lib/payment/escrow'
 
 /**
  * GET /api/dashboard/admin/payouts
@@ -100,6 +101,18 @@ export async function POST(req: NextRequest) {
   }
 
   let newStatus = payout.status
+
+  // Verify balance before APPROVE or COMPLETE
+  if (action === 'APPROVE' || action === 'COMPLETE') {
+    const balance = await getTeacherAvailableBalance(payout.teacherId)
+    if (payout.amountEGP > balance.availableEGP || payout.amountUSD > balance.availableUSD) {
+      return NextResponse.json(
+        { error: `رصيد المعلم غير كافٍ. المتاح: ${balance.availableEGP / 100} ج.م — المطلوب: ${payout.amountEGP / 100} ج.م` },
+        { status: 400 },
+      )
+    }
+  }
+
   if (action === 'APPROVE') {
     if (payout.status !== 'PENDING') {
       return NextResponse.json({ error: 'لا يمكن اعتماد طلب غير معلّق' }, { status: 400 })
@@ -117,6 +130,13 @@ export async function POST(req: NextRequest) {
     newStatus = 'COMPLETED'
   }
 
+  // Snapshot before update (for audit)
+  const beforeJson = JSON.stringify({
+    status: payout.status,
+    processedAt: payout.processedAt,
+    providerRef: payout.providerRef,
+  })
+
   await db.payout.update({
     where: { id: payoutId },
     data: {
@@ -125,6 +145,19 @@ export async function POST(req: NextRequest) {
       processedAt: new Date(),
       providerRef: providerRef ?? payout.providerRef,
       notes: notes ?? payout.notes,
+    },
+  })
+
+  // Financial audit trail
+  await db.financialAudit.create({
+    data: {
+      entityType: 'PAYOUT',
+      entityId: payoutId,
+      action: newStatus,
+      performedById: session.userId,
+      beforeJson,
+      afterJson: JSON.stringify({ status: newStatus, providerRef: providerRef ?? payout.providerRef }),
+      description: `Payout ${payout.amountEGP / 100} EGP → ${newStatus}`,
     },
   })
 
@@ -153,7 +186,7 @@ export async function POST(req: NextRequest) {
     ok: true,
     message:
       newStatus === 'COMPLETED'
-        ? 'تم تحويل المبلغ وتسجيل المرجع'
+        ? 'تم تحويل المبلغ وتسجيل المرجع وخصمه من رصيد المعلم'
         : newStatus === 'REJECTED'
           ? 'تم رفض الطلب'
           : 'تم اعتماد الطلب',

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PopupNotificationContainer } from "@/components/site/popup-notification";
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -84,6 +85,7 @@ export default function RootLayout({
           {children}
           <Toaster />
           <Sonner position="top-center" dir="rtl" />
+          <PopupNotificationContainer />
         </ThemeProvider>
       </body>
     </html>
