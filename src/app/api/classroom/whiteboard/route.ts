@@ -14,7 +14,7 @@ function safeParse<T>(str: string | null | undefined, fallback: T): T {
 
 /**
  * GET /api/classroom/whiteboard?session=<id>
- * Returns the saved whiteboard state (Excalidraw elements JSON).
+ * Returns the saved whiteboard state (canvas elements JSON).
  */
 export async function GET(req: NextRequest) {
   const session = await getSession()

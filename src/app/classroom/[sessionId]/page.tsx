@@ -17,6 +17,7 @@ import { FocusTracker } from '@/components/classroom/focus-tracker'
 import { useRealtimeClassroom } from '@/components/classroom/use-realtime-classroom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 interface JoinResult {
   ok: boolean
@@ -49,6 +50,7 @@ function ClassroomContent() {
   const [recordingStatus, setRecordingStatus] = useState('NONE')
   const [initialWhiteboard, setInitialWhiteboard] = useState<any[]>([])
   const [chatHistory, setChatHistory] = useState<any[]>([])
+  const [activeTab, setActiveTab] = useState('chat')
 
   // 1. Join the classroom (creates Daily room + meeting token)
   useEffect(() => {
@@ -334,7 +336,7 @@ function ClassroomContent() {
 
           {/* Chat + Whiteboard + Code tabs (mobile: full width) */}
           <div className="min-h-[400px] lg:min-h-0">
-            <Tabs defaultValue="chat" className="h-full flex flex-col">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
               <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10">
                 <TabsTrigger value="chat" className="data-[state=active]:bg-gold data-[state=active]:text-night text-white/70">
                   💬 المحادثة
@@ -357,7 +359,7 @@ function ClassroomContent() {
                 />
               </TabsContent>
 
-              <TabsContent value="board" className="flex-1 mt-2 min-h-0">
+              <TabsContent value="board" forceMount className={cn('flex-1 mt-2 min-h-0', activeTab !== 'board' && 'hidden')}>
                 <WhiteboardPanel
                   initialElements={initialWhiteboard}
                   realtimeElements={rt.whiteboardElements}

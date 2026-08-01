@@ -38,7 +38,7 @@ echo  [1/6] Installing dependencies...
 call %CMD% install --no-audit --no-fund
 echo  [OK] Dependencies installed
 echo  [2/6] Resetting database...
-call %CMD% run db:reset --force
+call %CMD% run db:push --force-reset --accept-data-loss
 echo  [OK] Database reset
 echo  [3/6] Generating Prisma...
 call %CMD% run db:generate
@@ -68,6 +68,15 @@ echo  Waiting 5 seconds...
 timeout /t 5 /nobreak >nul
 
 echo.
+echo  [*] Clearing Next.js cache (.next)...
+if exist ".next" (
+    rmdir /s /q ".next" >nul 2>&1
+    echo  [OK] .next cache cleared
+) else (
+    echo  [OK] No .next cache to clear
+)
+echo.
+
 echo  [6/6] Starting main server (port 3001)...
 echo.
 echo  ============================================================

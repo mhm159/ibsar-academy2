@@ -15,6 +15,15 @@ import { createDailyRoom, createDailyMeetingToken } from '@/lib/daily'
  * Both teacher and parent call this; teacher becomes room owner (can start/stop recording).
  */
 export async function POST(req: NextRequest) {
+  try {
+    return await handlePost(req)
+  } catch (err) {
+    console.error('[classroom/join] unhandled error:', err)
+    return NextResponse.json({ error: 'حدث خطأ غير متوقع' }, { status: 500 })
+  }
+}
+
+async function handlePost(req: NextRequest) {
   const session = await getSession()
   if (!session) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
