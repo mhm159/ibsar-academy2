@@ -183,6 +183,8 @@
 @layer base {
   * {
     border-color: var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--gold) 60%, var(--muted)) var(--muted);
   }
   html {
     scroll-behavior: smooth;
@@ -192,7 +194,8 @@
     color: var(--foreground);
     font-feature-settings: "kern", "liga", "calt";
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: auto;
   }
   /* Better RTL number rendering */
   body[dir="rtl"] {
