@@ -52,44 +52,51 @@ function ClassroomContent() {
 
   // 1. Join the classroom (creates Daily room + meeting token)
   useEffect(() => {
-    if (!sessionId) return
+    if (!sessionId) return;
     fetch('/api/classroom/join', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId }),
+      credentials: 'same-origin',
     })
-      .then((r) => r.json())
+      .then(async (r) => {
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'فشل الدخول إلى الصف');
+        return d;
+      })
       .then((d) => {
-        if (d.error) {
-          setError(d.error)
-          setLoading(false)
-          return
-        }
-        setJoinResult(d)
-        setLoading(false)
+        setJoinResult(d);
+        setLoading(false);
       })
-      .catch(() => {
-        setError('تعذّر الاتصال بالخادم')
-        setLoading(false)
-      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+    
   }, [sessionId])
 
   // 2. Fetch recording status
   useEffect(() => {
     if (!joinResult) return
-    fetch(`/api/classroom/recording?session=${sessionId}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d.error) setRecordingStatus(d.recordingStatus ?? 'NONE')
+    fetch(`/api/classroom/recording?session=${sessionId}`, { credentials: 'same-origin' })
+      .then(async (r) => {
+        const d = await r.json()
+        if (!r.ok) throw new Error(d.error || 'Failed to fetch recording status')
+        return d
       })
-      .catch(() => {})
+      .then((d) => setRecordingStatus(d.recordingStatus ?? 'NONE'))
+      .catch((err) => toast.error(err.message))
   }, [joinResult, sessionId])
 
   // 3. Fetch chat history
   useEffect(() => {
     if (!joinResult) return
-    fetch(`/api/classroom/chat?session=${sessionId}`)
-      .then((r) => r.json())
+    fetch(`/api/classroom/chat?session=${sessionId}`, { credentials: 'same-origin' })
+      .then(async (r) => {
+        const d = await r.json()
+        if (!r.ok) throw new Error(d.error || 'Failed to fetch chat history')
+        return d
+      })
       .then((d) => {
         if (d.messages) {
           setChatHistory(d.messages.map((m: any) => ({
@@ -105,18 +112,22 @@ function ClassroomContent() {
           })))
         }
       })
-      .catch(() => {})
+      .catch((err) => toast.error(err.message))
   }, [joinResult, sessionId])
 
   // 4. Fetch whiteboard state
   useEffect(() => {
     if (!joinResult) return
-    fetch(`/api/classroom/whiteboard?session=${sessionId}`)
-      .then((r) => r.json())
+    fetch(`/api/classroom/whiteboard?session=${sessionId}`, { credentials: 'same-origin' })
+      .then(async (r) => {
+        const d = await r.json()
+        if (!r.ok) throw new Error(d.error || 'Failed to fetch whiteboard')
+        return d
+      })
       .then((d) => {
         if (d.elements) setInitialWhiteboard(d.elements)
       })
-      .catch(() => {})
+      .catch((err) => toast.error(err.message))
   }, [joinResult, sessionId])
 
   // 5. Connect to realtime classroom (socket.io) — only after join succeeds
