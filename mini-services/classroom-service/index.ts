@@ -189,6 +189,18 @@ io.on('connection', (socket) => {
     console.log(`[classroom] Code ${payload.locked ? 'locked' : 'unlocked'} in session ${payload.sessionId}`)
   })
 
+  // ---- AI Focus Tracking: alert teacher ----
+  socket.on('focus:alert', (payload: {
+    sessionId: string
+    userId: string
+    name: string
+  }) => {
+    const roomId = getRoomId(payload.sessionId)
+    // Broadcast to the whole room (only teacher will show the alert in UI)
+    io.to(roomId).emit('focus:alert', payload)
+    console.log(`[classroom] Focus alert: ${payload.name} in session ${payload.sessionId}`)
+  })
+
   // ---- Cursor pointer sync (for collaborative drawing) ----
   socket.on('cursor:move', (payload: {
     sessionId: string

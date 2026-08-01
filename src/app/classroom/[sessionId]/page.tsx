@@ -13,6 +13,7 @@ import { VideoPanel } from '@/components/classroom/video-panel'
 import { ChatPanel } from '@/components/classroom/chat-panel'
 import { WhiteboardPanel } from '@/components/classroom/whiteboard-panel'
 import { CodeSandboxPanel } from '@/components/classroom/code-sandbox-panel'
+import { FocusTracker } from '@/components/classroom/focus-tracker'
 import { useRealtimeClassroom } from '@/components/classroom/use-realtime-classroom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { toast } from 'sonner'
@@ -126,6 +127,19 @@ function ClassroomContent() {
     userRole: joinResult?.userRole ?? null,
   })
 
+  // Listen for AI Focus Alerts from students (Teacher side)
+  useEffect(() => {
+    const handleFocusAlert = (e: any) => {
+      if (joinResult?.userRole !== 'TEACHER') return
+      const { name } = e.detail
+      toast.error(`⚠️ تنبيه ذكاء اصطناعي: الطالب ${name} يبدو مشتتاً ولا ينظر للشاشة!`, {
+        duration: 5000,
+      })
+    }
+    window.addEventListener('focus:alert', handleFocusAlert)
+    return () => window.removeEventListener('focus:alert', handleFocusAlert)
+  }, [joinResult])
+
   const handleSendChat = useCallback(
     (text: string) => {
       if (!joinResult) return
@@ -206,6 +220,16 @@ function ClassroomContent() {
     const dest = joinResult?.userRole === 'TEACHER' ? '/teacher/schedule' : '/parent/sessions'
     router.push(dest)
   }
+
+  // Save AI focus score at the end of the session
+  const handleSaveFocusScore = useCallback((score: number) => {
+    if (!sessionId) return
+    fetch('/api/classroom/focus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId, score }),
+    }).catch(() => {})
+  }, [sessionId])
 
   if (loading) {
     return (
@@ -347,6 +371,16 @@ function ClassroomContent() {
           </div>
         </div>
       </main>
+
+      {/* AI Focus Tracker for Student */}
+      {!isTeacher && (
+        <FocusTracker
+          sessionId={sessionId}
+          studentName={joinResult.displayName}
+          onDistracted={() => rt.sendFocusAlert(joinResult.displayName)}
+          onSaveScore={handleSaveFocusScore}
+        />
+      )}
     </div>
   )
 }

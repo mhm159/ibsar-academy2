@@ -53,6 +53,7 @@ interface StudentReport {
     engagement: number
     understanding: number
     homework: number
+    focusScore: number | null
     notes: string | null
     sessionDate: Date
   }[]
@@ -102,6 +103,7 @@ export async function collectWeeklyReports(): Promise<WeeklyReportData[]> {
             engagement: r.engagement,
             understanding: r.understanding,
             homework: r.homework,
+            focusScore: r.focusScore,
             notes: r.notes,
             sessionDate: r.session.startTime,
           })),
@@ -135,6 +137,9 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
       lines.push(`      • التفاعل: ${STARS(r.engagement)}`)
       lines.push(`      • الفهم: ${STARS(r.understanding)}`)
       lines.push(`      • الواجب: ${STARS(r.homework)}`)
+      if (r.focusScore !== null) {
+        lines.push(`      • مستوى الانتباه الآلي: ${r.focusScore}% 🧠`)
+      }
       if (r.notes) {
         lines.push(`   📝 ملاحظة المعلم: _${r.notes}_`)
       }
@@ -249,6 +254,7 @@ export async function previewReportForParent(parentId: string): Promise<string |
           engagement: r.engagement,
           understanding: r.understanding,
           homework: r.homework,
+          focusScore: r.focusScore,
           notes: r.notes,
           sessionDate: r.session.startTime,
         })),

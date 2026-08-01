@@ -360,6 +360,8 @@ model ProgressReport {
   engagement    Int      @default(3)
   understanding Int      @default(3)
   homework      Int      @default(3)
+  // focusScore 0-100 measured automatically by AI
+  focusScore    Int?
   notes         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

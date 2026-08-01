@@ -149,6 +149,12 @@ export function useRealtimeClassroom({
       setCodeLocked(payload.locked)
     })
 
+    // AI Focus Tracking
+    socket.on('focus:alert', (payload: { sessionId: string; userId: string; name: string }) => {
+      // Dispatch a custom event so the UI can show a toast
+      window.dispatchEvent(new CustomEvent('focus:alert', { detail: payload }))
+    })
+
     return () => {
       socket.disconnect()
       socketRef.current = null
@@ -232,6 +238,15 @@ export function useRealtimeClassroom({
     [sessionId],
   )
 
+  // AI Focus Tracking: send alert when student is distracted
+  const sendFocusAlert = useCallback(
+    (name: string) => {
+      if (!socketRef.current || !sessionId || !userId) return
+      socketRef.current.emit('focus:alert', { sessionId, userId, name })
+    },
+    [sessionId, userId],
+  )
+
   return {
     connected,
     presence,
@@ -254,5 +269,6 @@ export function useRealtimeClassroom({
     codeLocked,
     sendCodeUpdate,
     sendCodeLock,
+    sendFocusAlert,
   }
 }
