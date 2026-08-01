@@ -227,6 +227,7 @@ model Session {
   durationMins  Int      @default(60)
   // status: SCHEDULED | COMPLETED | CANCELLED | IN_PROGRESS
   status        String   @default("SCHEDULED")
+  isTrial       Boolean  @default(false)
   meetingUrl    String?  // Daily.co room URL (Phase 4)
   recordingUrl  String?
   notes         String?
@@ -259,6 +260,7 @@ model Booking {
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   // status: CONFIRMED | CANCELLED | COMPLETED | NO_SHOW
   status        String   @default("CONFIRMED")
+  isTrial       Boolean  @default(false)
   priceEGP      Int      @default(0)
   priceUSD      Int      @default(0)
   transactionId String?  @unique

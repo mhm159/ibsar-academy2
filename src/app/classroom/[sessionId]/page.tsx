@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/card'
 import { VideoPanel } from '@/components/classroom/video-panel'
 import { ChatPanel } from '@/components/classroom/chat-panel'
 import { WhiteboardPanel } from '@/components/classroom/whiteboard-panel'
+import { CodeSandboxPanel } from '@/components/classroom/code-sandbox-panel'
 import { useRealtimeClassroom } from '@/components/classroom/use-realtime-classroom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { toast } from 'sonner'
@@ -170,6 +171,20 @@ function ClassroomContent() {
     [sessionId],
   )
 
+  const handleCodeChange = useCallback(
+    (code: string, language: string) => {
+      rt.sendCodeUpdate(code, language)
+    },
+    [rt],
+  )
+
+  const handleCodeLockToggle = useCallback(
+    (locked: boolean) => {
+      rt.sendCodeLock(locked)
+    },
+    [rt],
+  )
+
   const handleRecordingToggle = async () => {
     if (!joinResult) return
     const action = recordingStatus === 'STARTED' ? 'stop' : 'start'
@@ -282,15 +297,18 @@ function ClassroomContent() {
             />
           </div>
 
-          {/* Chat + Whiteboard tabs (mobile: full width) */}
+          {/* Chat + Whiteboard + Code tabs (mobile: full width) */}
           <div className="min-h-[400px] lg:min-h-0">
             <Tabs defaultValue="chat" className="h-full flex flex-col">
-              <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+              <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10">
                 <TabsTrigger value="chat" className="data-[state=active]:bg-gold data-[state=active]:text-night text-white/70">
                   💬 المحادثة
                 </TabsTrigger>
                 <TabsTrigger value="board" className="data-[state=active]:bg-gold data-[state=active]:text-night text-white/70">
                   ✏️ السبورة
+                </TabsTrigger>
+                <TabsTrigger value="code" className="data-[state=active]:bg-emerald-egypt data-[state=active]:text-white text-white/70">
+                  💻 الكود
                 </TabsTrigger>
               </TabsList>
 
@@ -312,6 +330,17 @@ function ClassroomContent() {
                   onElementsChange={handleWhiteboardChange}
                   onStateRequest={() => {}}
                   onSave={handleWhiteboardSave}
+                />
+              </TabsContent>
+
+              <TabsContent value="code" className="flex-1 mt-2 min-h-0">
+                <CodeSandboxPanel
+                  code={rt.codeContent}
+                  language={rt.codeLanguage}
+                  isLocked={rt.codeLocked}
+                  isTeacher={isTeacher}
+                  onCodeChange={handleCodeChange}
+                  onLockToggle={handleCodeLockToggle}
                 />
               </TabsContent>
             </Tabs>

@@ -17,6 +17,7 @@ interface Session {
   endTime: string
   durationMins: number
   status: string
+  isTrial?: boolean
   meetingUrl: string | null
   recordingUrl?: string | null
   students: Array<{ id: string; name: string }>
@@ -175,6 +176,11 @@ function SessionRow({ session }: { session: Session }) {
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <TrackBadge track={session.track} />
             <StatusBadge status={completed ? 'COMPLETED' : session.status} />
+            {session.isTrial && (
+              <span className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
+                حصة تجريبية
+              </span>
+            )}
           </div>
           <p className="text-sm font-bold">{session.title}</p>
           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

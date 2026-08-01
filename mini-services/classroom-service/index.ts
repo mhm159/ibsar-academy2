@@ -168,6 +168,27 @@ io.on('connection', (socket) => {
     })
   })
 
+  // ---- Live Code Sandbox: broadcast code changes ----
+  socket.on('code:update', (payload: {
+    sessionId: string
+    code: string
+    language: string
+  }) => {
+    const roomId = getRoomId(payload.sessionId)
+    // Broadcast to everyone EXCEPT sender
+    socket.to(roomId).emit('code:update', payload)
+  })
+
+  // ---- Live Code Sandbox: teacher locks/unlocks editing ----
+  socket.on('code:lock', (payload: {
+    sessionId: string
+    locked: boolean
+  }) => {
+    const roomId = getRoomId(payload.sessionId)
+    io.to(roomId).emit('code:lock', { locked: payload.locked })
+    console.log(`[classroom] Code ${payload.locked ? 'locked' : 'unlocked'} in session ${payload.sessionId}`)
+  })
+
   // ---- Cursor pointer sync (for collaborative drawing) ----
   socket.on('cursor:move', (payload: {
     sessionId: string

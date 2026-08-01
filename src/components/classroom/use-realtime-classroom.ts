@@ -62,6 +62,10 @@ export function useRealtimeClassroom({
   const [messages, setMessages] = useState<ChatMessagePayload[]>([])
   const [whiteboardElements, setWhiteboardElements] = useState<any[]>([])
   const [cursors, setCursors] = useState<Map<string, CursorPayload>>(new Map())
+  // Code Sandbox state
+  const [codeContent, setCodeContent] = useState<string>('# مرحباً! اكتب كودك هنا\nprint("Hello, Ibsar Academy!")')
+  const [codeLanguage, setCodeLanguage] = useState<string>('python')
+  const [codeLocked, setCodeLocked] = useState<boolean>(false)
 
   // Connect on mount
   useEffect(() => {
@@ -136,6 +140,15 @@ export function useRealtimeClassroom({
       })
     })
 
+    // Code Sandbox
+    socket.on('code:update', (payload: { sessionId: string; code: string; language: string }) => {
+      setCodeContent(payload.code)
+      setCodeLanguage(payload.language)
+    })
+    socket.on('code:lock', (payload: { locked: boolean }) => {
+      setCodeLocked(payload.locked)
+    })
+
     return () => {
       socket.disconnect()
       socketRef.current = null
@@ -200,6 +213,25 @@ export function useRealtimeClassroom({
     [sessionId],
   )
 
+  // Broadcast code update (any participant can write unless locked)
+  const sendCodeUpdate = useCallback(
+    (code: string, language: string) => {
+      if (!socketRef.current || !sessionId) return
+      socketRef.current.emit('code:update', { sessionId, code, language })
+    },
+    [sessionId],
+  )
+
+  // Teacher locks/unlocks code editing for students
+  const sendCodeLock = useCallback(
+    (locked: boolean) => {
+      if (!socketRef.current || !sessionId) return
+      socketRef.current.emit('code:lock', { sessionId, locked })
+      setCodeLocked(locked)
+    },
+    [sessionId],
+  )
+
   return {
     connected,
     presence,
@@ -214,5 +246,13 @@ export function useRealtimeClassroom({
     respondWhiteboardState,
     requestWhiteboardState,
     sendCursorMove,
+    // Code Sandbox
+    codeContent,
+    setCodeContent,
+    codeLanguage,
+    setCodeLanguage,
+    codeLocked,
+    sendCodeUpdate,
+    sendCodeLock,
   }
 }

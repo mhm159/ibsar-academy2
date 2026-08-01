@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { useMode } from '@/components/use-mode'
 import { Mascot, triggerConfetti } from '@/components/site/kids-effects'
 import { SeasonalBanner } from '@/components/site/seasonal-banner'
+import { BookTrialModal } from '@/components/dashboard/book-trial-modal'
 
 interface OverviewData {
   stats: {
