@@ -59,6 +59,7 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/payouts', label: 'طلبات السحب', icon: CreditCard },
   { href: '/admin/financials', label: 'التقارير المالية', icon: ClipboardList },
   { href: '/admin/trials', label: 'الحصص التجريبية', icon: CalendarDays },
+  { href: '/admin/whatsapp-reports', label: 'تقارير واتساب', icon: FileBarChart },
   { href: '/admin/teacher-pricing', label: 'تسعير المعلمين', icon: Settings },
   { href: '/admin/reviews', label: 'التقييمات', icon: Star },
   { href: '/admin/alerts', label: 'تنبيهات AI', icon: AlertTriangle },
