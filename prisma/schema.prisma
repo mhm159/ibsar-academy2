@@ -110,12 +110,18 @@ model Student {
   grade         String?  // school grade
   // level per track: JSON string e.g. {"PROGRAMMING":"BEGINNER"}
   levelsJson    String   @default("{}")
+  // Gamification properties
+  pointsBalance Int      @default(0)
+  // Active equipped reward references (store RewardItem IDs)
+  activeFrameId Int?      // FK to RewardItem (type FRAME)
+  activeTitleId Int?      // FK to RewardItem (type TITLE)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   bookings        Booking[]
   progressReports ProgressReport[]
   homeworks       Homework[]
+  rewards         StudentReward[]
 
   @@index([parentId])
 }
@@ -885,4 +891,50 @@ model NotificationPreference {
   quietStartHour  Int      @default(22) // 10 PM
   quietEndHour    Int      @default(7)  // 7 AM
   updatedAt       DateTime @updatedAt
+}
+
+// ============================================================
+// Phase 7 — Mystery Boxes & Avatar Store
+// ============================================================
+
+// -----------------------------
+// RewardItem — Items won from mystery boxes (Frames, Titles)
+// -----------------------------
+// -----------------------------
+// RewardItem — Items won from mystery boxes (Frames, Titles)
+// -----------------------------
+model RewardItem {
+  id        Int      @id @default(autoincrement())
+  name      String   // Display name (e.g., "Golden Frame")
+  type      RewardType
+  rarity    Rarity
+  cssValue  String   // CSS class or styling value used in UI
+  imageUrl  String?
+  students  StudentReward[]
+}
+
+// -----------------------------
+// StudentReward — The items a student owns
+// -----------------------------
+model StudentReward {
+  id          Int      @id @default(autoincrement())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  rewardId    Int
+  reward      RewardItem @relation(fields: [rewardId], references: [id])
+  unlockedAt  DateTime @default(now())
+
+  @@unique([studentId, rewardId])
+}
+
+enum RewardType {
+  FRAME
+  TITLE
+}
+
+enum Rarity {
+  COMMON   // 🟢
+  RARE     // 🔵
+  EPIC     // 🟣
+  LEGENDARY // 🟡
 }

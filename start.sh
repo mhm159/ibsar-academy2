@@ -97,30 +97,22 @@ echo -e "  ${YELLOW}🌱 الخطوة 4/5: بذر البيانات الأولي�
 echo -e "  ${BLUE}══════════════════════════════════════════════════════════${NC}"
 if [ "$USE_BUN" -eq 1 ]; then
     bun run prisma/seed.ts
+echo -e "${YELLOW}🌱 الخطوة 4/5: بذر البيانات الأولية...${NC}"
+if [ -f "prisma/db/custom.db" ]; then
+    echo -e "${GREEN}✅ قاعدة البيانات موجودة مسبقاً، سيتم الحفاظ على بياناتك وتخطي عملية بذر البيانات.${NC}\n"
 else
-    npx tsx prisma/seed.ts
+    echo -e "${YELLOW}🌱 نقوم بزرع البيانات لأول مرة...${NC}"
+    if [ "$USE_BUN" -eq 1 ]; then
+        bun run prisma/seed.ts
+        bun run prisma/seed-payments.ts 2>/dev/null
+        bun run prisma/seed-gamification.ts 2>/dev/null
+    else
+        npx tsx prisma/seed.ts
+        npx tsx prisma/seed-payments.ts 2>/dev/null
+        npx tsx prisma/seed-gamification.ts 2>/dev/null
+    fi
+    echo -e "${GREEN}✅ تم بذر البيانات${NC}\n"
 fi
-echo -e "  ${GREEN}✅ تم بذر البيانات الأولية${NC}"
-echo ""
-
-# بذر الدفع والعملات
-echo -e "  ${CYAN}🌱 بذر بيانات الدفع والعملات...${NC}"
-if [ "$USE_BUN" -eq 1 ]; then
-    bun run prisma/seed-payments.ts 2>/dev/null || true
-else
-    npx tsx prisma/seed-payments.ts 2>/dev/null || true
-fi
-echo -e "  ${GREEN}✅ تم بذر بيانات الدفع${NC}"
-echo ""
-
-# بذر الـ Gamification
-echo -e "  ${CYAN}🌱 بذر النقاط والأوسمة...${NC}"
-if [ "$USE_BUN" -eq 1 ]; then
-    bun run prisma/seed-gamification.ts 2>/dev/null || true
-else
-    npx tsx prisma/seed-gamification.ts 2>/dev/null || true
-fi
-echo -e "  ${GREEN}✅ تم بذر النقاط والأوسمة${NC}"
 echo ""
 
 # الخطوة 5: تشغيل الخوادم

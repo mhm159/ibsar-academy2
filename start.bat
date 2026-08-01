@@ -81,7 +81,7 @@ echo  ════════════════════════�
 if %USE_BUN% equ 1 (
     bun run db:push
 ) else (
-    npx prisma db push --accept-data-loss
+    npx prisma db push
 )
 if %errorlevel% neq 0 (
     echo  ❌ فشل إنشاء قاعدة البيانات
@@ -95,32 +95,42 @@ echo.
 echo  ══════════════════════════════════════════════════════════
 echo  🌱 الخطوة 4/5: بذر البيانات الأولية (معلمين + طلاب + حصص)...
 echo  ══════════════════════════════════════════════════════════
-if %USE_BUN% equ 1 (
-    bun run prisma/seed.ts
+if exist "prisma\db\custom.db" (
+    echo  ✅ قاعدة البيانات موجودة مسبقاً، سيتم الحفاظ على بياناتك وتخطي عملية بذر البيانات.
+    echo.
 ) else (
-    npx tsx prisma/seed.ts
-)
-echo  ✅ تم بذر البيانات الأولية
-echo.
+    echo  🌱 نقوم بزرع البيانات لأول مرة...
+    if %USE_BUN% equ 1 (
+        bun run prisma/seed.ts
+    ) else (
+        npx tsx prisma/seed.ts
+    )
+    echo  ✅ تم بذر البيانات الأولية
+    echo.
+
 
 :: بذر بيانات الدفع والعملات
 echo  🌱 بذر بيانات الدفع والعملات...
-if %USE_BUN% equ 1 (
-    bun run prisma/seed-payments.ts 2>nul
-) else (
-    npx tsx prisma/seed-payments.ts 2>nul
+if not exist "prisma\db\custom.db" (
+    if %USE_BUN% equ 1 (
+        bun run prisma/seed-payments.ts 2>nul
+    ) else (
+        npx tsx prisma/seed-payments.ts 2>nul
+    )
+    echo  ✅ تم بذر بيانات الدفع
 )
-echo  ✅ تم بذر بيانات الدفع
 echo.
 
 :: بذر بيانات الـ Gamification
 echo  🌱 بذر النقاط والأوسمة...
-if %USE_BUN% equ 1 (
-    bun run prisma/seed-gamification.ts 2>nul
-) else (
-    npx tsx prisma/seed-gamification.ts 2>nul
+if not exist "prisma\db\custom.db" (
+    if %USE_BUN% equ 1 (
+        bun run prisma/seed-gamification.ts 2>nul
+    ) else (
+        npx tsx prisma/seed-gamification.ts 2>nul
+    )
+    echo  ✅ تم بذر النقاط والأوسمة
 )
-echo  ✅ تم بذر النقاط والأوسمة
 echo.
 
 :: الخطوة 5: تشغيل الخوادم

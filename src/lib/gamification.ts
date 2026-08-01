@@ -84,6 +84,14 @@ export async function awardPoints(params: {
     },
   })
 
+  // Increment pointsBalance on the Student model (if points > 0)
+  if (points > 0) {
+    await db.student.update({
+      where: { id: studentId },
+      data: { pointsBalance: { increment: points } },
+    })
+  }
+
   // Get new total
   const newTotal = await getStudentTotalPoints(studentId)
 
@@ -233,7 +241,7 @@ export async function checkAndUnlockBadges(studentId: string): Promise<
 
 /** Get full gamification profile for a student */
 export async function getStudentGamification(studentId: string) {
-  const [totalPoints, pointsLog, badges, streak, completedSessions] = await Promise.all([
+  const [totalPoints, pointsLog, badges, streak, completedSessions, studentData, inventory] = await Promise.all([
     getStudentTotalPoints(studentId),
     db.pointsLog.findMany({
       where: { studentId },
@@ -247,6 +255,8 @@ export async function getStudentGamification(studentId: string) {
     }),
     db.streak.findUnique({ where: { studentId } }),
     db.booking.count({ where: { studentId, status: 'COMPLETED' } }),
+    db.student.findUnique({ where: { id: studentId }, select: { pointsBalance: true, activeFrame: true, activeTitle: true } }),
+    db.studentReward.findMany({ where: { studentId }, include: { reward: true } }),
   ])
 
   const level = getLevelFromPoints(totalPoints)
@@ -254,6 +264,10 @@ export async function getStudentGamification(studentId: string) {
 
   return {
     totalPoints,
+    pointsBalance: studentData?.pointsBalance ?? 0,
+    activeFrame: studentData?.activeFrame,
+    activeTitle: studentData?.activeTitle,
+    inventory: inventory.map(sr => sr.reward),
     level,
     completedSessions,
     streak: streak
@@ -364,4 +378,37 @@ export async function seedBadges() {
     })
   }
   console.log(`✓ Seeded ${badges.length} badges`)
+}
+
+/** Seed default rewards (Frames & Titles) */
+export async function seedRewards() {
+  const rewards = [
+    // Frames
+    { type: 'FRAME', name: 'إطار خشبي', rarity: 'COMMON', cssValue: 'ring-4 ring-amber-700/50', icon: '🪵' },
+    { type: 'FRAME', name: 'إطار أزرق ساطع', rarity: 'COMMON', cssValue: 'ring-4 ring-blue-500', icon: '🔵' },
+    { type: 'FRAME', name: 'إطار الطبيعة', rarity: 'RARE', cssValue: 'ring-4 ring-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]', icon: '🍃' },
+    { type: 'FRAME', name: 'إطار فضي', rarity: 'RARE', cssValue: 'ring-4 ring-slate-400 shadow-[0_0_20px_rgba(148,163,184,0.6)]', icon: '🥈' },
+    { type: 'FRAME', name: 'إطار نيون', rarity: 'EPIC', cssValue: 'ring-4 ring-fuchsia-500 shadow-[0_0_25px_rgba(217,70,239,0.8)]', icon: '⚡' },
+    { type: 'FRAME', name: 'إطار ذهبي متوهج', rarity: 'LEGENDARY', cssValue: 'ring-4 ring-yellow-400 shadow-[0_0_35px_rgba(250,204,21,1)] animate-pulse', icon: '👑' },
+    
+    // Titles
+    { type: 'TITLE', name: 'طالب مجتهد', rarity: 'COMMON', cssValue: 'text-slate-600 bg-slate-100', icon: '📚' },
+    { type: 'TITLE', name: 'مفكر صغير', rarity: 'COMMON', cssValue: 'text-blue-600 bg-blue-100', icon: '💡' },
+    { type: 'TITLE', name: 'بطل الرياضيات', rarity: 'RARE', cssValue: 'text-green-700 bg-green-100 font-bold', icon: '🧮' },
+    { type: 'TITLE', name: 'مبرمج واعد', rarity: 'RARE', cssValue: 'text-indigo-700 bg-indigo-100 font-bold', icon: '💻' },
+    { type: 'TITLE', name: 'فارس المعرفة', rarity: 'EPIC', cssValue: 'text-purple-700 bg-purple-100 font-bold shadow-sm', icon: '⚔️' },
+    { type: 'TITLE', name: 'أسطورة الأكاديمية', rarity: 'LEGENDARY', cssValue: 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-amber-600 font-black drop-shadow-md', icon: '🌟' },
+  ]
+
+  let count = 0
+  for (const r of rewards) {
+    const existing = await db.rewardItem.findFirst({ where: { name: r.name } })
+    if (!existing) {
+      await db.rewardItem.create({ data: r })
+      count++
+    }
+  }
+  if (count > 0) {
+    console.log(`✓ Seeded ${count} new mystery box rewards`)
+  }
 }

@@ -17,6 +17,9 @@ import { useMode } from '@/components/use-mode'
 import { triggerConfetti } from '@/components/site/kids-effects'
 import { playCoin, playLevelUp, isSoundEnabled } from '@/lib/sounds'
 import { toast } from 'sonner'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MysteryBox } from '@/components/dashboard/mystery-box'
+import { StudentInventory } from '@/components/dashboard/student-inventory'
 
 interface Level {
   level: number
@@ -43,6 +46,17 @@ interface Badge {
 
 interface GamificationData {
   totalPoints: number
+  pointsBalance: number
+  activeFrame?: string
+  activeTitle?: string
+  inventory: Array<{
+    id: string
+    name: string
+    type: string
+    rarity: string
+    cssValue: string
+    icon: string
+  }>
   level: {
     current: Level
     next: Level | null
@@ -129,6 +143,12 @@ function GamificationView() {
         title={isKids ? '🏆 رحلتك البطولية' : 'الإنجازات والنقاط'}
         description={isKids ? 'اجمع نقاط + افتح أوسمة + اصعد مستويات!' : 'تتبّع نقاط وأوسمة ومستويات طفلك'}
       />
+      <Tabs defaultValue="stats" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="stats">الإنجازات</TabsTrigger>
+          <TabsTrigger value="store">المتجر</TabsTrigger>
+        </TabsList>
+        <TabsContent value="stats">
 
       {/* Student selector */}
       {data.students.length > 0 && (
@@ -141,38 +161,11 @@ function GamificationView() {
               {data.students.map((s) => (
                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
-      {/* Level + Points Hero */}
-      <Card className={`p-6 mb-4 ${isKids ? 'kids-card' : 'glass border-gold/15'}`}
-        style={isKids ? { background: `linear-gradient(135deg, ${data.level.current.color}33, ${data.level.current.color}11)` } : undefined}
-      >
-        <div className="flex items-center gap-6 flex-wrap">
-          {/* Level badge */}
-          <div
-            className="h-24 w-24 rounded-full flex items-center justify-center text-5xl shrink-0 kids-bounce"
-            style={{ background: `linear-gradient(135deg, ${data.level.current.color}, ${data.level.current.color}88)` }}
-          >
-            {data.level.current.icon}
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h2 className="font-display text-2xl font-extrabold">
-                مستوى {data.level.current.level}
-              </h2>
-              <span
-                className="px-2 py-0.5 rounded-full text-xs font-bold text-white"
-                style={{ background: data.level.current.color }}
-              >
-                {data.level.current.name}
-              </span>
-            </div>
             <p className="text-2xl font-extrabold text-gradient-gold mb-2">
-              {data.totalPoints} نقطة
+              {data.totalPoints} نقطة (إجمالي الإنجازات)
+            </p>
+            <p className="text-sm font-bold text-muted-foreground mb-4">
+              الرصيد المتاح: <span className="text-primary">{data.pointsBalance} نقطة</span>
             </p>
 
             {/* Progress to next level */}
@@ -296,6 +289,49 @@ function GamificationView() {
           )}
         </div>
       </div>
+      </TabsContent>
+      
+      <TabsContent value="store">
+        <div className="grid lg:grid-cols-2 gap-8">
+          <Card className="p-6 glass border-primary/20">
+            <h2 className="text-2xl font-display font-bold text-center mb-2">الصندوق السحري 🎁</h2>
+            <p className="text-center text-muted-foreground mb-8">استخدم نقاطك لفتح الصندوق السحري واربح إطارات وألقاب نادرة!</p>
+            <MysteryBox 
+              studentId={selectedStudent} 
+              balance={data.pointsBalance}
+              onRewardUnlocked={(reward, newBalance) => {
+                setData(prev => prev ? {
+                  ...prev,
+                  pointsBalance: newBalance,
+                  inventory: [reward, ...prev.inventory]
+                } : prev)
+              }}
+            />
+          </Card>
+
+          <Card className="p-6 glass border-border">
+            <h2 className="text-2xl font-display font-bold mb-2">الخزانة 🎒</h2>
+            <p className="text-muted-foreground mb-6">قم بتفعيل الإطارات والألقاب التي ربحتها</p>
+            <StudentInventory 
+              studentId={selectedStudent}
+              inventory={data.inventory}
+              activeFrame={data.activeFrame}
+              activeTitle={data.activeTitle}
+              onEquip={(type, css, name) => {
+                setData(prev => {
+                  if (!prev) return prev
+                  return {
+                    ...prev,
+                    activeFrame: type === 'FRAME' ? css : prev.activeFrame,
+                    activeTitle: type === 'TITLE' ? name : prev.activeTitle
+                  }
+                })
+              }}
+            />
+          </Card>
+        </div>
+      </TabsContent>
+    </Tabs>
     </>
   )
 }

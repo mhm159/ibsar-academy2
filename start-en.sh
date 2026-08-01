@@ -87,16 +87,20 @@ echo ""
 echo -e "  ${BLUE}============================================================${NC}"
 echo -e "  ${YELLOW}[4/5] Seeding initial data...${NC}"
 echo -e "  ${BLUE}============================================================${NC}"
-if [ "$USE_BUN" -eq 1 ]; then
-    bun run prisma/seed.ts
-    bun run prisma/seed-payments.ts
-    bun run prisma/seed-gamification.ts
+if [ -f "prisma/db/custom.db" ]; then
+    echo -e "${GREEN}[OK] Database already exists. Skipping seed to preserve your data.${NC}\n"
 else
-    npx tsx prisma/seed.ts
-    npx tsx prisma/seed-payments.ts
-    npx tsx prisma/seed-gamification.ts
+    if [ "$USE_BUN" -eq 1 ]; then
+        bun run prisma/seed.ts
+        bun run prisma/seed-comprehensive.ts
+        bun run prisma/fix-accounts.ts
+    else
+        npx tsx prisma/seed.ts
+        npx tsx prisma/seed-comprehensive.ts
+        npx tsx prisma/fix-accounts.ts
+    fi
+    echo -e "${GREEN}[OK] Data seeded${NC}\n"
 fi
-echo -e "  ${GREEN}[OK] Data seeded${NC}"
 echo ""
 
 # Step 5: Start servers
