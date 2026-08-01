@@ -76,13 +76,21 @@ export function CodeSandboxPanel({
   const pyodideRef = useRef<any>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Sync incoming realtime code (from other participants)
-  useEffect(() => {
+  // Sync incoming realtime code (from other participants) at render time
+  const [prevCode, setPrevCode] = useState(code)
+  if (prevCode !== code) {
+    setPrevCode(code)
     setLocalCode(code)
-  }, [code])
-  useEffect(() => {
+  }
+  const [prevLang, setPrevLang] = useState(language)
+  if (prevLang !== language) {
+    setPrevLang(language)
     setLocalLang(language)
-  }, [language])
+  }
+
+  const addOutput = useCallback((type: OutputLine['type'], text: string) => {
+    setOutput(prev => [...prev, { type, text }])
+  }, [])
 
   // Load Pyodide on first Python run
   const loadPyodide = useCallback(async () => {
@@ -102,7 +110,7 @@ export function CodeSandboxPanel({
     } finally {
       setPyodideLoading(false)
     }
-  }, [pyodideLoading])
+  }, [pyodideLoading, addOutput])
 
   // Load Pyodide script tag dynamically
   useEffect(() => {
@@ -113,10 +121,6 @@ export function CodeSandboxPanel({
     script.async = true
     document.head.appendChild(script)
   }, [])
-
-  const addOutput = (type: OutputLine['type'], text: string) => {
-    setOutput(prev => [...prev, { type, text }])
-  }
 
   const clearOutput = () => setOutput([])
 
@@ -165,7 +169,6 @@ sys.stderr = _captured_stderr
         console.log = (...args: any[]) => logs.push(args.map(String).join(' '))
         console.error = (...args: any[]) => logs.push('ERROR: ' + args.map(String).join(' '))
         try {
-          // eslint-disable-next-line no-eval
           const result = eval(localCode)
           console.log = origLog
           console.error = origError

@@ -81,11 +81,13 @@ function ProfileEditor() {
         setDiplomaUrl(d.teacher.diplomaUrl ?? null)
         // Initialize availability for all days (default off)
         const existing = new Map(
-          d.availability.map((a: any) => [a.dayOfWeek, a]),
+          d.availability.map((a: any) => [a.dayOfWeek, a] as [number, { startHour: number; endHour: number; isActive: boolean }]),
         )
         setAvailability(
           DAYS.map((day) => {
-            const ex = existing.get(day.idx)
+            const ex = existing.get(day.idx) as
+              | { startHour: number; endHour: number; isActive: boolean }
+              | undefined
             return ex
               ? { dayOfWeek: day.idx, startHour: ex.startHour, endHour: ex.endHour, isActive: ex.isActive }
               : { dayOfWeek: day.idx, startHour: 16, endHour: 20, isActive: false }

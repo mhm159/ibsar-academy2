@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'البريد الإلكتروني غير صحيح' }, { status: 422 })
   }
 
-  const result = await consumeOtp({ target: normalized, code, purpose })
+  const result = await consumeOtp({ target: normalized, code, channel, purpose })
   if (!result.ok) {
     return NextResponse.json({ error: result.reason }, { status: 400 })
   }

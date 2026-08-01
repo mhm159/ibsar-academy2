@@ -65,24 +65,26 @@ export default function AdminEscrowPage() {
 
 function EscrowAdmin() {
   const [data, setData] = useState<Data | null>(null)
-  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('HELD')
   const [acting, setActing] = useState<string | null>(null)
+  const loading = data === null
 
   const load = () => {
-    setLoading(true)
     fetch(`/api/dashboard/admin/escrow?status=${statusFilter}`)
       .then((r) => r.json())
       .then((d) => {
-        if (!d.error) setData(d)
-        setLoading(false)
+        if (d.error) {
+          setData(null)
+          return
+        }
+        setData(d)
       })
-      .catch(() => setLoading(false))
+      .catch(() => setData(null))
   }
 
   useEffect(() => {
     load()
-     
+      
   }, [statusFilter])
 
   const handleAction = async (escrowId: string, action: 'RELEASE' | 'REFUND') => {
@@ -181,7 +183,13 @@ function EscrowAdmin() {
 
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm text-muted-foreground">تصفية:</span>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => {
+            setData(null)
+            setStatusFilter(v)
+          }}
+        >
           <SelectTrigger className="w-[160px] h-9"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="HELD">محتجز</SelectItem>

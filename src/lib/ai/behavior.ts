@@ -47,19 +47,19 @@ export async function analyzeStudentBehavior(
         where: { status: { in: ['COMPLETED', 'NO_SHOW'] } },
         include: {
           session: { select: { title: true, track: true, startTime: true } },
-          progressReports: {
-            select: {
-              score: true,
-              engagement: true,
-              understanding: true,
-              homework: true,
-              attendance: true,
-              notes: true,
-              createdAt: true,
-            },
-          },
         },
         orderBy: { session: { startTime: 'asc' } },
+      },
+      progressReports: {
+        select: {
+          score: true,
+          engagement: true,
+          understanding: true,
+          homework: true,
+          attendance: true,
+          notes: true,
+          createdAt: true,
+        },
       },
     },
   })
@@ -69,7 +69,7 @@ export async function analyzeStudentBehavior(
   }
 
   // Aggregate metrics
-  const reports = student.bookings.flatMap((b) => b.progressReports)
+  const reports = student.progressReports
   const totalSessions = student.bookings.length
   const completedSessions = student.bookings.filter((b) => b.status === 'COMPLETED').length
   const noShowSessions = student.bookings.filter((b) => b.status === 'NO_SHOW').length

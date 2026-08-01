@@ -30,7 +30,7 @@ export function TeachersSection() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURED_TEACHERS.map((teacher, i) => {
-            const teacherTracks = TRACKS.filter((t) => teacher.tracks.includes(t.id))
+            const teacherTracks = TRACKS.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
             return (
               <motion.div
                 key={teacher.id}

@@ -28,8 +28,39 @@ export function FocusTracker({ studentName, sessionId, onDistracted, onSaveScore
   const distractedStreak = useRef(0)
   const activeTracker = useRef<number | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const startTrackingRef = useRef<() => void>(() => {})
 
   // ─── 1. Load ML Models via CDN ──────────────────────────────────────────────
+  const loadScript = (src: string) => {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script')
+      s.src = src
+      s.onload = resolve
+      s.onerror = reject
+      document.head.appendChild(s)
+    })
+  }
+
+  // ─── 2. Start Camera (Low Res) ──────────────────────────────────────────────
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: 160, height: 120, frameRate: 10 } 
+      })
+      streamRef.current = stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play()
+          startTrackingRef.current()
+        }
+      }
+    } catch (err) {
+      console.warn('FocusTracker: Camera permission denied or not available.', err)
+      setStatus('ERROR')
+    }
+  }
+
   useEffect(() => {
     let isMounted = true
 
@@ -54,37 +85,16 @@ export function FocusTracker({ studentName, sessionId, onDistracted, onSaveScore
     return () => { isMounted = false }
   }, [])
 
-  const loadScript = (src: string) => {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script')
-      s.src = src
-      s.onload = resolve
-      s.onerror = reject
-      document.head.appendChild(s)
-    })
-  }
-
-  // ─── 2. Start Camera (Low Res) ──────────────────────────────────────────────
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { width: 160, height: 120, frameRate: 10 } 
-      })
-      streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play()
-          startTracking()
-        }
-      }
-    } catch (err) {
-      console.warn('FocusTracker: Camera permission denied or not available.', err)
-      setStatus('ERROR')
+  // ─── 3. Face Tracking Logic ──────────────────────────────────────────────────
+  const handleDistracted = () => {
+    distractedStreak.current += 1
+    setIsDistracted(true)
+    // If distracted for 4 consecutive checks (8 seconds), alert the teacher
+    if (distractedStreak.current === 4) {
+      onDistracted()
     }
   }
 
-  // ─── 3. Face Tracking Logic ──────────────────────────────────────────────────
   const startTracking = async () => {
     const fld = (window as any).faceLandmarksDetection
     if (!fld) return
@@ -137,14 +147,9 @@ export function FocusTracker({ studentName, sessionId, onDistracted, onSaveScore
     }
   }
 
-  const handleDistracted = () => {
-    distractedStreak.current += 1
-    setIsDistracted(true)
-    // If distracted for 4 consecutive checks (8 seconds), alert the teacher
-    if (distractedStreak.current === 4) {
-      onDistracted()
-    }
-  }
+  useEffect(() => {
+    startTrackingRef.current = startTracking
+  })
 
   // ─── Cleanup & Save ──────────────────────────────────────────────────────────
   useEffect(() => {

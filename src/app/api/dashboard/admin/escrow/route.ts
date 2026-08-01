@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
     releasedUSD: 0,
     refundedCount: 0,
     refundedEGP: 0,
+    refundedUSD: 0,
     platformFeeEGP: 0,
     platformFeeUSD: 0,
   }

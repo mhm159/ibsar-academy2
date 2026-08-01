@@ -39,13 +39,8 @@ export function BookTrialModal({ students }: BookTrialModalProps) {
 
   // Fetch available days when track changes
   useEffect(() => {
-    if (!selectedTrack) {
-      setAvailableDays([])
-      setSelectedDay('')
-      return
-    }
+    if (!selectedTrack) return
 
-    setFetchingDays(true)
     fetch(`/api/dashboard/parent/trials/available-slots?track=${selectedTrack}`)
       .then(r => r.json())
       .then(d => {
@@ -126,7 +121,12 @@ export function BookTrialModal({ students }: BookTrialModalProps) {
               {TRACKS.map(t => (
                 <button
                   key={t.id}
-                  onClick={() => setSelectedTrack(t.id)}
+                  onClick={() => {
+                    setSelectedTrack(t.id)
+                    setAvailableDays([])
+                    setSelectedDay('')
+                    setFetchingDays(true)
+                  }}
                   className={`p-2 rounded-xl border-2 text-center text-sm transition-all ${
                     selectedTrack === t.id 
                       ? 'border-gold bg-gold/10 font-bold' 

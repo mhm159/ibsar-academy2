@@ -102,7 +102,7 @@ async function main() {
     },
   ]
 
-  const teachers = []
+  const teachers: Array<{ user: { id: string; name: string | null }; teacher: { id: string }; avatar: string }> = []
   for (const td of teacherData) {
     const user = await db.user.upsert({
       where: { phone: td.phone },
@@ -174,7 +174,7 @@ async function main() {
     { teacherIdx: 3, track: 'PROGRAMMING', title: 'تطوير الألعاب بـ Godot', level: 'INTERMEDIATE', ageMin: 10, ageMax: 16, totalSessions: 10, sessionDurationMins: 75, priceEGP: 549, priceUSD: 32, description: 'اصنع لعبتك الخاصة من الصفر باستخدام محرك Godot' },
   ]
 
-  const courses = []
+  const courses: Array<{ id: string; title: string }> = []
   for (const cd of coursesData) {
     const teacher = teachers[cd.teacherIdx].teacher
     const existing = await db.course.findFirst({
@@ -313,7 +313,7 @@ async function main() {
   // ---------- Sessions (upcoming + past) ----------
   await db.session.deleteMany({ where: { id: { startsWith: 'seed-session-' } } })
   const now = new Date()
-  const sessions = []
+  const sessions: Array<{ id: string }> = []
 
   // Helper to create a session
   const createSession = async (

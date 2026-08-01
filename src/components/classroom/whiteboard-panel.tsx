@@ -68,6 +68,7 @@ export function WhiteboardPanel({
   useEffect(() => {
     if (isTeacher || realtimeElements.length === 0) return
     isApplyingRemote.current = true
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mirror realtime board state
     setStrokes(realtimeElements)
     if (excalidrawAPI) {
       excalidrawAPI.updateScene({ elements: realtimeElements })

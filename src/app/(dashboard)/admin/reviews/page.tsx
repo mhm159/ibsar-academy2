@@ -39,19 +39,21 @@ export default function AdminReviewsPage() {
 
 function ReviewsAdmin() {
   const [data, setData] = useState<{ reviews: Review[]; summary: any } | null>(null)
-  const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('all')
   const [acting, setActing] = useState<string | null>(null)
+  const loading = data === null
 
   const load = (flaggedOnly = false) => {
-    setLoading(true)
     fetch(`/api/dashboard/admin/reviews${flaggedOnly ? '?flagged=true' : ''}`)
       .then((r) => r.json())
       .then((d) => {
-        if (!d.error) setData(d)
-        setLoading(false)
+        if (d.error) {
+          setData(null)
+          return
+        }
+        setData(d)
       })
-      .catch(() => setLoading(false))
+      .catch(() => setData(null))
   }
 
   useEffect(() => {
@@ -118,7 +120,14 @@ function ReviewsAdmin() {
         <StatCard icon={Check} label="معتمدة" value={data.reviews.filter((r) => r.isApproved && !r.isFlagged).length} color="var(--emerald-egypt)" />
       </div>
 
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => {
+          setData(null)
+          setTab(v)
+        }}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2 glass border border-gold/20 max-w-md">
           <TabsTrigger value="all" className="data-[state=active]:bg-gold data-[state=active]:text-night">
             الكل ({data.summary.total})

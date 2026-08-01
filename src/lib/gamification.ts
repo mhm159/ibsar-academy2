@@ -255,7 +255,7 @@ export async function getStudentGamification(studentId: string) {
     }),
     db.streak.findUnique({ where: { studentId } }),
     db.booking.count({ where: { studentId, status: 'COMPLETED' } }),
-    db.student.findUnique({ where: { id: studentId }, select: { pointsBalance: true, activeFrame: true, activeTitle: true } }),
+    db.student.findUnique({ where: { id: studentId }, select: { pointsBalance: true, activeFrameId: true, activeTitleId: true } }),
     db.studentReward.findMany({ where: { studentId }, include: { reward: true } }),
   ])
 
@@ -265,8 +265,14 @@ export async function getStudentGamification(studentId: string) {
   return {
     totalPoints,
     pointsBalance: studentData?.pointsBalance ?? 0,
-    activeFrame: studentData?.activeFrame,
-    activeTitle: studentData?.activeTitle,
+    activeFrame:
+      studentData?.activeFrameId != null
+        ? inventory.find((sr) => sr.reward.id === studentData.activeFrameId)?.reward.cssValue ?? null
+        : null,
+    activeTitle:
+      studentData?.activeTitleId != null
+        ? inventory.find((sr) => sr.reward.id === studentData.activeTitleId)?.reward.name ?? null
+        : null,
     inventory: inventory.map(sr => sr.reward),
     level,
     completedSessions,
@@ -382,7 +388,15 @@ export async function seedBadges() {
 
 /** Seed default rewards (Frames & Titles) */
 export async function seedRewards() {
-  const rewards = [
+  type RewardSeed = {
+    type: 'FRAME' | 'TITLE'
+    name: string
+    rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
+    cssValue: string
+    icon: string
+  }
+
+  const rewards: RewardSeed[] = [
     // Frames
     { type: 'FRAME', name: 'إطار خشبي', rarity: 'COMMON', cssValue: 'ring-4 ring-amber-700/50', icon: '🪵' },
     { type: 'FRAME', name: 'إطار أزرق ساطع', rarity: 'COMMON', cssValue: 'ring-4 ring-blue-500', icon: '🔵' },

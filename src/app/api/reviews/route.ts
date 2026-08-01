@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     const sess = await db.session.findUnique({
       where: { id: sessionId },
       include: {
-        teacher: { include: { user: { select: { id: true } } } },
+        teacher: { include: { user: { select: { id: true, name: true } } } },
         bookings: { include: { student: { include: { parent: { include: { user: { select: { id: true } } } } } } } },
       },
     })
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
     // Parent reviews the teacher
     const parent = await db.parent.findUnique({
       where: { userId: session.userId },
-      include: { students: { select: { id: true } } },
+      include: { students: { select: { id: true } }, user: { select: { name: true } } },
     })
     if (!parent) {
       return NextResponse.json({ error: 'الملف غير موجود' }, { status: 404 })

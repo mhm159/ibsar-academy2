@@ -46,7 +46,7 @@ const CreateStudent = z.object({
   birthDate: z.string().datetime().optional(),
   gender: z.enum(['MALE', 'FEMALE']).optional(),
   grade: z.string().max(80).optional(),
-  levels: z.record(z.string()).optional(),
+  levels: z.record(z.string(), z.string()).optional(),
 })
 
 /** POST /api/dashboard/parent/students — add a new child */

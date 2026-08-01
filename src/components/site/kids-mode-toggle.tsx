@@ -16,7 +16,10 @@ import { cn } from '@/lib/utils'
 export function KidsModeToggle() {
   const { mode, setMode, isKids } = useMode()
   const [mounted, setMounted] = React.useState(false)
-  React.useEffect(() => setMounted(true), [])
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration guard
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
     return (

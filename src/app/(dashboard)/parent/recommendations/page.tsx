@@ -64,11 +64,9 @@ function RecommendationsView() {
       .catch(() => setLoading(false))
   }, [])
 
-  // Load recommendations when student changes
-  useEffect(() => {
-    if (!selectedStudent) return
+  const loadRecommendations = (studentId: string) => {
     setGenerating(true)
-    fetch(`/api/recommendations?student=${selectedStudent}`)
+    fetch(`/api/recommendations?student=${studentId}`)
       .then((r) => r.json())
       .then((d) => {
         if (d.recommendations) {
@@ -78,6 +76,13 @@ function RecommendationsView() {
         setGenerating(false)
       })
       .catch(() => setGenerating(false))
+  }
+
+  // Load recommendations when student changes
+  useEffect(() => {
+    if (!selectedStudent) return
+    const t = setTimeout(() => loadRecommendations(selectedStudent), 0)
+    return () => clearTimeout(t)
   }, [selectedStudent])
 
   const handleRefresh = async () => {

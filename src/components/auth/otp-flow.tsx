@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 interface OtpFlowProps {
   /** target (phone or email) */
   target: string
-  channel: 'SMS' | 'EMAIL'
+  channel: 'SMS' | 'EMAIL' | 'WHATSAPP'
   purpose: 'REGISTER' | 'LOGIN' | 'RESET'
   /** called with the verification token once the OTP is consumed */
   onVerified: (verificationToken: string) => void | Promise<void>
@@ -62,7 +62,8 @@ export function OtpFlow({ target, channel, purpose, onVerified, onChangeTarget }
 
   // Auto-send on mount
   React.useEffect(() => {
-    sendOtp()
+    const t = setTimeout(() => sendOtp(), 0)
+    return () => clearTimeout(t)
   }, [sendOtp])
 
   // Countdown

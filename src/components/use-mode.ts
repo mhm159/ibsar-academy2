@@ -12,6 +12,26 @@ interface UseModeReturn {
 }
 
 const MODE_KEY = 'ibdaa-mode'
+const MODE_CHANGE_EVENT = 'ibdaa-mode-change'
+
+function getSnapshot(): Mode {
+  if (typeof window === 'undefined') return 'pro'
+  try {
+    const saved = window.localStorage.getItem(MODE_KEY)
+    return saved === 'kids' ? 'kids' : 'pro'
+  } catch {
+    return 'pro'
+  }
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener('storage', onChange)
+  window.addEventListener(MODE_CHANGE_EVENT, onChange)
+  return () => {
+    window.removeEventListener('storage', onChange)
+    window.removeEventListener(MODE_CHANGE_EVENT, onChange)
+  }
+}
 
 /**
  * useMode — manages pro/kids UI mode.
@@ -22,34 +42,25 @@ const MODE_KEY = 'ibdaa-mode'
  * Mode is persisted in localStorage and applied to <html data-mode="...">.
  */
 export function useMode(): UseModeReturn {
-  const [mode, setModeState] = React.useState<Mode>('pro')
+  const mode = React.useSyncExternalStore<Mode>(subscribe, getSnapshot, () => 'pro')
 
-  // Load from localStorage on mount
+  // Apply mode to <html data-mode="...">
   React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem(MODE_KEY) as Mode | null
-      if (saved === 'kids' || saved === 'pro') {
-        setModeState(saved)
-        applyMode(saved)
-      }
-    } catch {
-      // ignore
-    }
-  }, [])
+    applyMode(mode)
+  }, [mode])
 
   const setMode = React.useCallback((newMode: Mode) => {
-    setModeState(newMode)
-    applyMode(newMode)
     try {
-      localStorage.setItem(MODE_KEY, newMode)
+      window.localStorage.setItem(MODE_KEY, newMode)
     } catch {
       // ignore
     }
+    window.dispatchEvent(new Event(MODE_CHANGE_EVENT))
   }, [])
 
   const toggle = React.useCallback(() => {
-    setMode(mode === 'pro' ? 'kids' : 'pro')
-  }, [mode, setMode])
+    setMode(getSnapshot() === 'pro' ? 'kids' : 'pro')
+  }, [setMode])
 
   return {
     mode,

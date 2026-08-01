@@ -95,8 +95,8 @@ export default function ParentGamificationPage() {
 function GamificationView() {
   const { isKids } = useMode()
   const [data, setData] = useState<GamificationData | null>(null)
-  const [loading, setLoading] = useState(true)
   const [selectedStudent, setSelectedStudent] = useState('')
+  const loading = data === null
 
   useEffect(() => {
     fetch('/api/dashboard/parent/students')
@@ -110,15 +110,13 @@ function GamificationView() {
 
   useEffect(() => {
     if (!selectedStudent) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true)
     fetch(`/api/dashboard/parent/gamification?student=${selectedStudent}`)
       .then((r) => r.json())
       .then((d) => {
         if (!d.error) setData(d)
-        setLoading(false)
+        else setData(null)
       })
-      .catch(() => setLoading(false))
+      .catch(() => setData(null))
   }, [selectedStudent])
 
   if (loading || !data) {
@@ -143,24 +141,46 @@ function GamificationView() {
         title={isKids ? '🏆 رحلتك البطولية' : 'الإنجازات والنقاط'}
         description={isKids ? 'اجمع نقاط + افتح أوسمة + اصعد مستويات!' : 'تتبّع نقاط وأوسمة ومستويات طفلك'}
       />
+
       <Tabs defaultValue="stats" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="stats">الإنجازات</TabsTrigger>
           <TabsTrigger value="store">المتجر</TabsTrigger>
         </TabsList>
-        <TabsContent value="stats">
 
-      {/* Student selector */}
-      {data.students.length > 0 && (
-        <div className="mb-4">
-          <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-            <SelectTrigger className="h-12 max-w-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {data.students.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-              ))}
+        <TabsContent value="stats">
+          {/* Student selector */}
+          {data.students.length > 0 && (
+            <div className="mb-4">
+              <Select
+                value={selectedStudent}
+                onValueChange={(id) => {
+                  setData(null)
+                  setSelectedStudent(id)
+                }}
+              >
+                <SelectTrigger className="h-12 max-w-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {data.students.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Level card */}
+          <Card className={`p-6 mb-6 ${isKids ? 'kids-card' : 'glass border-gold/15'}`}>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl kids-bounce">{data.level.current.icon}</div>
+              <div>
+                <p className="text-sm text-muted-foreground">المستوى الحالي</p>
+                <h2 className="font-display text-2xl font-extrabold">{data.level.current.name}</h2>
+              </div>
+            </div>
+
             <p className="text-2xl font-extrabold text-gradient-gold mb-2">
               {data.totalPoints} نقطة (إجمالي الإنجازات)
             </p>
@@ -191,147 +211,145 @@ function GamificationView() {
                 </p>
               </div>
             )}
-          </div>
 
-          {isKids && (
-            <Button onClick={handleCelebrate} className="kids-btn kids-btn-accent">
-              🎉 احتفل
-            </Button>
-          )}
-        </div>
-      </Card>
+            {isKids && (
+              <Button onClick={handleCelebrate} className="kids-btn kids-btn-accent mt-4">
+                🎉 احتفل
+              </Button>
+            )}
+          </Card>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] text-white' : 'glass border-gold/15'}`}>
-          <Flame className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-kids-red'}`} />
-          <p className="text-2xl font-extrabold">{data.streak.current}</p>
-          <p className={`text-xs ${isKids ? 'opacity-90' : 'text-muted-foreground'}`}>أيام متتالية</p>
-        </Card>
-        <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#4ECDC4] to-[#44A8B3] text-white' : 'glass border-gold/15'}`}>
-          <Trophy className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-gold'}`} />
-          <p className="text-2xl font-extrabold">{data.completedSessions}</p>
-          <p className={`text-xs ${isKids ? 'opacity-90' : 'text-muted-foreground'}`}>حصص مكتملة</p>
-        </Card>
-        <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#FFE66D] to-[#FFC93C] text-[#2D1B4E]' : 'glass border-gold/15'}`}>
-          <Award className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-emerald-egypt'}`} />
-          <p className="text-2xl font-extrabold">{data.unlockedBadges.length}</p>
-          <p className={`text-xs ${isKids ? 'opacity-80' : 'text-muted-foreground'}`}>أوسمة مفتوحة</p>
-        </Card>
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Badges */}
-        <div>
-          <h3 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-            <Award className="h-5 w-5 text-gold" />
-            الأوسمة ({data.unlockedBadges.length}/{data.unlockedBadges.length + data.lockedBadges.length})
-          </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-            {data.unlockedBadges.map((badge, i) => (
-              <div
-                key={badge.id}
-                className={`rounded-2xl p-3 text-center kids-pop-in ${isKids ? 'kids-card' : 'glass border-gold/15'}`}
-                style={{ animationDelay: `${i * 0.05}s`, borderColor: badge.color }}
-                title={badge.description}
-              >
-                <div className="text-4xl mb-1 kids-bounce" style={{ animationDelay: `${i * 0.2}s` }}>{badge.icon}</div>
-                <p className="text-xs font-bold truncate">{badge.nameAr}</p>
-                <div
-                  className="mt-1 inline-block w-2 h-2 rounded-full"
-                  style={{ background: TIER_COLORS[badge.tier] ?? '#999' }}
-                />
-              </div>
-            ))}
-            {data.lockedBadges.map((badge) => (
-              <div
-                key={badge.id}
-                className="rounded-2xl p-3 text-center opacity-40 grayscale glass border-border"
-                title={badge.description}
-              >
-                <div className="text-4xl mb-1"><Lock className="h-8 w-8 mx-auto text-muted-foreground" /></div>
-                <p className="text-xs font-bold truncate">{badge.nameAr}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Recent points */}
-        <div>
-          <h3 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-azure" />
-            آخر النقاط المكتسبة
-          </h3>
-          {data.recentPoints.length === 0 ? (
-            <Card className="glass border-gold/15">
-              <EmptyState icon={Star} title="لا توجد نقاط بعد" description="اكسب نقاط من إكمال الحصص" />
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] text-white' : 'glass border-gold/15'}`}>
+              <Flame className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-kids-red'}`} />
+              <p className="text-2xl font-extrabold">{data.streak.current}</p>
+              <p className={`text-xs ${isKids ? 'opacity-90' : 'text-muted-foreground'}`}>أيام متتالية</p>
             </Card>
-          ) : (
-            <div className="space-y-2">
-              {data.recentPoints.slice(0, 10).map((p) => (
-                <div key={p.id} className={`flex items-center justify-between rounded-xl p-3 ${isKids ? 'bg-muted/40' : 'bg-muted/30'}`}>
-                  <div className="flex items-center gap-2">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      p.points > 0 ? 'bg-emerald-egypt/15 text-emerald-egypt' : 'bg-destructive/15 text-destructive'
-                    }`}>
-                      {p.points > 0 ? '+' : ''}{p.points}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">{p.description}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(p.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-      </TabsContent>
-      
-      <TabsContent value="store">
-        <div className="grid lg:grid-cols-2 gap-8">
-          <Card className="p-6 glass border-primary/20">
-            <h2 className="text-2xl font-display font-bold text-center mb-2">الصندوق السحري 🎁</h2>
-            <p className="text-center text-muted-foreground mb-8">استخدم نقاطك لفتح الصندوق السحري واربح إطارات وألقاب نادرة!</p>
-            <MysteryBox 
-              studentId={selectedStudent} 
-              balance={data.pointsBalance}
-              onRewardUnlocked={(reward, newBalance) => {
-                setData(prev => prev ? {
-                  ...prev,
-                  pointsBalance: newBalance,
-                  inventory: [reward, ...prev.inventory]
-                } : prev)
-              }}
-            />
-          </Card>
+            <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#4ECDC4] to-[#44A8B3] text-white' : 'glass border-gold/15'}`}>
+              <Trophy className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-gold'}`} />
+              <p className="text-2xl font-extrabold">{data.completedSessions}</p>
+              <p className={`text-xs ${isKids ? 'opacity-90' : 'text-muted-foreground'}`}>حصص مكتملة</p>
+            </Card>
+            <Card className={`p-4 text-center ${isKids ? 'kids-card bg-gradient-to-br from-[#FFE66D] to-[#FFC93C] text-[#2D1B4E]' : 'glass border-gold/15'}`}>
+              <Award className={`h-8 w-8 mx-auto mb-1 ${isKids ? '' : 'text-emerald-egypt'}`} />
+              <p className="text-2xl font-extrabold">{data.unlockedBadges.length}</p>
+              <p className={`text-xs ${isKids ? 'opacity-80' : 'text-muted-foreground'}`}>أوسمة مفتوحة</p>
+            </Card>
+          </div>
 
-          <Card className="p-6 glass border-border">
-            <h2 className="text-2xl font-display font-bold mb-2">الخزانة 🎒</h2>
-            <p className="text-muted-foreground mb-6">قم بتفعيل الإطارات والألقاب التي ربحتها</p>
-            <StudentInventory 
-              studentId={selectedStudent}
-              inventory={data.inventory}
-              activeFrame={data.activeFrame}
-              activeTitle={data.activeTitle}
-              onEquip={(type, css, name) => {
-                setData(prev => {
-                  if (!prev) return prev
-                  return {
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Badges */}
+            <div>
+              <h3 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
+                <Award className="h-5 w-5 text-gold" />
+                الأوسمة ({data.unlockedBadges.length}/{data.unlockedBadges.length + data.lockedBadges.length})
+              </h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {data.unlockedBadges.map((badge, i) => (
+                  <div
+                    key={badge.id}
+                    className={`rounded-2xl p-3 text-center kids-pop-in ${isKids ? 'kids-card' : 'glass border-gold/15'}`}
+                    style={{ animationDelay: `${i * 0.05}s`, borderColor: badge.color }}
+                    title={badge.description}
+                  >
+                    <div className="text-4xl mb-1 kids-bounce" style={{ animationDelay: `${i * 0.2}s` }}>{badge.icon}</div>
+                    <p className="text-xs font-bold truncate">{badge.nameAr}</p>
+                    <div
+                      className="mt-1 inline-block w-2 h-2 rounded-full"
+                      style={{ background: TIER_COLORS[badge.tier] ?? '#999' }}
+                    />
+                  </div>
+                ))}
+                {data.lockedBadges.map((badge) => (
+                  <div
+                    key={badge.id}
+                    className="rounded-2xl p-3 text-center opacity-40 grayscale glass border-border"
+                    title={badge.description}
+                  >
+                    <div className="text-4xl mb-1"><Lock className="h-8 w-8 mx-auto text-muted-foreground" /></div>
+                    <p className="text-xs font-bold truncate">{badge.nameAr}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recent points */}
+            <div>
+              <h3 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-azure" />
+                آخر النقاط المكتسبة
+              </h3>
+              {data.recentPoints.length === 0 ? (
+                <Card className="glass border-gold/15">
+                  <EmptyState icon={Star} title="لا توجد نقاط بعد" description="اكسب نقاط من إكمال الحصص" />
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {data.recentPoints.slice(0, 10).map((p) => (
+                    <div key={p.id} className={`flex items-center justify-between rounded-xl p-3 ${isKids ? 'bg-muted/40' : 'bg-muted/30'}`}>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          p.points > 0 ? 'bg-emerald-egypt/15 text-emerald-egypt' : 'bg-destructive/15 text-destructive'
+                        }`}>
+                          {p.points > 0 ? '+' : ''}{p.points}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold">{p.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(p.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="store">
+          <div className="grid lg:grid-cols-2 gap-8">
+            <Card className="p-6 glass border-primary/20">
+              <h2 className="text-2xl font-display font-bold text-center mb-2">الصندوق السحري 🎁</h2>
+              <p className="text-center text-muted-foreground mb-8">استخدم نقاطك لفتح الصندوق السحري واربح إطارات وألقاب نادرة!</p>
+              <MysteryBox
+                studentId={selectedStudent}
+                balance={data.pointsBalance}
+                onRewardUnlocked={(reward, newBalance) => {
+                  setData(prev => prev ? {
                     ...prev,
-                    activeFrame: type === 'FRAME' ? css : prev.activeFrame,
-                    activeTitle: type === 'TITLE' ? name : prev.activeTitle
-                  }
-                })
-              }}
-            />
-          </Card>
-        </div>
-      </TabsContent>
-    </Tabs>
+                    pointsBalance: newBalance,
+                    inventory: [reward, ...prev.inventory]
+                  } : prev)
+                }}
+              />
+            </Card>
+
+            <Card className="p-6 glass border-border">
+              <h2 className="text-2xl font-display font-bold mb-2">الخزانة 🎒</h2>
+              <p className="text-muted-foreground mb-6">قم بتفعيل الإطارات والألقاب التي ربحتها</p>
+              <StudentInventory
+                studentId={selectedStudent}
+                inventory={data.inventory}
+                activeFrame={data.activeFrame}
+                activeTitle={data.activeTitle}
+                onEquip={(type, css, name) => {
+                  setData(prev => {
+                    if (!prev) return prev
+                    return {
+                      ...prev,
+                      activeFrame: type === 'FRAME' ? css : prev.activeFrame,
+                      activeTitle: type === 'TITLE' ? name : prev.activeTitle
+                    }
+                  })
+                }}
+              />
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </>
   )
 }

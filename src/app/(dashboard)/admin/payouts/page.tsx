@@ -77,25 +77,27 @@ export default function AdminPayoutsPage() {
 
 function PayoutsAdmin() {
   const [data, setData] = useState<Data | null>(null)
-  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('PENDING')
   const [processing, setProcessing] = useState<string | null>(null)
   const [processDialog, setProcessDialog] = useState<Payout | null>(null)
+  const loading = data === null
 
   const load = () => {
-    setLoading(true)
     fetch(`/api/dashboard/admin/payouts?status=${statusFilter}`)
       .then((r) => r.json())
       .then((d) => {
-        if (!d.error) setData(d)
-        setLoading(false)
+        if (d.error) {
+          setData(null)
+          return
+        }
+        setData(d)
       })
-      .catch(() => setLoading(false))
+      .catch(() => setData(null))
   }
 
   useEffect(() => {
     load()
-     
+      
   }, [statusFilter])
 
   const handleAction = async (payoutId: string, action: 'APPROVE' | 'REJECT') => {
@@ -145,7 +147,13 @@ function PayoutsAdmin() {
       {/* Filter */}
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm text-muted-foreground">تصفية:</span>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => {
+            setData(null)
+            setStatusFilter(v)
+          }}
+        >
           <SelectTrigger className="w-[160px] h-9">
             <SelectValue />
           </SelectTrigger>

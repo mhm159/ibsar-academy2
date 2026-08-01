@@ -32,12 +32,12 @@ export async function POST(req: NextRequest) {
     if (studentReward.reward.type === 'FRAME') {
       await db.student.update({
         where: { id: studentId },
-        data: { activeFrame: studentReward.reward.cssValue }
+        data: { activeFrameId: studentReward.rewardId }
       })
     } else if (studentReward.reward.type === 'TITLE') {
       await db.student.update({
         where: { id: studentId },
-        data: { activeTitle: studentReward.reward.name }
+        data: { activeTitleId: studentReward.rewardId }
       })
     }
 

@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     // Verify this parent has a booking for this session
     const parent = await db.parent.findUnique({
       where: { userId: session.userId },
-      include: { students: { select: { id: true } } },
+      include: { students: { select: { id: true } }, user: { select: { name: true } } },
     })
     if (!parent) {
       return NextResponse.json({ error: 'الملف غير موجود' }, { status: 404 })

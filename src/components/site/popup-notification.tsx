@@ -14,7 +14,7 @@ interface PopupNotification {
   title: string
   message: string
   link?: string
-  duration?: number
+  duration: number
 }
 
 // Global state
@@ -112,6 +112,7 @@ export function PopupNotificationContainer() {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration guard
     setMounted(true)
     listeners.add(setPopups)
     return () => { listeners.delete(setPopups) }

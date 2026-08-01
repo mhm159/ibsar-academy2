@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
         },
       },
       student: { select: { name: true } },
+      transaction: { select: { status: true } },
     },
   })
 

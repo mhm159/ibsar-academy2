@@ -20,10 +20,10 @@ export async function GET() {
       student: {
         include: {
           parent: { include: { user: { select: { name: true, phone: true, country: true } } } },
+          progressReports: { select: { id: true } },
         },
       },
       session: { select: { title: true, track: true, startTime: true, status: true } },
-      progressReports: { select: { id: true } },
     },
     orderBy: { session: { startTime: 'desc' } },
   })
@@ -49,7 +49,7 @@ export async function GET() {
       studentMap.set(s.id, {
         id: s.id,
         name: s.name,
-        parentName: s.parent.user.name,
+        parentName: s.parent.user.name ?? '',
         parentPhone: s.parent.user.phone ?? '',
         country: s.parent.user.country ?? 'EG',
         totalSessions: 0,
@@ -68,7 +68,7 @@ export async function GET() {
       entry.lastSessionDate = b.session.startTime
     }
     entry.tracks.add(b.session.track)
-    entry.hasReports += b.progressReports.length
+    entry.hasReports += s.progressReports.length
   }
 
   return NextResponse.json({
