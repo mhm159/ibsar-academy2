@@ -1,0 +1,21 @@
+# Files/dirs that must NOT be sent to the Docker build context
+node_modules
+**/node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+educational-content
+DEPLOY.md
+README.md
+*.log
+npm-debug.log*
+*.bat
+*.sh
+!docker-entrypoint.sh
+start-en.bat
+start-en.sh
+start.bat
+start.sh

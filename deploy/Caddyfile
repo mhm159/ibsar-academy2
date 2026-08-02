@@ -1,0 +1,53 @@
+# Manhal Academy — Caddy proxy for the Docker deployment
+#
+# The Next.js classroom frontend connects to socket.io on the SAME
+# origin with `?XTransformPort=3003`. Caddy inspects the query param
+# and routes those requests to the `socket` service (classroom
+# realtime, port 3003); everything else goes to the Next.js `app`
+# service (port 3000). Service names are Docker Compose hostnames.
+#
+# Note: the repo-root `Caddyfile` is the LOCAL/dev variant (host
+# services on localhost). This file is used only inside Compose.
+
+:80 {
+	@transform_port_query {
+		query XTransformPort=*
+	}
+
+	handle @transform_port_query {
+		reverse_proxy socket:{query.XTransformPort} {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		reverse_proxy app:3000 {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+}
+
+# ---- Optional: HTTPS with your own domain ----
+# Uncomment the block below and replace `example.com` with your domain
+# (point its A record to the server IP first). Caddy obtains a free
+# Let's Encrypt certificate automatically.
+#
+# example.com {
+# 	@transform_port_query {
+# 		query XTransformPort=*
+# 	}
+#
+# 	handle @transform_port_query {
+# 		reverse_proxy socket:{query.XTransformPort}
+# 	}
+#
+# 	handle {
+# 		reverse_proxy app:3000
+# 	}
+# }

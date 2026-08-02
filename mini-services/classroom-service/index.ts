@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — Classroom Realtime Service
+ * Manhal Academy — Classroom Realtime Service
  *
  * Socket.io server on port 3003 that handles:
  *   - Realtime chat messages (per session room)
@@ -11,7 +11,12 @@
  * scoped to that session.
  *
  * Frontend connects via: io("/?XTransformPort=3003") (Caddy forwards
- * the XTransformPort query to localhost:3003).
+ * the XTransformPort query to this service on :3003).
+ *
+ * NOTE: socket.io path is '/' (matches the frontend). Because engine.io
+ * then intercepts every HTTP request, a plain `/health` route cannot be
+ * served from this process; Docker health checks use the engine.io
+ * polling handshake instead: GET /?EIO=4&transport=polling → 200.
  */
 
 import { createServer } from 'http'
@@ -20,16 +25,6 @@ import { Server } from 'socket.io'
 const PORT = 3003
 
 const httpServer = createServer()
-
-// Health check endpoint (must be set up BEFORE attaching socket.io)
-httpServer.on('request', (req, res) => {
-  if (req.url === '/health' || req.url === '/health/') {
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ ok: true, service: 'ibsar-classroom', port: PORT, uptime: process.uptime() }))
-    return
-  }
-  // Let socket.io handle other requests
-})
 
 const io = new Server(httpServer, {
   // CRITICAL: path must be '/' so Caddy can forward based on XTransformPort
@@ -260,8 +255,8 @@ io.on('connection', (socket) => {
 })
 
 httpServer.listen(PORT, () => {
-  console.log(`✓ Ibsar Classroom Service running on port ${PORT}`)
-  console.log(`  Health: http://localhost:${PORT}/health`)
+  console.log(`✓ Manhal Classroom Service running on port ${PORT}`)
+  console.log(`  Handshake check: http://localhost:${PORT}/?EIO=4&transport=polling`)
 })
 
 /* TODO(phase-5): Add AI-powered content filter on chat:send to block external links + inappropriate content. */

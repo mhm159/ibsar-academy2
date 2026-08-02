@@ -9,5 +9,6 @@
     "socket.io": "^4.8.3"
   },
   "module": "esnext",
-  "target": "esnext"
+  "target": "esnext",
+  "type": "module"
 }

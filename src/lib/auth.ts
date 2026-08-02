@@ -103,8 +103,10 @@ export async function issueOtp(params: {
   })
 
   return {
-    // Only expose the code in non-production for dev/testing convenience.
-    devCode: process.env.NODE_ENV === 'production' ? undefined : code,
+    // Only expose the code in non-production for dev/testing convenience,
+    // unless OTP_DEBUG=1 is set (used by the self-hosted test deployment
+    // when no real SMS/WhatsApp provider is configured).
+    devCode: process.env.NODE_ENV === 'production' && process.env.OTP_DEBUG !== '1' ? undefined : code,
     expiresAt,
   }
 }
