@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { COUNTRIES } from '@/lib/constants'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
 type Step = 'FORM' | 'OTP'
@@ -79,7 +79,7 @@ export default function RegisterStudentPage() {
         setStep('FORM')
         return
       }
-      toast.success('تم إنشاء حساب ولي الأمر بنجاح!')
+      notify.success('تم إنشاء حساب ولي الأمر بنجاح!')
       router.push('/parent')
     } catch {
       setError('تعذّر الاتصال بالخادم')

@@ -37,29 +37,22 @@ if not exist ".env.local" (
 echo  [1/6] Installing dependencies...
 call %CMD% install --no-audit --no-fund
 echo  [OK] Dependencies installed
-echo  [2/6] Resetting database...
-call %CMD% run db:push --force-reset --accept-data-loss
-echo  [OK] Database reset
+echo  [2/6] Syncing database schema (keeps existing data)...
+call %CMD% run db:push --accept-data-loss
+echo  [OK] Database schema synced (data preserved)
 echo  [3/6] Generating Prisma...
 call %CMD% run db:generate
 echo  [OK] Prisma generated
 echo.
 
-rem Skipping Prisma generate and DB push because db:reset already handled these steps
-echo.
-
-echo  [4/6] Seeding data...
-echo  [4/6] Seeding data...
+echo  [4/6] Seeding data (first run only)...
 if "%CMD%"=="bun" (
-    call bun run prisma/seed.ts
-    call bun run prisma/seed-comprehensive.ts
-    call bun run prisma/fix-accounts.ts
+    call bun run prisma/seed-once.ts
 ) else (
-    call npx tsx prisma/seed.ts
-    call npx tsx prisma/seed-comprehensive.ts
-    call npx tsx prisma/fix-accounts.ts
+    call npx tsx prisma/seed-once.ts
 )
-echo  [OK] Data seededecho.
+echo  [OK] Seeding done
+echo.
 
 echo  [5/6] Starting classroom service (port 3003)...
 start "Ibdaa Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"

@@ -1,13 +1,13 @@
 'use client'
 import { formatTime } from '@/lib/datetime'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Users, CalendarClock, Wallet, Star, Clock, CheckCircle2, ArrowLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { StatCard, PageHeader, TrackBadge, StarRating, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useSyncedData } from '@/hooks/use-synced-data'
 
 interface TeacherOverview {
   teacher: {
@@ -58,18 +58,15 @@ export default function TeacherOverviewPage() {
 }
 
 function TeacherOverviewContent() {
-  const [data, setData] = useState<TeacherOverview | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/dashboard/teacher/overview')
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d.error) setData(d)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+  const { data, loading } = useSyncedData<TeacherOverview>({
+    key: 'ibsar:teacher-overview',
+    fetcher: async () => {
+      const r = await fetch('/api/dashboard/teacher/overview')
+      const d = await r.json()
+      if (d.error) throw new Error(d.error)
+      return d as TeacherOverview
+    },
+  })
 
   if (loading) {
     return (

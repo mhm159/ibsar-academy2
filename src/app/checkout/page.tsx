@@ -10,7 +10,7 @@ import { ThemeToggle } from '@/components/site/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { PAYMENT_METHOD_LABELS, COUNTRIES_CONFIG, type PaymentMethod } from '@/lib/payment/config'
 import { cn } from '@/lib/utils'
 
@@ -62,7 +62,7 @@ function CheckoutContent() {
       .then((r) => r.json())
       .then((d) => {
         if (d.error) {
-          toast.error(d.error)
+          notify.error(d.error)
           router.replace('/parent/sessions')
           return
         }
@@ -71,7 +71,7 @@ function CheckoutContent() {
         setLoading(false)
       })
       .catch(() => {
-        toast.error('تعذّر التحميل')
+        notify.error('تعذّر التحميل')
         router.replace('/parent/sessions')
       })
   }, [bookingId, router])
@@ -90,13 +90,13 @@ function CheckoutContent() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل إنشاء الدفع')
+        notify.error(d.error || 'فشل إنشاء الدفع')
         return
       }
       // Redirect to provider checkout URL
       window.location.href = d.checkoutUrl
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setProcessing(false)
     }
@@ -198,7 +198,7 @@ function CheckoutContent() {
               <Button
                 variant="outline"
                 className="glass border-gold/30 hover:bg-gold/10"
-                onClick={() => toast.info('سيتم تطبيق الكوبون عند الدفع')}
+                onClick={() => notify.info('سيتم تطبيق الكوبون عند الدفع')}
               >
                 تطبيق
               </Button>

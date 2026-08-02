@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BookOpen, Loader2, Plus, Check, Clock, FileText, Star } from 'lucide-react'
+import { BookOpen, Loader2, Plus, Check, Clock, FileText, Star, ListChecks, X } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
@@ -24,8 +24,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { FileUpload } from '@/components/dashboard/file-upload'
+import {
+  InteractiveHomeworkEditor,
+  type InteractiveHomework,
+} from '@/components/dashboard/interactive-homework-editor'
 import { formatDate, formatTime } from '@/lib/datetime'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
+import { cn } from '@/lib/utils'
 
 interface Homework {
   id: string
@@ -47,6 +52,11 @@ interface Homework {
   feedback: string | null
   reviewedAt: string | null
   createdAt: string
+  questions?: Array<{ id: string; type: string; question: string; points: number }>
+  answers?: Record<string, string> | null
+  autoGraded?: boolean
+  totalPoints?: number
+  earnedPoints?: number
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -63,7 +73,17 @@ const TYPE_LABELS: Record<string, string> = {
   READING: 'قراءة',
   QUIZ: 'اختبار',
   PROJECT: 'مشروع',
+  INTERACTIVE: 'اختبار تفاعلي',
 }
+
+const TYPE_OPTIONS = [
+  { id: 'PRACTICAL', label: 'تطبيقي', icon: '🛠️', desc: 'مهمة عملية على المنصة' },
+  { id: 'WRITTEN', label: 'تحريري', icon: '✍️', desc: 'إجابة نصية أو ملف' },
+  { id: 'READING', label: 'قراءة', icon: '📖', desc: 'مادة للقراءة والمذاكرة' },
+  { id: 'QUIZ', label: 'اختبار', icon: '📝', desc: 'اختبار قصير' },
+  { id: 'PROJECT', label: 'مشروع', icon: '🎨', desc: 'مشروع أسبوعي' },
+  { id: 'INTERACTIVE', label: 'اختبار تفاعلي', icon: '🧠', desc: 'أسئلة موضوعية بتصحيح تلقائي' },
+]
 
 export default function TeacherHomeworkPage() {
   return (
@@ -120,9 +140,12 @@ function HomeworkManager() {
                 تكليف واجب
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>تكليف طالب بواجب</DialogTitle>
+                <DialogTitle className="flex items-center gap-2">
+                  <ListChecks className="h-5 w-5 text-gold" />
+                  تكليف طالب بواجب
+                </DialogTitle>
               </DialogHeader>
               <AssignForm onSaved={() => setAssignDialog(false)} />
             </DialogContent>
@@ -243,6 +266,31 @@ function HomeworkCard({ homework, onReview }: { homework: Homework; onReview?: (
             </a>
           )}
 
+          {/* Interactive questions summary */}
+          {homework.questions && homework.questions.length > 0 && (
+            <div className="mt-2 rounded-lg bg-azure/10 p-2 text-xs">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="font-bold">🧠 أسئلة تفاعلية ({homework.questions.length}):</span>
+                {homework.autoGraded && homework.earnedPoints !== undefined && (
+                  <span className="font-extrabold text-emerald-egypt">
+                    النتيجة: {homework.earnedPoints}/{homework.totalPoints} نقطة
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {homework.questions.slice(0, 5).map((q, i) => (
+                  <span key={q.id} className="px-1.5 py-0.5 rounded bg-white/40 text-muted-foreground">
+                    {i + 1}. {q.type === 'MCQ' ? '🔘' : q.type === 'TRUE_FALSE' ? '✓✗' : q.type === 'FILL_BLANK' ? '✏️' : '📝'}
+                    {' '}{q.question.length > 28 ? q.question.slice(0, 28) + '…' : q.question}
+                  </span>
+                ))}
+                {homework.questions.length > 5 && (
+                  <span className="text-muted-foreground">+{homework.questions.length - 5} أخرى</span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Grade + feedback */}
           {homework.grade !== null && (
             <div className="mt-2 rounded-lg bg-emerald-egypt/10 p-2 text-xs">
@@ -288,6 +336,7 @@ function AssignForm({ onSaved }: { onSaved: () => void }) {
   const [dueDate, setDueDate] = useState('')
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
   const [attachmentName, setAttachmentName] = useState<string | null>(null)
+  const [interactive, setInteractive] = useState<InteractiveHomework>({ questions: [] })
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -302,7 +351,11 @@ function AssignForm({ onSaved }: { onSaved: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!studentId || !title || !description || !dueDate) {
-      toast.error('املأ كل الحقول المطلوبة')
+      notify.error('املأ كل الحقول المطلوبة')
+      return
+    }
+    if (type === 'INTERACTIVE' && interactive.questions.length === 0) {
+      notify.error('أضف سؤالاً واحداً على الأقل في الواجب التفاعلي')
       return
     }
     setSaving(true)
@@ -318,57 +371,35 @@ function AssignForm({ onSaved }: { onSaved: () => void }) {
           dueDate: new Date(dueDate).toISOString(),
           attachmentUrl,
           attachmentName,
+          questions: type === 'INTERACTIVE' ? interactive.questions : undefined,
         }),
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success('تم تكليف الطالب بالواجب')
+      notify.success('تم تكليف الطالب بالواجب')
       onSaved()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label>الطالب</Label>
-        <Select value={studentId} onValueChange={setStudentId}>
-          <SelectTrigger className="h-11"><SelectValue placeholder="اختر الطالب..." /></SelectTrigger>
-          <SelectContent>
-            {students.map((s) => (
-              <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="title">عنوان الواجب</Label>
-        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required className="h-11" placeholder="مثال: تمرين 3 — الحلقات" />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="desc">الوصف / التعليمات</Label>
-        <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="اكتب تعليمات الواجب..." />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pl-1">
+      {/* Student + due date */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label>النوع</Label>
-          <Select value={type} onValueChange={setType}>
-            <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+          <Label>الطالب</Label>
+          <Select value={studentId} onValueChange={setStudentId}>
+            <SelectTrigger className="h-11"><SelectValue placeholder="اختر الطالب..." /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="PRACTICAL">تطبيقي</SelectItem>
-              <SelectItem value="WRITTEN">تحريري</SelectItem>
-              <SelectItem value="READING">قراءة</SelectItem>
-              <SelectItem value="QUIZ">اختبار</SelectItem>
-              <SelectItem value="PROJECT">مشروع</SelectItem>
+              {students.map((s) => (
+                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -377,6 +408,51 @@ function AssignForm({ onSaved }: { onSaved: () => void }) {
           <Input id="due" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="h-11" />
         </div>
       </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="title">عنوان الواجب</Label>
+        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required className="h-11" placeholder="مثال: تمرين 3 — الحلقات" />
+      </div>
+
+      {/* Type selector — attractive chips */}
+      <div className="space-y-2">
+        <Label>نوع الواجب</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {TYPE_OPTIONS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setType(t.id)}
+              className={cn(
+                'flex flex-col items-center gap-0.5 rounded-xl border-2 p-2.5 text-center transition-all',
+                type === t.id
+                  ? 'border-gold bg-gold/10 shadow-sm'
+                  : 'border-border hover:border-gold/40',
+              )}
+            >
+              <span className="text-lg leading-none">{t.icon}</span>
+              <span className="text-xs font-bold">{t.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="desc">الوصف / التعليمات</Label>
+        <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="اكتب تعليمات الواجب..." />
+      </div>
+
+      {/* Interactive questions editor (only for INTERACTIVE type) */}
+      {type === 'INTERACTIVE' && (
+        <div className="rounded-xl border border-gold/25 bg-gold/5 p-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <ListChecks className="h-4 w-4 text-gold" />
+            <span className="text-sm font-bold">الأسئلة الموضوعية (تُصحّح تلقائياً)</span>
+            <span className="text-[10px] text-muted-foreground">اختيار من متعدد • صح/خطأ • ملء الفراغ • مقالي</span>
+          </div>
+          <InteractiveHomeworkEditor value={interactive} onChange={setInteractive} />
+        </div>
+      )}
 
       <FileUpload
         type="material"
@@ -387,7 +463,7 @@ function AssignForm({ onSaved }: { onSaved: () => void }) {
         onUploaded={(url) => {
           setAttachmentUrl(url)
           setAttachmentName(url.split('/').pop() ?? 'مرفق')
-          toast.success('تم رفع المرفق')
+          notify.success('تم رفع المرفق')
         }}
         onClear={() => { setAttachmentUrl(null); setAttachmentName(null) }}
       />
@@ -420,13 +496,13 @@ function ReviewForm({ homework, onDone }: { homework: Homework; onDone: () => vo
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success('تم تصحيح الواجب')
+      notify.success('تم تصحيح الواجب')
       onDone()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }

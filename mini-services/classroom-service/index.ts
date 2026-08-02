@@ -189,6 +189,26 @@ io.on('connection', (socket) => {
     console.log(`[classroom] Code ${payload.locked ? 'locked' : 'unlocked'} in session ${payload.sessionId}`)
   })
 
+  // ---- Educational platforms: teacher broadcasts which platform students see ----
+  socket.on('platform:update', (payload: {
+    sessionId: string
+    url: string | null
+  }) => {
+    const roomId = getRoomId(payload.sessionId)
+    socket.to(roomId).emit('platform:update', { url: payload.url })
+    console.log(`[classroom] Platform broadcast in session ${payload.sessionId}`)
+  })
+
+  // ---- Lesson content: teacher broadcasts lesson notes to students ----
+  socket.on('lesson:update', (payload: {
+    sessionId: string
+    content: string
+  }) => {
+    const roomId = getRoomId(payload.sessionId)
+    socket.to(roomId).emit('lesson:update', { content: payload.content })
+    console.log(`[classroom] Lesson broadcast in session ${payload.sessionId}`)
+  })
+
   // ---- AI Focus Tracking: alert teacher ----
   socket.on('focus:alert', (payload: {
     sessionId: string

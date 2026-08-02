@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
 type Step = 'INPUT' | 'OTP'
@@ -43,7 +43,7 @@ export default function LoginPage() {
         setError(data.error || 'فشل تسجيل الدخول')
         return
       }
-      toast.success('تم تسجيل الدخول بنجاح')
+      notify.success('تم تسجيل الدخول بنجاح')
       // Route by role
       const role = data.user?.role
       if (role === 'ADMIN') router.push('/admin')
@@ -98,7 +98,7 @@ export default function LoginPage() {
         setStep('INPUT')
         return
       }
-      toast.success('تم تسجيل الدخول بنجاح')
+      notify.success('تم تسجيل الدخول بنجاح')
       const role = data.user?.role
       if (role === 'ADMIN') router.push('/admin')
       else if (role === 'TEACHER') router.push('/teacher')

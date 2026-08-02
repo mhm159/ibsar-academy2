@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { sendNotification } from '@/lib/notifications'
 import { autoGradeHomework, type Question } from '@/components/dashboard/interactive-homework-editor'
+import { awardPoints, checkAndUnlockBadges, POINTS } from '@/lib/gamification'
 
 /** Safe JSON parse — returns null on invalid/empty input */
 function safeJsonParse(str: string | null | undefined): any {
@@ -168,6 +169,18 @@ export async function POST(req: NextRequest) {
       ...(fullyGraded && { grade, reviewedAt: new Date() }),
     },
   })
+
+  // Gamification: award points (first submission only → status was ASSIGNED)
+  if (homework.status === 'ASSIGNED') {
+    await awardPoints({
+      studentId: homework.studentId,
+      points: fullyGraded ? POINTS.HOMEWORK_DONE + POINTS.QUIZ_PASS : POINTS.HOMEWORK_DONE,
+      reason: 'HOMEWORK_DONE',
+      description: `تسليم واجب: ${homework.title}${fullyGraded ? ' (+نقاط اختبار تفاعلي)' : ''}`,
+      refId: homeworkId,
+    })
+    await checkAndUnlockBadges(homework.studentId)
+  }
 
   // Notify teacher
   await sendNotification(

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Escrow {
   id: string
@@ -89,7 +89,7 @@ function EscrowAdmin() {
 
   const handleAction = async (escrowId: string, action: 'RELEASE' | 'REFUND') => {
     if (action === 'REFUND') {
-      const reason = prompt('سبب الاسترجاع؟')
+      const reason = await notify.prompt('سبب الاسترجاع؟', { placeholder: 'اكتب السبب...' })
       if (!reason) return
       setActing(escrowId)
       try {
@@ -100,16 +100,16 @@ function EscrowAdmin() {
         })
         const d = await res.json()
         if (!res.ok) {
-          toast.error(d.error || 'فشل')
+          notify.error(d.error || 'فشل')
           return
         }
-        toast.success(d.message)
+        notify.success(d.message)
         load()
       } finally {
         setActing(null)
       }
     } else {
-      if (!confirm('تأكيد تحرير الأموال للمعلم؟')) return
+      if (!(await notify.confirm('تأكيد تحرير الأموال للمعلم؟'))) return
       setActing(escrowId)
       try {
         const res = await fetch('/api/dashboard/admin/escrow', {
@@ -119,10 +119,10 @@ function EscrowAdmin() {
         })
         const d = await res.json()
         if (!res.ok) {
-          toast.error(d.error || 'فشل')
+          notify.error(d.error || 'فشل')
           return
         }
-        toast.success(d.message)
+        notify.success(d.message)
         load()
       } finally {
         setActing(null)

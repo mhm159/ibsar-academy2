@@ -6,7 +6,7 @@ import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, TrackBadge, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface PendingTeacher {
   id: string
@@ -65,7 +65,7 @@ function ApprovalsView() {
   }, [])
 
   const handleAction = async (teacherId: string, action: 'APPROVE' | 'REJECT') => {
-    if (action === 'REJECT' && !confirm('هل أنت متأكد من رفض هذا المعلم؟')) return
+    if (action === 'REJECT' && !(await notify.confirm('هل أنت متأكد من رفض هذا المعلم؟'))) return
     setActing(teacherId)
     try {
       const res = await fetch('/api/dashboard/admin/approvals', {
@@ -75,13 +75,13 @@ function ApprovalsView() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل الإجراء')
+        notify.error(d.error || 'فشل الإجراء')
         return
       }
-      toast.success(d.message)
+      notify.success(d.message)
       load()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setActing(null)
     }

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { TRACKS } from '@/lib/constants'
 
 const DAYS = [
@@ -134,12 +134,12 @@ function ProfileEditor() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل الحفظ')
+        notify.error(d.error || 'فشل الحفظ')
         return
       }
-      toast.success('تم تحديث الملف بنجاح')
+      notify.success('تم تحديث الملف بنجاح')
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }
@@ -307,7 +307,7 @@ function ProfileEditor() {
             value={avatarUrl}
             onUploaded={(url) => {
               setAvatarUrl(url)
-              toast.success('تم رفع الصورة')
+              notify.success('تم رفع الصورة')
             }}
             onClear={() => setAvatarUrl(null)}
           />
@@ -320,7 +320,7 @@ function ProfileEditor() {
             value={videoUrl}
             onUploaded={(url) => {
               setVideoUrl(url)
-              toast.success('تم رفع الفيديو')
+              notify.success('تم رفع الفيديو')
             }}
             onClear={() => setVideoUrl(null)}
           />
@@ -333,7 +333,7 @@ function ProfileEditor() {
             value={diplomaUrl}
             onUploaded={(url) => {
               setDiplomaUrl(url)
-              toast.success('تم رفع الشهادة')
+              notify.success('تم رفع الشهادة')
             }}
             onClear={() => setDiplomaUrl(null)}
           />

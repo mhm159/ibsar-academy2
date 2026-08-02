@@ -7,7 +7,7 @@ import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, TrackBadge, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Session {
   id: string
@@ -143,7 +143,7 @@ function SessionRow({ session }: { session: Session }) {
   const isLive = session.status === 'IN_PROGRESS' || (session.meetingUrl && new Date() >= new Date(session.startTime))
 
   const handleComplete = async () => {
-    if (!confirm('تأكيد إكمال الحصة؟ سيتم تحرير المدفوعات للمعلم وخصم عمولة الأكاديمية.')) return
+    if (!(await notify.confirm('تأكيد إكمال الحصة؟ سيتم تحرير المدفوعات للمعلم وخصم عمولة الأكاديمية.'))) return
     setCompleting(true)
     try {
       const res = await fetch('/api/dashboard/teacher/complete-session', {
@@ -153,13 +153,13 @@ function SessionRow({ session }: { session: Session }) {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success(d.message)
+      notify.success(d.message)
       setCompleted(true)
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setCompleting(false)
     }

@@ -184,6 +184,11 @@ export async function refundEscrow(
 
 /**
  * Get teacher's available balance (sum of RELEASED escrows not yet paid out).
+ *
+ * Money in → escrow RELEASED. Money out → Payout in any of
+ * PENDING / APPROVED / PROCESSING / COMPLETED (each request reserves the
+ * amount as soon as it exists, so approving a withdrawal immediately and
+ * correctly reduces the teacher's available balance, preventing double spend).
  */
 export async function getTeacherAvailableBalance(teacherId: string): Promise<{
   availableEGP: number
@@ -205,7 +210,7 @@ export async function getTeacherAvailableBalance(teacherId: string): Promise<{
       _sum: { teacherShareEGP: true, teacherShareUSD: true },
     }),
     db.payout.aggregate({
-      where: { teacherId, status: 'COMPLETED' },
+      where: { teacherId, status: { in: ['PENDING', 'APPROVED', 'PROCESSING', 'COMPLETED'] } },
       _sum: { amountEGP: true, amountUSD: true },
     }),
   ])

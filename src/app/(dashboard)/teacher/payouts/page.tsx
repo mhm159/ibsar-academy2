@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Balance {
   availableEGP: number
@@ -294,10 +294,10 @@ function PayoutsManager() {
 
 function WalletCard({ wallet, onDeleted }: { wallet: Wallet; onDeleted: () => void }) {
   const handleDelete = async () => {
-    if (!confirm('هل تريد حذف هذه المحفظة؟')) return
+    if (!(await notify.confirm('هل تريد حذف هذه المحفظة؟'))) return
     const res = await fetch(`/api/dashboard/teacher/wallets?id=${wallet.id}`, { method: 'DELETE' })
     if (res.ok) {
-      toast.success('تم الحذف')
+      notify.success('تم الحذف')
       onDeleted()
     }
   }
@@ -345,7 +345,7 @@ function WalletForm({ walletTypes, onSaved }: { walletTypes: Array<{ type: strin
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!type || !identifier) {
-      toast.error('املأ البيانات المطلوبة')
+      notify.error('املأ البيانات المطلوبة')
       return
     }
     setSaving(true)
@@ -357,13 +357,13 @@ function WalletForm({ walletTypes, onSaved }: { walletTypes: Array<{ type: strin
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل الحفظ')
+        notify.error(d.error || 'فشل الحفظ')
         return
       }
-      toast.success('تمت إضافة المحفظة')
+      notify.success('تمت إضافة المحفظة')
       onSaved()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }
@@ -456,7 +456,7 @@ function PayoutForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!walletId) {
-      toast.error('اختر المحفظة')
+      notify.error('اختر المحفظة')
       return
     }
     setSaving(true)
@@ -472,13 +472,13 @@ function PayoutForm({
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل الطلب')
+        notify.error(d.error || 'فشل الطلب')
         return
       }
-      toast.success('تم إرسال طلب السحب ✅ سيتم مراجعته من الإدارة')
+      notify.success('تم إرسال طلب السحب ✅ سيتم مراجعته من الإدارة')
       onDone()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }

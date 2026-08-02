@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface User {
   id: string
@@ -73,7 +73,7 @@ function UsersManager() {
 
   const toggleActive = async (user: User) => {
     if (user.role === 'ADMIN') {
-      toast.error('لا يمكنك تعديل حساب إدارة')
+      notify.error('لا يمكنك تعديل حساب إدارة')
       return
     }
     setUpdating(user.id)
@@ -85,13 +85,13 @@ function UsersManager() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل التحديث')
+        notify.error(d.error || 'فشل التحديث')
         return
       }
-      toast.success(user.isActive ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')
+      notify.success(user.isActive ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')
       load()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setUpdating(null)
     }

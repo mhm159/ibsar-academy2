@@ -16,7 +16,7 @@ import {
 import { useMode } from '@/components/use-mode'
 import { triggerConfetti } from '@/components/site/kids-effects'
 import { playCoin, playLevelUp, isSoundEnabled } from '@/lib/sounds'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MysteryBox } from '@/components/dashboard/mystery-box'
 import { StudentInventory } from '@/components/dashboard/student-inventory'
@@ -132,7 +132,7 @@ function GamificationView() {
   const handleCelebrate = () => {
     if (isSoundEnabled()) playLevelUp()
     triggerConfetti(80, 4000)
-    toast.success('🎉 أحسنت!')
+    notify.success('🎉 أحسنت!')
   }
 
   return (

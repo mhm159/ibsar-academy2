@@ -7,7 +7,7 @@ import { PageHeader, StatCard, StarRating, StatusBadge, EmptyState } from '@/com
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Review {
   id: string
@@ -61,9 +61,9 @@ function ReviewsAdmin() {
   }, [tab])
 
   const handleAction = async (reviewId: string, action: 'APPROVE' | 'FLAG' | 'UNFLAG' | 'DELETE') => {
-    if (action === 'DELETE' && !confirm('حذف هذا التقييم نهائياً؟')) return
+    if (action === 'DELETE' && !(await notify.confirm('حذف هذا التقييم نهائياً؟', { danger: true }))) return
     if (action === 'FLAG') {
-      const reason = prompt('سبب الإبلاغ؟')
+      const reason = await notify.prompt('سبب الإبلاغ؟', { placeholder: 'اكتب السبب...' })
       if (!reason) return
       setActing(reviewId)
       try {
@@ -72,7 +72,7 @@ function ReviewsAdmin() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reviewId, action, reason }),
         })
-        toast.success('تم الإبلاغ')
+        notify.success('تم الإبلاغ')
         load(tab === 'flagged')
       } finally {
         setActing(null)
@@ -88,7 +88,7 @@ function ReviewsAdmin() {
       })
       const d = await res.json()
       if (d.ok) {
-        toast.success(d.message ?? 'تم')
+        notify.success(d.message ?? 'تم')
         load(tab === 'flagged')
       }
     } finally {

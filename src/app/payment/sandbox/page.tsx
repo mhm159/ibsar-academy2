@@ -8,7 +8,7 @@ import { Logo } from '@/components/site/logo'
 import { ThemeToggle } from '@/components/site/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 function SandboxPaymentContent() {
   const params = useSearchParams()
@@ -31,13 +31,13 @@ function SandboxPaymentContent() {
       })
       const data = await res.json()
       if (!res.ok) {
-        toast.error(data.error || 'فشل')
+        notify.error(data.error || 'فشل')
         setStatus('failed')
         return
       }
       if (success) {
         setStatus('success')
-        toast.success('تم الدفع بنجاح! (وضع تجريبي)')
+        notify.success('تم الدفع بنجاح! (وضع تجريبي)')
         setTimeout(() => router.push(`/payment/success?tx=${data.transactionId}`), 1500)
       } else {
         setStatus('failed')

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface SessionData {
   courses: Array<{
@@ -304,7 +304,7 @@ function BookingForm({
 
   const handleBook = async () => {
     if (!studentId) {
-      toast.error('اختر الطفل أولاً')
+      notify.error('اختر الطفل أولاً')
       return
     }
     setBooking(true)
@@ -316,13 +316,13 @@ function BookingForm({
       })
       const data = await res.json()
       if (!res.ok) {
-        toast.error(data.error || 'فشل الحجز')
+        notify.error(data.error || 'فشل الحجز')
         return
       }
-      toast.success('تم حجز الحصة بنجاح! 🎉')
+      notify.success('تم حجز الحصة بنجاح! 🎉')
       onBooked()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setBooking(false)
     }

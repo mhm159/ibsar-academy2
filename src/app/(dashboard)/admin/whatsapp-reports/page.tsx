@@ -16,7 +16,7 @@ import {
   FileText,
   AlertTriangle,
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface DryRunParent {
   parentId: string
@@ -52,9 +52,9 @@ function WhatsAppReportsContent() {
       const data = await res.json()
       if (data.ok) {
         setDryRunData(data.parents)
-        toast.success(`سيتم الإرسال لـ ${data.wouldSend} ولي أمر`)
+        notify.success(`سيتم الإرسال لـ ${data.wouldSend} ولي أمر`)
       } else {
-        toast.error(data.error)
+        notify.error(data.error)
       }
     } finally {
       setLoading(false)
@@ -62,7 +62,7 @@ function WhatsAppReportsContent() {
   }
 
   const handleSend = async () => {
-    if (!confirm(`هل تريد إرسال التقارير الأسبوعية فعلياً عبر الواتساب لجميع أولياء الأمور؟`)) return
+    if (!(await notify.confirm(`هل تريد إرسال التقارير الأسبوعية فعلياً عبر الواتساب لجميع أولياء الأمور؟`))) return
     setLoading(true)
     setSendResult(null)
     try {
@@ -74,9 +74,9 @@ function WhatsAppReportsContent() {
       const data = await res.json()
       if (data.ok) {
         setSendResult({ sent: data.sent, failed: data.failed, skipped: data.skipped })
-        toast.success(data.message)
+        notify.success(data.message)
       } else {
-        toast.error(data.error)
+        notify.error(data.error)
       }
     } finally {
       setLoading(false)
@@ -85,7 +85,7 @@ function WhatsAppReportsContent() {
 
   const handlePreview = async () => {
     if (!previewParentId.trim()) {
-      toast.error('أدخل ID ولي الأمر أولاً')
+      notify.error('أدخل ID ولي الأمر أولاً')
       return
     }
     setLoading(true)
@@ -100,7 +100,7 @@ function WhatsAppReportsContent() {
       if (data.ok) {
         setPreview(data.preview)
       } else {
-        toast.error(data.error)
+        notify.error(data.error)
       }
     } finally {
       setLoading(false)

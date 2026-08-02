@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { notify } from '@/lib/notify'
 
 type WbPoint = { x: number; y: number }
 
@@ -539,9 +540,9 @@ export function WhiteboardPanel({
     setCanUndo(true)
   }
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (!isTeacher) return
-    if (!confirm('مسح كل ما على السبورة؟')) return
+    if (!(await notify.confirm('مسح كل ما على السبورة؟'))) return
     pushHistory()
     commitElements([])
   }

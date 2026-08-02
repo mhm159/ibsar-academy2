@@ -1,7 +1,6 @@
 'use client'
 import { formatTime } from '@/lib/datetime'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Users,
@@ -21,6 +20,7 @@ import { useMode } from '@/components/use-mode'
 import { Mascot, triggerConfetti } from '@/components/site/kids-effects'
 import { SeasonalBanner } from '@/components/site/seasonal-banner'
 import { BookTrialModal } from '@/components/dashboard/book-trial-modal'
+import { useSyncedData } from '@/hooks/use-synced-data'
 
 interface OverviewData {
   stats: {
@@ -71,18 +71,15 @@ export default function ParentOverviewPage() {
 
 function ParentOverviewContent() {
   const { isKids } = useMode()
-  const [data, setData] = useState<OverviewData | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/dashboard/parent/overview')
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d.error) setData(d)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+  const { data, loading } = useSyncedData<OverviewData>({
+    key: 'ibsar:parent-overview',
+    fetcher: async () => {
+      const r = await fetch('/api/dashboard/parent/overview')
+      const d = await r.json()
+      if (d.error) throw new Error(d.error)
+      return d as OverviewData
+    },
+  })
 
   if (loading) {
     return (

@@ -15,8 +15,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { FileUpload } from '@/components/dashboard/file-upload'
+import { HomeworkPlayer } from '@/components/dashboard/homework-player'
+import type { Question } from '@/components/dashboard/interactive-homework-editor'
 import { formatDate } from '@/lib/datetime'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Homework {
   id: string
@@ -37,6 +39,11 @@ interface Homework {
   grade: number | null
   feedback: string | null
   reviewedAt: string | null
+  questions?: Question[] | null
+  answers?: Record<string, string> | null
+  autoGraded?: boolean
+  totalPoints?: number
+  earnedPoints?: number
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -53,6 +60,7 @@ const TYPE_LABELS: Record<string, string> = {
   READING: 'قراءة',
   QUIZ: 'اختبار',
   PROJECT: 'مشروع',
+  INTERACTIVE: 'اختبار تفاعلي',
 }
 
 export default function ParentHomeworkPage() {
@@ -210,6 +218,31 @@ function HomeworkCard({ homework, onSubmit }: { homework: Homework; onSubmit?: (
             </a>
           )}
 
+          {/* Interactive questions preview */}
+          {homework.questions && homework.questions.length > 0 && (
+            <div className="mt-2 rounded-lg bg-azure/10 p-2 text-xs">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="font-bold">🧠 أسئلة تفاعلية ({homework.questions.length}):</span>
+                {homework.autoGraded && homework.earnedPoints !== undefined && (
+                  <span className="font-extrabold text-emerald-egypt">
+                    النتيجة: {homework.earnedPoints}/{homework.totalPoints} نقطة
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {homework.questions.slice(0, 5).map((q, i) => (
+                  <span key={q.id} className="px-1.5 py-0.5 rounded bg-white/40 text-muted-foreground">
+                    {i + 1}. {q.type === 'MCQ' ? '🔘' : q.type === 'TRUE_FALSE' ? '✓✗' : q.type === 'FILL_BLANK' ? '✏️' : '📝'}
+                    {' '}{q.question.length > 28 ? q.question.slice(0, 28) + '…' : q.question}
+                  </span>
+                ))}
+                {homework.questions.length > 5 && (
+                  <span className="text-muted-foreground">+{homework.questions.length - 5} أخرى</span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Grade + feedback */}
           {homework.grade !== null && (
             <div className="mt-2 rounded-lg bg-emerald-egypt/10 p-2 text-xs">
@@ -237,12 +270,15 @@ function SubmitForm({ homework, onDone }: { homework: Homework; onDone: () => vo
   const [submissionText, setSubmissionText] = useState('')
   const [submissionUrl, setSubmissionUrl] = useState<string | null>(null)
   const [submissionName, setSubmissionName] = useState<string | null>(null)
+  const [answers, setAnswers] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!submissionText && !submissionUrl) {
-      toast.error('اكتب إجابة أو ارفع ملف')
+  const isInteractive = homework.questions && homework.questions.length > 0
+
+  const doSubmit = async (extra: Record<string, unknown> = {}) => {
+    if (isInteractive && Object.keys(answers).length === 0) return
+    if (!isInteractive && !submissionText && !submissionUrl) {
+      notify.error('اكتب إجابة أو ارفع ملف')
       return
     }
     setSaving(true)
@@ -255,24 +291,49 @@ function SubmitForm({ homework, onDone }: { homework: Homework; onDone: () => vo
           submissionText: submissionText || undefined,
           submissionUrl: submissionUrl ?? undefined,
           submissionName: submissionName ?? undefined,
+          ...extra,
         }),
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success('تم تسليم الواجب')
+      notify.success(d.grade !== undefined ? 'تم تسليم الواجب وتصحيحه تلقائياً ✅' : 'تم تسليم الواجب')
       onDone()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }
   }
 
+  // Interactive homework → run the questions player (auto-graded)
+  if (isInteractive) {
+    return (
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pl-1">
+        <HomeworkPlayer
+          questions={homework.questions!}
+          title={homework.title}
+          description={homework.description}
+          submitting={saving}
+          onSubmit={async (ans) => {
+            setAnswers(ans)
+            await doSubmit({ answers: ans })
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        doSubmit()
+      }}
+      className="space-y-4"
+    >
       <div className="rounded-lg bg-muted/30 p-3">
         <p className="text-sm font-bold mb-1">{homework.title}</p>
         <p className="text-xs text-muted-foreground">{homework.description}</p>
@@ -298,7 +359,7 @@ function SubmitForm({ homework, onDone }: { homework: Homework; onDone: () => vo
         onUploaded={(url) => {
           setSubmissionUrl(url)
           setSubmissionName(url.split('/').pop() ?? 'مرفق')
-          toast.success('تم رفع الملف')
+          notify.success('تم رفع الملف')
         }}
         onClear={() => { setSubmissionUrl(null); setSubmissionName(null) }}
       />

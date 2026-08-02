@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface TeacherPricing {
   id: string
@@ -182,13 +182,13 @@ function PricingEditForm({
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success(d.message)
+      notify.success(d.message)
       onSaved()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }
@@ -289,12 +289,12 @@ function CommissionEditor() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success(d.message)
+      notify.success(d.message)
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }

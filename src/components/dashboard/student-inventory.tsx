@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Check, ShieldCheck, Gem } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { Card } from '@/components/ui/card'
 
 interface Reward {
@@ -39,10 +39,10 @@ export function StudentInventory({
         body: JSON.stringify({ studentId, rewardId: reward.id })
       })
       if (!res.ok) throw new Error('فشل التفعيل')
-      toast.success('تم التفعيل بنجاح!')
+      notify.success('تم التفعيل بنجاح!')
       onEquip(reward.type, reward.cssValue, reward.name)
     } catch {
-      toast.error('حدث خطأ أثناء التفعيل')
+      notify.error('حدث خطأ أثناء التفعيل')
     }
     setLoading(null)
   }

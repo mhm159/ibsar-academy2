@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { TRACKS } from '@/lib/constants'
 import { DAYS_AR_FULL } from '@/lib/datetime'
 import { Gift, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { useRouter } from 'next/navigation'
 
 interface Student {
@@ -51,7 +51,7 @@ export function BookTrialModal({ students }: BookTrialModalProps) {
 
   const handleBook = async () => {
     if (!selectedStudent || !selectedTrack || selectedDay === '') {
-      toast.error('يرجى استكمال جميع البيانات')
+      notify.error('يرجى استكمال جميع البيانات')
       return
     }
 
@@ -69,14 +69,14 @@ export function BookTrialModal({ students }: BookTrialModalProps) {
 
       const data = await res.json()
       if (res.ok) {
-        toast.success('تم حجز الحصة التجريبية بنجاح!')
+        notify.success('تم حجز الحصة التجريبية بنجاح!')
         setOpen(false)
         router.refresh()
       } else {
-        toast.error(data.error || 'حدث خطأ أثناء الحجز')
+        notify.error(data.error || 'حدث خطأ أثناء الحجز')
       }
     } catch (e) {
-      toast.error('حدث خطأ في الاتصال')
+      notify.error('حدث خطأ في الاتصال')
     } finally {
       setLoading(false)
     }

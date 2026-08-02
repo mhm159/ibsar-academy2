@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { notify } from '@/lib/notify'
 import type { Question, QuestionType } from './interactive-homework-editor'
 import { autoGradeHomework } from './interactive-homework-editor'
 
@@ -48,7 +49,7 @@ export function HomeworkPlayer({ questions, title, description, onSubmit, submit
   const handleSubmit = async () => {
     const unanswered = questions.filter((q) => !answers[q.id]?.trim())
     if (unanswered.length > 0) {
-      if (!confirm(`لديك ${unanswered.length} سؤال بدون إجابة. هل تريد التسليم؟`)) return
+      if (!(await notify.confirm(`لديك ${unanswered.length} سؤال بدون إجابة. هل تريد التسليم؟`))) return
     }
     await onSubmit(answers)
   }

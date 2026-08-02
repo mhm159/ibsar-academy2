@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Gift, Loader2, Sparkles, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { triggerConfetti } from '@/components/site/kids-effects'
 
 interface Reward {
@@ -25,7 +25,7 @@ export function MysteryBox({ studentId, balance, onRewardUnlocked }: { studentId
 
   const handleOpen = async () => {
     if (balance < BOX_PRICE) {
-      toast.error('رصيد النقاط غير كافٍ!')
+      notify.error('رصيد النقاط غير كافٍ!')
       return
     }
 
@@ -39,7 +39,7 @@ export function MysteryBox({ studentId, balance, onRewardUnlocked }: { studentId
       const data = await res.json()
       
       if (!res.ok) {
-        toast.error(data.error)
+        notify.error(data.error)
         setLoading(false)
         return
       }
@@ -54,7 +54,7 @@ export function MysteryBox({ studentId, balance, onRewardUnlocked }: { studentId
       }, 2000) // 2 sec shake
 
     } catch (err) {
-      toast.error('حدث خطأ')
+      notify.error('حدث خطأ')
       setLoading(false)
     }
   }

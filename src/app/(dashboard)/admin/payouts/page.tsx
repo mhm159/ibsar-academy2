@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 const WALLET_LABELS: Record<string, string> = {
   VODAFONE_CASH: 'فودافون كاش',
@@ -110,10 +110,10 @@ function PayoutsAdmin() {
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success(d.message)
+      notify.success(d.message)
       load()
     } finally {
       setProcessing(null)
@@ -284,7 +284,7 @@ function ProcessPayoutForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!providerRef) {
-      toast.error('أدخل رقم المرجع من التحويل')
+      notify.error('أدخل رقم المرجع من التحويل')
       return
     }
     setSaving(true)
@@ -301,10 +301,10 @@ function ProcessPayoutForm({
       })
       const d = await res.json()
       if (!res.ok) {
-        toast.error(d.error || 'فشل')
+        notify.error(d.error || 'فشل')
         return
       }
-      toast.success('تم تأكيد التحويل بنجاح ✅')
+      notify.success('تم تأكيد التحويل بنجاح ✅')
       onDone()
     } finally {
       setSaving(false)

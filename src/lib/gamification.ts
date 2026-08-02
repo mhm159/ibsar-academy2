@@ -20,6 +20,7 @@ export const POINTS = {
   STREAK_BONUS: 25, // per day of streak (capped)
   BADGE_UNLOCKED: 0, // badges don't give points, they're rewards themselves
   HOMEWORK_DONE: 15,
+  QUIZ_PASS: 20, // auto-graded interactive homework (fully correct)
   ATTENDANCE: 10,
 } as const
 

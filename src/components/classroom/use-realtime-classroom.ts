@@ -66,6 +66,9 @@ export function useRealtimeClassroom({
   const [codeContent, setCodeContent] = useState<string>('# مرحباً! اكتب كودك هنا\nprint("Hello, Ibsar Academy!")')
   const [codeLanguage, setCodeLanguage] = useState<string>('python')
   const [codeLocked, setCodeLocked] = useState<boolean>(false)
+  // Educational platforms + lesson content (broadcast by teacher)
+  const [platformUrl, setPlatformUrl] = useState<string | null>(null)
+  const [lessonContent, setLessonContent] = useState<string>('')
 
   // Connect on mount
   useEffect(() => {
@@ -149,6 +152,14 @@ export function useRealtimeClassroom({
       setCodeLocked(payload.locked)
     })
 
+    // Educational platforms + lesson content (teacher broadcasts, students receive)
+    socket.on('platform:update', (payload: { url: string | null }) => {
+      setPlatformUrl(payload.url)
+    })
+    socket.on('lesson:update', (payload: { content: string }) => {
+      setLessonContent(payload.content)
+    })
+
     // AI Focus Tracking
     socket.on('focus:alert', (payload: { sessionId: string; userId: string; name: string }) => {
       // Dispatch a custom event so the UI can show a toast
@@ -162,6 +173,9 @@ export function useRealtimeClassroom({
       setPresence([])
       setMessages([])
       setCursors(new Map())
+      setCodeLocked(false)
+      setPlatformUrl(null)
+      setLessonContent('')
     }
   }, [sessionId, userId, userName, userRole])
 
@@ -247,6 +261,24 @@ export function useRealtimeClassroom({
     [sessionId, userId],
   )
 
+  // Teacher broadcasts which educational platform students should open
+  const sendPlatformUpdate = useCallback(
+    (url: string) => {
+      if (!socketRef.current || !sessionId) return
+      socketRef.current.emit('platform:update', { sessionId, url })
+    },
+    [sessionId],
+  )
+
+  // Teacher broadcasts lesson content to students
+  const sendLessonUpdate = useCallback(
+    (content: string) => {
+      if (!socketRef.current || !sessionId) return
+      socketRef.current.emit('lesson:update', { sessionId, content })
+    },
+    [sessionId],
+  )
+
   return {
     connected,
     presence,
@@ -270,5 +302,10 @@ export function useRealtimeClassroom({
     sendCodeUpdate,
     sendCodeLock,
     sendFocusAlert,
+    // Educational platforms + lesson
+    platformUrl,
+    lessonContent,
+    sendPlatformUpdate,
+    sendLessonUpdate,
   }
 }

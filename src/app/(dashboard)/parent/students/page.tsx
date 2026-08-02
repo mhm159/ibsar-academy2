@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Student {
   id: string
@@ -70,13 +70,13 @@ function StudentsManager() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا الطفل؟ سيتم حذف جميع حجوزاته وتقاريره.')) return
+    if (!(await notify.confirm('هل أنت متأكد من حذف هذا الطفل؟ سيتم حذف جميع حجوزاته وتقاريره.', { danger: true }))) return
     const res = await fetch(`/api/dashboard/parent/students?id=${id}`, { method: 'DELETE' })
     if (res.ok) {
-      toast.success('تم حذف الطفل')
+      notify.success('تم حذف الطفل')
       load()
     } else {
-      toast.error('فشل الحذف')
+      notify.error('فشل الحذف')
     }
   }
 
@@ -205,13 +205,13 @@ function StudentForm({ student, onSaved }: { student: Student | null; onSaved: (
       })
       const data = await res.json()
       if (!res.ok) {
-        toast.error(data.error || 'فشل الحفظ')
+        notify.error(data.error || 'فشل الحفظ')
         return
       }
-      toast.success(student ? 'تم تحديث البيانات' : 'تمت إضافة الطفل')
+      notify.success(student ? 'تم تحديث البيانات' : 'تمت إضافة الطفل')
       onSaved()
     } catch {
-      toast.error('تعذّر الاتصال')
+      notify.error('تعذّر الاتصال')
     } finally {
       setSaving(false)
     }

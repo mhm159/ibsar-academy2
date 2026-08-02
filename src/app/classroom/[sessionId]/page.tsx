@@ -4,7 +4,7 @@ import { formatTime } from '@/lib/datetime'
 import { useEffect, useState, Suspense, useCallback } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, AlertCircle, ArrowRight, Users, Wifi, WifiOff } from 'lucide-react'
+import { Loader2, AlertCircle, ArrowRight, Users, Wifi, WifiOff, Maximize2, Minimize2 } from 'lucide-react'
 import { Logo } from '@/components/site/logo'
 import { ThemeToggle } from '@/components/site/theme-toggle'
 import { Button } from '@/components/ui/button'
@@ -13,10 +13,12 @@ import { VideoPanel } from '@/components/classroom/video-panel'
 import { ChatPanel } from '@/components/classroom/chat-panel'
 import { WhiteboardPanel } from '@/components/classroom/whiteboard-panel'
 import { CodeSandboxPanel } from '@/components/classroom/code-sandbox-panel'
+import { PlatformPanel } from '@/components/classroom/platform-panel'
+import { MiniGame } from '@/components/classroom/mini-game'
 import { FocusTracker } from '@/components/classroom/focus-tracker'
 import { useRealtimeClassroom } from '@/components/classroom/use-realtime-classroom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import { cn } from '@/lib/utils'
 
 interface JoinResult {
@@ -51,6 +53,7 @@ function ClassroomContent() {
   const [initialWhiteboard, setInitialWhiteboard] = useState<any[]>([])
   const [chatHistory, setChatHistory] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState('chat')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   // 1. Join the classroom (creates Daily room + meeting token)
   useEffect(() => {
@@ -87,7 +90,7 @@ function ClassroomContent() {
         return d
       })
       .then((d) => setRecordingStatus(d.recordingStatus ?? 'NONE'))
-      .catch((err) => toast.error(err.message))
+      .catch((err) => notify.error(err.message))
   }, [joinResult, sessionId])
 
   // 3. Fetch chat history
@@ -114,7 +117,7 @@ function ClassroomContent() {
           })))
         }
       })
-      .catch((err) => toast.error(err.message))
+      .catch((err) => notify.error(err.message))
   }, [joinResult, sessionId])
 
   // 4. Fetch whiteboard state
@@ -129,7 +132,7 @@ function ClassroomContent() {
       .then((d) => {
         if (d.elements) setInitialWhiteboard(d.elements)
       })
-      .catch((err) => toast.error(err.message))
+      .catch((err) => notify.error(err.message))
   }, [joinResult, sessionId])
 
   // 5. Connect to realtime classroom (socket.io) — only after join succeeds
@@ -145,7 +148,7 @@ function ClassroomContent() {
     const handleFocusAlert = (e: any) => {
       if (joinResult?.userRole !== 'TEACHER') return
       const { name } = e.detail
-      toast.error(`⚠️ تنبيه ذكاء اصطناعي: الطالب ${name} يبدو مشتتاً ولا ينظر للشاشة!`, {
+      notify.error(`⚠️ تنبيه ذكاء اصطناعي: الطالب ${name} يبدو مشتتاً ولا ينظر للشاشة!`, {
         duration: 5000,
       })
     }
@@ -175,7 +178,7 @@ function ClassroomContent() {
             })
           }
         })
-        .catch(() => toast.error('فشل إرسال الرسالة'))
+        .catch(() => notify.error('فشل إرسال الرسالة'))
     },
     [joinResult, sessionId, rt],
   )
@@ -212,6 +215,20 @@ function ClassroomContent() {
     [rt],
   )
 
+  const handlePlatformSelect = useCallback(
+    (url: string) => {
+      rt.sendPlatformUpdate(url)
+    },
+    [rt],
+  )
+
+  const handleLessonUpdate = useCallback(
+    (content: string) => {
+      rt.sendLessonUpdate(content)
+    },
+    [rt],
+  )
+
   const handleRecordingToggle = async () => {
     if (!joinResult) return
     const action = recordingStatus === 'STARTED' ? 'stop' : 'start'
@@ -222,11 +239,11 @@ function ClassroomContent() {
     })
     const d = await res.json()
     if (!res.ok) {
-      toast.error(d.error || 'فشل')
+      notify.error(d.error || 'فشل')
       return
     }
     setRecordingStatus(d.status)
-    toast.success(action === 'start' ? 'بدأ التسجيل' : 'تم إيقاف التسجيل')
+    notify.success(action === 'start' ? 'بدأ التسجيل' : 'تم إيقاف التسجيل')
   }
 
   const handleLeave = () => {
@@ -299,6 +316,18 @@ function ClassroomContent() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Expand / collapse the tabs panel to use maximum screen space */}
+            <button
+              onClick={() => setIsExpanded((v) => !v)}
+              title={isExpanded ? 'إظهار الفيديو' : 'تكبير الشاشة (إخفاء الفيديو)'}
+              className={cn(
+                'flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors',
+                isExpanded ? 'bg-gold text-night font-bold' : 'bg-white/10 hover:bg-white/20',
+              )}
+            >
+              {isExpanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+              <span className="hidden sm:inline">{isExpanded ? 'تقليص' : 'تكبير'}</span>
+            </button>
             {/* Connection indicator */}
             <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
               rt.connected ? 'bg-emerald-egypt/20 text-emerald-egypt' : 'bg-kids-red/20 text-kids-red'
@@ -317,27 +346,34 @@ function ClassroomContent() {
       </header>
 
       {/* Classroom layout: video + (chat/whiteboard tabs) */}
-      <main className="flex-1 p-3 lg:p-4">
-        {/* Desktop: 2 columns (video left, tabs right) */}
-        <div className="grid lg:grid-cols-2 gap-3 h-[calc(100vh-100px)]">
-          {/* Video panel */}
-          <div className="min-h-[300px] lg:min-h-0 relative">
-            <VideoPanel
-              roomUrl={joinResult.roomUrl}
-              token={joinResult.token}
-              displayName={joinResult.displayName}
-              isOwner={joinResult.isOwner}
-              sandbox={joinResult.sandbox}
-              recordingStatus={recordingStatus}
-              onRecordingToggle={handleRecordingToggle}
-              onLeave={handleLeave}
-            />
-          </div>
+      <main className={cn('flex-1', isExpanded ? 'p-0' : 'p-3 lg:p-4')}>
+        {/* Expanded mode: tabs take the full screen; video stays accessible via header */}
+        <div
+          className={cn(
+            'grid gap-3',
+            isExpanded ? 'h-[calc(100vh-56px)] grid-cols-1' : 'lg:grid-cols-2 h-[calc(100vh-100px)]',
+          )}
+        >
+          {/* Video panel (hidden when expanded) */}
+          {!isExpanded && (
+            <div className="min-h-[300px] lg:min-h-0 relative">
+              <VideoPanel
+                roomUrl={joinResult.roomUrl}
+                token={joinResult.token}
+                displayName={joinResult.displayName}
+                isOwner={joinResult.isOwner}
+                sandbox={joinResult.sandbox}
+                recordingStatus={recordingStatus}
+                onRecordingToggle={handleRecordingToggle}
+                onLeave={handleLeave}
+              />
+            </div>
+          )}
 
-          {/* Chat + Whiteboard + Code tabs (mobile: full width) */}
-          <div className="min-h-[400px] lg:min-h-0">
+          {/* Chat + Whiteboard + Code + Platforms tabs */}
+          <div className={cn('min-h-0', isExpanded ? 'h-full' : 'min-h-[400px] lg:min-h-0')}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10">
+              <TabsList className="grid w-full grid-cols-5 bg-white/5 border border-white/10">
                 <TabsTrigger value="chat" className="data-[state=active]:bg-gold data-[state=active]:text-night text-white/70">
                   💬 المحادثة
                 </TabsTrigger>
@@ -346,6 +382,12 @@ function ClassroomContent() {
                 </TabsTrigger>
                 <TabsTrigger value="code" className="data-[state=active]:bg-emerald-egypt data-[state=active]:text-white text-white/70">
                   💻 الكود
+                </TabsTrigger>
+                <TabsTrigger value="platforms" className="data-[state=active]:bg-azure data-[state=active]:text-white text-white/70">
+                  🚀 المنصات
+                </TabsTrigger>
+                <TabsTrigger value="game" className="data-[state=active]:bg-fuchsia-500 data-[state=active]:text-white text-white/70">
+                  🎮 الألعاب
                 </TabsTrigger>
               </TabsList>
 
@@ -379,6 +421,21 @@ function ClassroomContent() {
                   onCodeChange={handleCodeChange}
                   onLockToggle={handleCodeLockToggle}
                 />
+              </TabsContent>
+
+              <TabsContent value="platforms" forceMount className={cn('flex-1 mt-2 min-h-0', activeTab !== 'platforms' && 'hidden')}>
+                <PlatformPanel
+                  sessionId={sessionId}
+                  isTeacher={isTeacher}
+                  platformUrl={rt.platformUrl}
+                  lessonContent={rt.lessonContent}
+                  onPlatformSelect={handlePlatformSelect}
+                  onLessonUpdate={handleLessonUpdate}
+                />
+              </TabsContent>
+
+              <TabsContent value="game" forceMount className={cn('flex-1 mt-2 min-h-0', activeTab !== 'game' && 'hidden')}>
+                <MiniGame sessionId={sessionId} isTeacher={isTeacher} />
               </TabsContent>
             </Tabs>
           </div>

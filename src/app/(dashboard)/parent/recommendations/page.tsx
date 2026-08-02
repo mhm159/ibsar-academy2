@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface Recommendation {
   type: 'TEACHER' | 'COURSE' | 'TRACK'
@@ -96,10 +96,10 @@ function RecommendationsView() {
       if (d.recommendations) {
         setRecommendations(d.recommendations)
         setCached(d.cached)
-        toast.success('تم تحديث التوصيات')
+        notify.success('تم تحديث التوصيات')
       }
     } catch {
-      toast.error('فشل التحديث')
+      notify.error('فشل التحديث')
     } finally {
       setGenerating(false)
     }

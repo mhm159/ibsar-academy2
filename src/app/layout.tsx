@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Tajawal, Cairo } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PopupNotificationContainer } from "@/components/site/popup-notification";
 
@@ -83,8 +81,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster />
-          <Sonner position="top-center" dir="rtl" />
           <PopupNotificationContainer />
         </ThemeProvider>
       </body>

@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
 type Step = 'FORM' | 'OTP'
@@ -97,7 +97,7 @@ export default function RegisterTeacherPage() {
         setStep('FORM')
         return
       }
-      toast.success('تم إنشاء حساب المعلم بنجاح! سيتم مراجعته خلال 24 ساعة')
+      notify.success('تم إنشاء حساب المعلم بنجاح! سيتم مراجعته خلال 24 ساعة')
       router.push('/teacher')
     } catch {
       setError('تعذّر الاتصال بالخادم')

@@ -14,7 +14,7 @@ import {
   Code2,
   Loader2
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 // ─── Language configs ────────────────────────────────────────────────────────
 const LANGUAGES = [
@@ -203,7 +203,7 @@ sys.stderr = _captured_stderr
   const handleCopy = async () => {
     await navigator.clipboard.writeText(localCode)
     setCopied(true)
-    toast.success('تم نسخ الكود!')
+    notify.success('تم نسخ الكود!')
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -212,7 +212,7 @@ sys.stderr = _captured_stderr
     const encoded = btoa(encodeURIComponent(JSON.stringify({ code: localCode, lang: localLang })))
     const shareUrl = `${window.location.origin}/classroom/sandbox?code=${encoded}`
     await navigator.clipboard.writeText(shareUrl)
-    toast.success('تم نسخ رابط المشاركة! شاركه مع أي شخص.')
+    notify.success('تم نسخ رابط المشاركة! شاركه مع أي شخص.')
   }
 
   // ── Tab key support ───────────────────────────────────────────────────────
