@@ -107,7 +107,7 @@ function ReviewsAdmin() {
   }
 
   return (
-    <>
+    <div dir="rtl" className="w-full">
       <PageHeader
         title="إدارة التقييمات"
         description="مراجعة ومعالجة تقييمات المستخدمين"
@@ -208,6 +208,6 @@ function ReviewsAdmin() {
           )}
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   )
 }

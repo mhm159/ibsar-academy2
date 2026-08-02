@@ -2,10 +2,11 @@
 
 import { motion } from 'framer-motion'
 import { Quote, Star } from 'lucide-react'
-import { TESTIMONIALS } from '@/lib/constants'
+import { useHomeData } from '@/hooks/use-home-data'
 import { SectionHeading } from './tracks-section'
 
 export function TestimonialsSection() {
+  const { testimonials } = useHomeData()
   return (
     <section id="testimonials" className="py-20 lg:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -16,9 +17,9 @@ export function TestimonialsSection() {
         />
 
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {TESTIMONIALS.map((tm, i) => (
+          {testimonials.slice(0, 8).map((tm, i) => (
             <motion.figure
-              key={tm.id}
+              key={tm.id ?? `${tm.name}-${i}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}

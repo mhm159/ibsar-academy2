@@ -11,6 +11,23 @@ interface SiteSettingsState {
   loaded: boolean
 }
 
+// Module-level in-flight promise so multiple components mounting at the same
+// time share a single network request instead of firing N identical fetches.
+let inFlight: Promise<Record<string, string>> | null = null
+
+function fetchSettings(): Promise<Record<string, string>> {
+  if (!inFlight) {
+    inFlight = fetch('/api/site/settings')
+      .then((r) => r.json())
+      .then((d) => (d?.settings ? d.settings : DEFAULT_SITE_SETTINGS))
+      .catch(() => DEFAULT_SITE_SETTINGS)
+      .finally(() => {
+        inFlight = null
+      })
+  }
+  return inFlight
+}
+
 function readCache(): Record<string, string> | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY)
@@ -26,6 +43,7 @@ function readCache(): Record<string, string> | null {
 /**
  * useSiteSettings — editable front-page texts.
  * Uses cached values instantly, then refreshes from the API in the background.
+ * Concurrent consumers share a single request (module-level dedupe).
  */
 export function useSiteSettings(): SiteSettingsState {
   const [state, setState] = useState<SiteSettingsState>(() => {
@@ -35,18 +53,13 @@ export function useSiteSettings(): SiteSettingsState {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/site/settings')
-      .then((r) => r.json())
-      .then((d) => {
-        if (cancelled || !d?.settings) return
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), settings: d.settings }))
-        } catch { /* ignore */ }
-        setState({ settings: d.settings, loaded: true })
-      })
-      .catch(() => {
-        if (!cancelled) setState((s) => ({ ...s, loaded: true }))
-      })
+    fetchSettings().then((settings) => {
+      if (cancelled) return
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), settings }))
+      } catch { /* ignore */ }
+      setState({ settings, loaded: true })
+    })
     return () => {
       cancelled = true
     }

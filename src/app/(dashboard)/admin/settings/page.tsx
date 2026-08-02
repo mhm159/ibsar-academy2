@@ -16,6 +16,7 @@ const GROUP_LABELS: Record<string, string> = {
   CTA: 'شريط الدعوة للانضمام',
   FOOTER: 'التذييل (الفوتر)',
   GENERAL: 'عام',
+  PAYMENT: 'البيانات المالية للمنصة',
 }
 
 export default function AdminSettingsPage() {
@@ -53,27 +54,31 @@ function SettingsEditor() {
     setDirty(true)
   }
 
-  const save = async () => {
+  const save = async (valuesToSave?: Record<string, string>) => {
     setSaving(true)
     try {
+      const payload = valuesToSave ?? values
       const res = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values }),
+        body: JSON.stringify({ values: payload }),
       })
       const data = await res.json()
       if (!res.ok) {
         notify.error(data.error || 'فشل الحفظ')
-        return
+        return false
       }
-      notify.success('تم حفظ نصوص الواجهة — ستظهر على الموقع فوراً')
+      notify.success('تم الحفظ — ستظهر النصوص على الموقع فوراً')
+      setValues(payload)
       setDirty(false)
       // refresh public cache
       try {
         localStorage.removeItem('ibdaa:site-settings')
       } catch { /* ignore */ }
+      return true
     } catch {
       notify.error('تعذّر الاتصال')
+      return false
     } finally {
       setSaving(false)
     }
@@ -82,9 +87,7 @@ function SettingsEditor() {
   const resetAll = async () => {
     const ok = await notify.confirm('إعادة كل النصوص إلى الافتراضي؟', { title: 'تأكيد', danger: true })
     if (!ok) return
-    setValues({ ...DEFAULT_SITE_SETTINGS })
-    setDirty(true)
-    notify.info('تمت إعادة القيم الافتراضية — اضغط «حفظ» لتطبيقها')
+    await save({ ...DEFAULT_SITE_SETTINGS })
   }
 
   if (loading) {
@@ -100,7 +103,7 @@ function SettingsEditor() {
     )
   }
 
-  const groups = ['HERO', 'CTA', 'FOOTER', 'GENERAL'] as const
+  const groups = ['HERO', 'CTA', 'FOOTER', 'PAYMENT', 'GENERAL'] as const
 
   return (
     <>
@@ -111,14 +114,19 @@ function SettingsEditor() {
 
       <div className="flex items-center gap-2 mb-4">
         <Button
-          onClick={save}
+          onClick={() => save()}
           disabled={saving || !dirty}
           className="gap-2 bg-gradient-to-l from-gold to-[#E8D488] text-night"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           حفظ التغييرات
         </Button>
-        <Button variant="outline" className="gap-2 glass" onClick={resetAll}>
+        <Button
+          variant="outline"
+          disabled={saving}
+          onClick={resetAll}
+          className="gap-2 border-gold/30 text-foreground hover:bg-gold hover:text-night hover:border-gold"
+        >
           <RotateCcw className="h-4 w-4" />
           استعادة الافتراضي
         </Button>

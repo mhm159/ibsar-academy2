@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { getSession, normalizePhone, isValidPhone } from '@/lib/auth'
+import { getSupervisorBalance } from '@/lib/supervisor-finance'
 
 /**
  * Admin supervisor management.
  *
- * GET    /api/admin/supervisors — list supervisors with user info
+ * GET    /api/admin/supervisors — list supervisors with user info + finance
  * POST   /api/admin/supervisors — create { name, phone, password, title? }
- * PATCH  /api/admin/supervisors — update { id, title?, isActive? }
+ * PATCH  /api/admin/supervisors — update { id, title?, isActive?, creditDelta? }
  * DELETE /api/admin/supervisors — delete ?id=
  */
 
@@ -29,8 +30,15 @@ export async function GET() {
     },
   })
 
+  const withBalances = await Promise.all(
+    supervisors.map(async (s) => {
+      const balance = await getSupervisorBalance(s.id)
+      return { ...s, balance }
+    })
+  )
+
   return NextResponse.json({
-    supervisors: supervisors.map((s) => ({
+    supervisors: withBalances.map((s) => ({
       id: s.id,
       userId: s.userId,
       name: s.user.name,
@@ -39,6 +47,10 @@ export async function GET() {
       isActive: s.user.isActive,
       title: s.title,
       reportsCount: s.reports.length,
+      credits: s.creditBalance,
+      earnedEGP: s.balance.earned,
+      paidEGP: s.balance.paid,
+      balanceEGP: s.balance.balanceEGP,
       createdAt: s.createdAt.toISOString(),
     })),
   })
@@ -91,12 +103,39 @@ export async function PATCH(req: NextRequest) {
   if (!(await requireAdmin())) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
 
   const body = await req.json()
-  const { id, title, isActive } = body as Record<string, unknown>
+  const { id, title, isActive, creditDelta, bonusEGP, bonusNote } = body as Record<string, unknown>
 
   if (!id) return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 422 })
 
   const sup = await db.supervisor.findUnique({ where: { id: String(id) } })
   if (!sup) return NextResponse.json({ error: 'المشرف غير موجود' }, { status: 404 })
+
+  if (typeof creditDelta === 'number') {
+    if (!Number.isInteger(creditDelta) || creditDelta === 0) {
+      return NextResponse.json({ error: 'قيمة الكراد غير صالحة' }, { status: 422 })
+    }
+    if (sup.creditBalance + creditDelta < 0) {
+      return NextResponse.json({ error: 'لا يمكن أن يصبح الرصيد سالبًا' }, { status: 422 })
+    }
+    await db.supervisor.update({
+      where: { id: sup.id },
+      data: { creditBalance: { increment: creditDelta } },
+    })
+  }
+
+  if (typeof bonusEGP === 'number' && bonusEGP !== 0) {
+    if (!Number.isInteger(bonusEGP)) {
+      return NextResponse.json({ error: 'قيمة المكافأة غير صالحة' }, { status: 422 })
+    }
+    await db.supervisorEarning.create({
+      data: {
+        supervisorId: sup.id,
+        amountEGP: bonusEGP,
+        type: 'BONUS',
+        note: bonusNote ? String(bonusNote) : null,
+      },
+    })
+  }
 
   await db.$transaction([
     db.supervisor.update({

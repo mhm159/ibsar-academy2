@@ -9,7 +9,7 @@
 export interface SiteSettingDef {
   key: string
   label: string
-  group: 'HERO' | 'FOOTER' | 'CTA' | 'GENERAL'
+  group: 'HERO' | 'FOOTER' | 'CTA' | 'GENERAL' | 'PAYMENT'
   type?: 'text' | 'textarea'
   defaultValue: string
 }
@@ -35,6 +35,14 @@ export const SITE_SETTING_DEFS: SiteSettingDef[] = [
   { key: 'footer.phone', label: 'رقم الدعم (واتساب)', group: 'FOOTER', defaultValue: '+20 100 000 0000' },
   { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@ibdaa-academy.com' },
   { key: 'footer.slogan', label: 'الشعار الترويجي', group: 'FOOTER', defaultValue: 'نُبدِعُ مستقبلَ طفلِك' },
+
+  // Payment / financial info shown to parents at checkout
+  { key: 'payment.bankName', label: 'اسم البنك (تحويل بنكي)', group: 'PAYMENT', defaultValue: 'البنك الأهلي المصري' },
+  { key: 'payment.bankAccount', label: 'رقم الحساب البنكي', group: 'PAYMENT', defaultValue: '0000 0000 0000 0000' },
+  { key: 'payment.bankIban', label: 'الآيبان (IBAN)', group: 'PAYMENT', defaultValue: 'EG00 0000 0000 0000 0000 0000 0' },
+  { key: 'payment.walletType', label: 'نوع المحفظة الإلكترونية', group: 'PAYMENT', defaultValue: 'فودافون كاش' },
+  { key: 'payment.walletNumber', label: 'رقم المحفظة الإلكترونية', group: 'PAYMENT', defaultValue: '+20 100 000 0000' },
+  { key: 'payment.instructions', label: 'رسالة/إرشادات الدفع للعملاء', group: 'PAYMENT', type: 'textarea', defaultValue: 'بعد إتمام الطلب سيصلك تأكيد عبر الواتساب. يمكنك سداد الرسوم عبر التحويل البنكي أو المحافظ الإلكترونية أو البطاقات، وسيتم تفعيل الحصص فور تأكيد الدفع.' },
 ]
 
 export const DEFAULT_SITE_SETTINGS: Record<string, string> = Object.fromEntries(

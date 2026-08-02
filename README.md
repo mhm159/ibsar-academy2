@@ -2,27 +2,58 @@
 
 <div dir="rtl">
 
-منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.
-
-## ✨ المرحلة 1 — Foundation (مكتملة)
-
-### المميزات
-- 🎨 **نظام تصميم مصري**: ذهب فرعوني + أزور نيلي + عاجي + خطوط عربية (Tajawal + Cairo)
-- 🌗 **RTL كامل** + وضع ليلي/نهاري
-- 🪟 **Neumorphism + Glassmorphism** + نمط هيروغليفي
-- 🏠 **صفحة هبوط متكاملة**: Hero + مسارات + مميزات + معلمون + أسعار + FAQ + CTA
-- 🔐 **مصادقة OTP** (هاتف/بريد) + كلمة مرور + جلسات JWT مشفّرة
-- 🗄️ **Prisma ORM** (SQLite محلياً، قابل للترحيل إلى PostgreSQL)
-- 📱 **متجاوب بالكامل** مع الموبايل + PWA manifest
-
-### المسارات التعليمية
-| المسار | العمر | المحتوى |
-|--------|-------|---------|
-| 💻 البرمجة | 7-16 | Python, Scratch, HTML/CSS, JavaScript, تطوير الألعاب |
-| 🤖 الروبوتيكس | 8-16 | Arduino, Raspberry Pi, مستشعرات, مسابقات |
-| 🧮 الحساب الذهني | 6-13 | السوروبان, الجمع/الطرح السريع, الضرب الذهني |
+منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين — تشمل الحصص المباشرة، الفصل الافتراضي، المدفوعات، المكافآت، والتقارير الآلية.
 
 </div>
+
+---
+
+## ✨ المميزات الرئيسية
+
+### 🏠 الواجهة العامة
+- **نظام تصميم مصري**: ذهب فرعوني + أزور نيلي + عاجي + خطوط عربية (Tajawal + Cairo)
+- **RTL كامل** + وضع ليلي/نهاري + نمط Neumorphism + Glassmorphism + هيروغليفي
+- **صفحة هبوط مدفوعة بالبيانات (DB)**: إحصائيات حية، نخبة المعلمين، آراء أولياء الأمور، معرض الحصص، وسلايدر إعلاني يُدار من لوحة الإدارة
+- **متجاوب بالكامل** مع الموبايل + PWA manifest
+
+### 🔐 المصادقة والأدوار
+- تسجيل عبر **OTP** (هاتف/بريد) + كلمة مرور + جلسات JWT مشفّرة
+- **5 أدوار**: ولي أمر، طالب، معلم، مشرف تخصص، إدارة
+
+### 🎓 الحصص والفصل الافتراضي
+- حجوزات الحصص، الغرف المباشرة (انضمام مشرف/زائر)، **Whiteboard** غني بالصور والشارات، ألعاب صفية، وChat فوري
+- تقارير وتصنيفات أداء الطلاب (progress reports)
+
+### 💳 المدفوعات والحماية
+- سلة حجز + صفحة دفع (PayMob مصر / Stripe خليج) + **Escrow** (حفظ الأموال حتى اكتمال الحصة)
+- كوبونات خصم، طلبات استرداد، سجل مالي وتدقيق مالي
+
+### 🎮 التحفيز والمكافآت
+- نقاط، شارات، إنجازات، **Mystery Box**، قائمة متصدرين، وهدايا داخل المتجر
+
+### 🤖 الذكاء والأمان
+- محرك توصيات، فلتر روابط آمن، تنبيهات سلوكية، تقييم متبادل بين المعلم والطالب
+
+### 💰 مالية المشرفين
+- **المشرف التخصصي**: أتعاب ثابتة لكل تقرير (تُسجّل تلقائياً)، رصيد محسوب لحظياً، سجل أرباح، وطلبات سحب (اعتماد/رفض/صرف من الإدارة)
+- **كراد الرصيد**: منح/خصم بونص أو كراد من الإدارة مع سجل Earning لكل عملية
+
+### 🧾 أدوات البيانات (لوحة الإدارة)
+- **نسخ احتياطي** لقاعدة البيانات (تحميل ملف SQLite)
+- **تصدير Excel (xlsx)** لأي جدول: طلاب، حصص، حجوزات، معاملات، مراجعات، سحوبات، تقارير، مستخدمين، مشرفين
+- **تصفير البيانات** (بيانات العمل أو كامل، مع تأكيد نصي) دون المساس بالإعدادات والمسارات
+
+### 📲 تقارير واتساب الأسبوعية
+- رسائل تلقائية أسبوعية لأولياء الأمور بأداء الطالب (بما فيها تقدم نقاط الطالب، مع اسم المسار الحقيقي من قاعدة البيانات)
+
+### 🗺️ المسارات التعليمية
+| المسار | العمر | المحتوى |
+|--------|-------|---------|
+| 💻 البرمجة | 7-16 | التفكير الحسابي، Scratch، Python، HTML/CSS، JavaScript، مشروع التخرج |
+| 🤖 الروبوتيكس | 8-16 | أساسيات الكهرباء، Breadboard، Arduino، الحساسات، الروبوتات المتنقلة، المسابقات |
+| 🧮 الحساب الذهني | 6-13 | السوروبان، الجمع/الطرح السريع، الضرب، القسمة، السرعة والمسابقات |
+
+> 📚 **المنهج التعليمي الكامل** (خطط المستويات الأسبوعية + دليل التدريس والتقييم والتقارير) موجود في مجلد `educational-content/` — **مستبعد من Git** (داخلي).
 
 ---
 
@@ -35,47 +66,52 @@
 ### الخطوات
 
 ```bash
-# 1. فك ضغط الملف
-unzip ibdaa-academy-phase1.zip -d ibdaa-academy
-cd ibdaa-academy
+# 1. تثبيت الحزم
+npm install
+# أو: bun install
 
-# 2. تثبيت الحزم
-bun install
-# أو: npm install
+# 2. إعداد قاعدة البيانات (SQLite محلية)
+npm run db:generate
+npm run db:push
 
-# 3. إعداد قاعدة البيانات (SQLite محلية)
-bun run db:generate
-bun run db:push
-
-# 4. تشغيل خادم التطوير
-bun run dev
-# أو: npm run dev
+# 3. تشغيل خادم التطوير (الميناء 3001)
+npm run dev
+# أو: bun run dev
 ```
 
-ثم افتح **http://localhost:3000** في المتصفح.
+ثم افتح **http://localhost:3001** في المتصفح.
 
 ### حسابات تجريبية
-المنصة تدعم التسجيل المباشر. جرّب:
 1. اضغط «ابدأ التعلّم» في الصفحة الرئيسية
 2. املأ النموذج (اسم + رقم هاتف)
-3. ستظهر شاشة OTP — **رمز التطوير يظهر في صندوق أصفر** (للتجربة فقط، في الإنتاج يُرسل عبر SMS/Email فعلًا)
+3. ستظهر شاشة OTP — **رمز التطوير يظهر في صندوق أصفر** (في الإنتاج يُرسل عبر SMS/Email فعلًا)
 4. أدخل الرمز → سيُنشأ حسابك وتُوجَّه للوحة التحكم
 
 ---
 
-## 📤 الرفع على GitHub
+## 🔑 متغيرات البيئة (`.env.local`)
 
-بعد فك الضغط محلياً:
+```env
+DATABASE_URL="file:./db/custom.db"
 
-```bash
-cd ibdaa-academy
-git init
-git add -A
-git commit -m "feat: Phase 1 — Foundation (Ibdaa Academy)"
-git branch -M main
-git remote add origin https://github.com/mhm159/ibdaa-academy2.git
-git push -u origin main
+# لتوقيع الجلسات و OTP (غيّرها في الإنتاج!)
+NEXTAUTH_SECRET="your-random-secret-here"
+OTP_SECRET="your-otp-secret-here"
+
+# اختياري — لتسجيل الدخول عبر Google
+# GOOGLE_CLIENT_ID=""
+# GOOGLE_CLIENT_SECRET=""
+
+# اختياري — لإرسال SMS حقيقي
+# TWILIO_ACCOUNT_SID=""
+# TWILIO_AUTH_TOKEN=""
+# TWILIO_PHONE_NUMBER=""
+
+# اختياري — لإرسال البريد الحقيقي
+# RESEND_API_KEY=""
 ```
+
+> ⚠️ في الإنتاج، استخدم أسرار قوية عشوائية (32+ حرف) ولا ترفع ملف `.env*` إلى Git.
 
 ---
 
@@ -88,6 +124,13 @@ git push -u origin main
 | Styling | Tailwind CSS 4 + shadcn/ui |
 | Database | Prisma ORM + SQLite |
 | Auth | JWT cookies + OTP (HMAC) |
+| Real-time | Socket.io (Chat) + Daily.co (الفيديو) |
+| Whiteboard | Excalidraw |
+| State | Zustand + TanStack Query |
+| Tables | TanStack Table + shadcn |
+| Charts | Recharts |
+| Payments | PayMob (مصر) + Stripe (خليج) |
+| Excel | SheetJS (xlsx) |
 | Theme | next-themes |
 | Animation | Framer Motion |
 | Icons | Lucide React |
@@ -99,51 +142,47 @@ git push -u origin main
 ```
 src/
 ├── app/
-│   ├── (public)/           # الصفحة الرئيسية
-│   ├── auth/               # login, register/student, register/teacher
-│   ├── api/auth/           # send-otp, verify-otp, register, login, logout, me
-│   ├── parent/             # لوحة ولي الأمر (مرحلة 2)
-│   ├── teacher/            # لوحة المعلم (مرحلة 2)
-│   └── admin/              # لوحة الإدارة (مرحلة 2)
+│   ├── (dashboard)/         # لوحات: admin, teacher, supervisor, student, parent
+│   ├── (site)/              # مكونات الصفحة العامة
+│   ├── api/                 # REST endpoints (auth, admin, site, supervisor, teacher, parent, classroom…)
+│   ├── auth/                # login, register/student, register/teacher
+│   ├── checkout/            # سلة الحجز والدفع
+│   ├── payment/             # تأكيد الدفع + escrow
+│   ├── classroom/           # الفصل الافتراضي (فيديو + Whiteboard + Chat + ألعاب)
+│   ├── layout.tsx
+│   └── page.tsx             # الصفحة الرئيسية
 ├── components/
-│   ├── site/               # مكونات صفحة الهبوط
-│   ├── auth/               # مكونات المصادقة
-│   ├── dashboard/          # مكونات لوحات التحكم
-│   └── ui/                 # shadcn/ui components
+│   ├── site/                # مكونات صفحة الهبوط (hero, teachers, testimonials, gallery…)
+│   ├── auth/                # مكونات المصادقة
+│   ├── classroom/           # غرفة الفصل الافتراضي
+│   ├── dashboard/           # مكونات لوحات التحكم
+│   └── ui/                  # shadcn/ui components
+├── hooks/                   # use-site-settings, use-home-data…
 └── lib/
-    ├── auth.ts             # OTP + session helpers
-    ├── constants.ts        # الثوابت (المسارات، الأسعار، إلخ)
-    ├── db.ts               # Prisma client
-    └── utils.ts            # أدوات مساعدة
+    ├── auth.ts              # OTP + session helpers
+    ├── constants.ts         # الثوابت (المسارات، الأسعار…)
+    ├── db.ts                # Prisma client
+    ├── site-data.ts         # استعلامات الواجهة العامة الموحّدة
+    ├── supervisor-finance.ts# أتعاب/رصيد/كراد المشرف
+    ├── weekly-reports.ts    # تقارير واتساب الأسبوعية
+    ├── export-xlsx.ts       # توليد ملفات Excel
+    └── utils.ts             # أدوات مساعدة
 prisma/
-└── schema.prisma           # نماذج قاعدة البيانات
+└── schema.prisma            # نماذج قاعدة البيانات
 ```
 
 ---
 
-## 🔑 متغيرات البيئة (`.env`)
+## 🔌 واجهات عامة للواجهة الرئيسية
 
-```env
-DATABASE_URL="file:./db/custom.db"
-
-# لتوقيع الجلسات و OTP (غيّرها في الإنتاج!)
-NEXTAUTH_SECRET="your-random-secret-here"
-OTP_SECRET="your-otp-secret-here"
-
-# اختياري — لتسجيل الدخول عبر Google (مرحلة 2)
-# GOOGLE_CLIENT_ID=""
-# GOOGLE_CLIENT_SECRET=""
-
-# اختياري — لإرسال SMS حقيقي (مرحلة 1 يستخدم placeholder)
-# TWILIO_ACCOUNT_SID=""
-# TWILIO_AUTH_TOKEN=""
-# TWILIO_PHONE_NUMBER=""
-
-# اختياري — لإرسال البريد الحقيقي
-# RESEND_API_KEY=""
-```
-
-> ⚠️ في الإنتاج، استخدم أسرار قوية عشوائية (32+ حرف) ولا ترفع ملف `.env` إلى Git.
+| المسار | الوصف |
+|--------|-------|
+| `GET /api/site/home` | بيانات الصفحة الرئيسية مجتمعة (إحصائيات + معلمون + آراء) — طلب واحد |
+| `GET /api/site/stats` | إحصائيات حية من قاعدة البيانات |
+| `GET /api/site/teachers` | نخبة المعلمين المعتمدين (مع fallback لثوابت منسّقة) |
+| `GET /api/site/testimonials` | مراجعات أولياء الأمور المعتمدة |
+| `GET /api/site/slider` | سلايدر الإعلانات المُدار من الإدارة |
+| `GET /api/site/gallery` | معرض صور الحصص |
 
 ---
 
@@ -151,11 +190,12 @@ OTP_SECRET="your-otp-secret-here"
 
 | المرحلة | المحتوى | الحالة |
 |---------|---------|--------|
-| **1 — Foundation** | التصميم + الهبوط + المصادقة | ✅ مكتملة |
-| **2 — Dashboards** | لوحات: ولي الأمر، معلم، إدارة | ⏳ التالية |
-| **3 — Payments** | PayMob (مصر) + Stripe (خليج) + Escrow | 🔜 |
-| **4 — Virtual Classroom** | Daily.co + Chat (WebSocket) + Excalidraw | 🔜 |
-| **5 — AI & Safety** | محرك توصيات + فلتر روابط + تقييم متبادل | 🔜 |
+| **1 — Foundation** | التصميم + الهبوط + المصادقة + الأدوار | ✅ مكتملة |
+| **2 — Dashboards** | لوحات: ولي أمر، طالب، معلم، مشرف، إدارة | ✅ مكتملة |
+| **3 — Payments** | PayMob + Stripe + Escrow + كوبونات + استرداد | ✅ مكتملة |
+| **4 — Virtual Classroom** | Daily.co + Chat (WebSocket) + Whiteboard + ألعاب | ✅ مكتملة |
+| **5 — AI & Safety** | توصيات + فلتر روابط + تقييم متبادل + مكافآت | ✅ مكتملة |
+| **6 — Ops** | تقارير واتساب، مالية المشرفين، أدوات البيانات | ✅ مكتملة |
 
 ---
 

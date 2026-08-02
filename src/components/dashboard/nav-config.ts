@@ -23,6 +23,7 @@ import {
   Images,
   FileText,
   UserCog,
+  Database,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -74,6 +75,7 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/reviews', label: 'التقييمات', icon: Star },
   { href: '/admin/alerts', label: 'تنبيهات AI', icon: AlertTriangle },
   { href: '/admin/tracks', label: 'المسارات', icon: Layers },
+  { href: '/admin/data-tools', label: 'أدوات البيانات', icon: Database },
   { href: '/admin/settings', label: 'إعدادات الموقع', icon: Settings },
   { href: '/admin/posts', label: 'منشورات AI', icon: Sparkles },
 ]
@@ -82,6 +84,7 @@ export const SUPERVISOR_NAV: NavItem[] = [
   { href: '/supervisor', label: 'الرئيسية', icon: LayoutDashboard },
   { href: '/supervisor/sessions', label: 'الحصص والتقارير', icon: CalendarClock },
   { href: '/supervisor/reports', label: 'تقاريري', icon: FileBarChart },
+  { href: '/supervisor/finances', label: 'المالية', icon: Wallet },
   { href: '/supervisor/profile', label: 'الملف الشخصي', icon: Settings },
 ]
 

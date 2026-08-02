@@ -68,6 +68,8 @@ export function HeroSlider() {
                   <img
                     src={b.imageUrl}
                     alt={b.title}
+                    loading={i === index ? 'eager' : 'lazy'}
+                    decoding="async"
                     className="absolute inset-0 h-full w-full object-cover opacity-30"
                   />
                 )}

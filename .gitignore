@@ -67,3 +67,6 @@ worklog.md
 
 # local uploads (user data)
 /public/uploads/
+
+# educational content (internal — never pushed)
+/educational-content/

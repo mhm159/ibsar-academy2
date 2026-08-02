@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { SUPERVISOR_REPORT_FEE_EGP } from '@/lib/supervisor-finance'
 
 /**
  * POST /api/supervisor/report
@@ -58,20 +59,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'الملف غير موجود' }, { status: 404 })
   }
 
-  const report = await db.supervisorReport.create({
-    data: {
-      sessionId: sess.id,
-      supervisorId,
-      chatCount: sess.chatMessages.length,
-      studentCount: sess.bookings.filter((b) => b.status !== 'CANCELLED').length,
-      avgFocusScore: focusScores.length
-        ? Math.round(focusScores.reduce((a, b) => a + b, 0) / focusScores.length)
-        : 0,
-      durationMins: sess.durationMins,
-      eventsCount: sess.sessionLogs.length,
-      rating: typeof rating === 'number' && rating >= 1 && rating <= 5 ? Math.round(rating) : 0,
-      notes: notes ? String(notes) : null,
-    },
+  const report = await db.$transaction(async (tx) => {
+    const created = await tx.supervisorReport.create({
+      data: {
+        sessionId: sess.id,
+        supervisorId,
+        chatCount: sess.chatMessages.length,
+        studentCount: sess.bookings.filter((b) => b.status !== 'CANCELLED').length,
+        avgFocusScore: focusScores.length
+          ? Math.round(focusScores.reduce((a, b) => a + b, 0) / focusScores.length)
+          : 0,
+        durationMins: sess.durationMins,
+        eventsCount: sess.sessionLogs.length,
+        rating: typeof rating === 'number' && rating >= 1 && rating <= 5 ? Math.round(rating) : 0,
+        notes: notes ? String(notes) : null,
+        feeEGP: SUPERVISOR_REPORT_FEE_EGP,
+      },
+    })
+
+    // Credit the supervisor automatically for the completed report
+    await tx.supervisorEarning.create({
+      data: {
+        supervisorId,
+        reportId: created.id,
+        amountEGP: SUPERVISOR_REPORT_FEE_EGP,
+        type: 'REPORT_FEE',
+        note: `أتعاب تقرير تربوي — ${sess.title}`,
+      },
+    })
+
+    return created
   })
 
   return NextResponse.json({ ok: true, report }, { status: 201 })

@@ -149,7 +149,7 @@ function ReportsContent() {
             {data.teacherPerformance.length === 0 ? (
               <p className="text-sm text-muted-foreground py-6 text-center">لا توجد بيانات</p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" dir="rtl">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 border-b border-border/50">
                     <tr className="text-right">

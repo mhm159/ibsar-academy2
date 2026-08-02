@@ -18,6 +18,25 @@ const TRACK_NAMES: Record<string, string> = {
   MENTAL_MATH: 'الحساب الذهني 🧮',
 }
 
+/** Resolve an Arabic track label from the DB (live data) with a static fallback. */
+let trackLabelsCache: Record<string, string> | null = null
+async function getTrackLabels(): Promise<Record<string, string>> {
+  if (!trackLabelsCache) {
+    const tracks = await db.track.findMany({ select: { id: true, nameAr: true } })
+    trackLabelsCache = Object.fromEntries(tracks.map((t) => [t.id, t.nameAr]))
+    // refresh periodically so edits show up
+    setTimeout(() => {
+      trackLabelsCache = null
+    }, 5 * 60 * 1000)
+  }
+  return trackLabelsCache
+}
+
+const trackLabel = async (id: string) => {
+  const labels = await getTrackLabels()
+  return labels[id] ?? TRACK_NAMES[id] ?? id
+}
+
 const SCORE_EMOJI = (score: number) => {
   if (score >= 90) return '⭐⭐⭐⭐⭐'
   if (score >= 75) return '⭐⭐⭐⭐'
@@ -47,6 +66,7 @@ interface StudentReport {
   reports: {
     sessionTitle: string
     track: string
+    trackLabel: string
     teacherName: string
     attendance: string
     score: number
@@ -84,32 +104,41 @@ export async function collectWeeklyReports(): Promise<WeeklyReportData[]> {
     },
   })
 
-  return parents
-    .filter(p => p.user.phone) // only parents with phone numbers
-    .map(parent => ({
-      parentName: parent.user.name ?? 'ولي الأمر',
-      parentPhone: parent.user.phone!,
-      parentId: parent.id,
-      students: parent.students
-        .filter(s => s.progressReports.length > 0)
-        .map(student => ({
-          studentName: student.name,
-          reports: student.progressReports.map(r => ({
-            sessionTitle: r.session.title,
-            track: r.session.track,
-            teacherName: r.teacher.user.name ?? 'المعلم',
-            attendance: r.attendance,
-            score: r.score,
-            engagement: r.engagement,
-            understanding: r.understanding,
-            homework: r.homework,
-            focusScore: r.focusScore,
-            notes: r.notes,
-            sessionDate: r.session.startTime,
-          })),
-        })),
-    }))
-    .filter(p => p.students.length > 0) // only parents with active children this week
+  const built = await Promise.all(
+    parents
+      .filter(p => p.user.phone) // only parents with phone numbers
+      .map(async parent => {
+        const students = await Promise.all(
+          parent.students
+            .filter(s => s.progressReports.length > 0)
+            .map(async student => ({
+              studentName: student.name,
+              reports: await Promise.all(student.progressReports.map(async r => ({
+                sessionTitle: r.session.title,
+                track: r.session.track,
+                trackLabel: await trackLabel(r.session.track),
+                teacherName: r.teacher.user.name ?? 'المعلم',
+                attendance: r.attendance,
+                score: r.score,
+                engagement: r.engagement,
+                understanding: r.understanding,
+                homework: r.homework,
+                focusScore: r.focusScore,
+                notes: r.notes,
+                sessionDate: r.session.startTime,
+              }))),
+            }))
+        )
+        return {
+          parentName: parent.user.name ?? 'ولي الأمر',
+          parentPhone: parent.user.phone!,
+          parentId: parent.id,
+          students: students.filter(s => s.reports.length > 0),
+        }
+      })
+  )
+
+  return built.filter(p => p.students.length > 0) // only parents with active children this week
 }
 
 // ─── Build the WhatsApp message ───────────────────────────────────────────────
@@ -128,7 +157,7 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
     for (const r of student.reports) {
       const avgRating = Math.round((r.engagement + r.understanding + r.homework) / 3)
       lines.push(`📚 *${r.sessionTitle}*`)
-      lines.push(`   🎯 المسار: ${TRACK_NAMES[r.track] ?? r.track}`)
+      lines.push(`   🎯 المسار: ${r.trackLabel}`)
       lines.push(`   👩‍🏫 المعلم: ${r.teacherName}`)
       lines.push(`   📅 التاريخ: ${r.sessionDate.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' })}`)
       lines.push(`   ✔️ الحضور: ${ATTENDANCE_AR[r.attendance] ?? r.attendance}`)
@@ -237,17 +266,15 @@ export async function previewReportForParent(parentId: string): Promise<string |
 
   if (!parent) return null
 
-  const reportData: WeeklyReportData = {
-    parentName: parent.user.name ?? 'ولي الأمر',
-    parentPhone: parent.user.phone ?? '',
-    parentId: parent.id,
-    students: parent.students
+  const students = await Promise.all(
+    parent.students
       .filter(s => s.progressReports.length > 0)
-      .map(student => ({
+      .map(async student => ({
         studentName: student.name,
-        reports: student.progressReports.map(r => ({
+        reports: await Promise.all(student.progressReports.map(async r => ({
           sessionTitle: r.session.title,
           track: r.session.track,
+          trackLabel: await trackLabel(r.session.track),
           teacherName: r.teacher.user.name ?? 'المعلم',
           attendance: r.attendance,
           score: r.score,
@@ -257,8 +284,15 @@ export async function previewReportForParent(parentId: string): Promise<string |
           focusScore: r.focusScore,
           notes: r.notes,
           sessionDate: r.session.startTime,
-        })),
-      })),
+        }))),
+      }))
+  )
+
+  const reportData: WeeklyReportData = {
+    parentName: parent.user.name ?? 'ولي الأمر',
+    parentPhone: parent.user.phone ?? '',
+    parentId: parent.id,
+    students,
   }
 
   if (reportData.students.length === 0) return null

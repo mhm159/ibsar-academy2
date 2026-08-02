@@ -4,7 +4,7 @@ import { formatTime } from '@/lib/datetime'
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, CreditCard, ShieldCheck, Tag, ArrowLeft, Check } from 'lucide-react'
+import { Loader2, CreditCard, ShieldCheck, Tag, ArrowLeft, Check, Landmark, Wallet } from 'lucide-react'
 import { Logo } from '@/components/site/logo'
 import { ThemeToggle } from '@/components/site/theme-toggle'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { notify } from '@/lib/notify'
 import { PAYMENT_METHOD_LABELS, COUNTRIES_CONFIG, type PaymentMethod } from '@/lib/payment/config'
 import { cn } from '@/lib/utils'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 interface BookingDetails {
   booking: {
@@ -52,6 +53,7 @@ function CheckoutContent() {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('CARD')
   const [couponCode, setCouponCode] = useState('')
   const [processing, setProcessing] = useState(false)
+  const { settings } = useSiteSettings()
 
   useEffect(() => {
     if (!bookingId) {
@@ -248,6 +250,32 @@ function CheckoutContent() {
             <ShieldCheck className="h-4 w-4 text-emerald-egypt" />
             <span>دفع آمن ومشفّر • ضمان استرجاع خلال أول حصتين • أموالك في ضمان (Escrow) حتى إتمام الحصة</span>
           </div>
+
+          {/* Platform financial info (bank / wallet / instructions) */}
+          <Card className="p-5 glass border-gold/15 mb-4">
+            <h3 className="font-display font-bold mb-3 flex items-center gap-2">
+              <Landmark className="h-4 w-4 text-gold" />
+              طرق سداد إضافية
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-xl border border-border/60 p-3">
+                  <p className="text-xs text-muted-foreground mb-1">تحويل بنكي — {settings['payment.bankName']}</p>
+                  <p className="font-mono font-bold" dir="ltr">{settings['payment.bankAccount']}</p>
+                  {settings['payment.bankIban'] && (
+                    <p className="text-[0.7rem] text-muted-foreground font-mono mt-1 truncate" dir="ltr">IBAN: {settings['payment.bankIban']}</p>
+                  )}
+                </div>
+                <div className="rounded-xl border border-border/60 p-3">
+                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                    <Wallet className="h-3.5 w-3.5" /> {settings['payment.walletType']}
+                  </p>
+                  <p className="font-mono font-bold" dir="ltr">{settings['payment.walletNumber']}</p>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{settings['payment.instructions']}</p>
+            </div>
+          </Card>
 
           {/* Pay button */}
           <Button

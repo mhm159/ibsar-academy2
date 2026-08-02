@@ -80,6 +80,8 @@ model Teacher {
   maxHourlyRateEGP Int?     // when CAPPED: teacher can't exceed this
   fixedHourlyRateEGP Int?  // when FIXED: academy sets this, teacher can't change
   fixedHourlyRateUSD Int?  // when FIXED: USD equivalent
+  // Phase 9: a teacher may be assigned as supervisor of a specific track
+  supervisorTrackId String? // track id this teacher supervises (e.g. "PROGRAMMING")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -258,6 +260,8 @@ model Track {
   descriptionAr String?
   ageRange      String  @default("7-16")
   emoji         String  @default("💡")
+  // optional expressive image — shown on cards instead of the emoji when set
+  imageUrl      String?
   isActive      Boolean @default(true)
   orderIndex    Int     @default(0)
   createdAt     DateTime @default(now())
@@ -1047,10 +1051,51 @@ model Supervisor {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String?  // e.g. "مشرف تربوي", "منسق المتابعة"
   isActive  Boolean  @default(true)
+  // Phase 9: gamified credits (نقاط) granted by admins or earned via supervision
+  creditBalance Int   @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  reports SupervisorReport[]
+  reports  SupervisorReport[]
+  earnings SupervisorEarning[]
+  payouts  SupervisorPayout[]
+}
+
+// -----------------------------
+// SupervisorEarning — financial ledger entry for a supervisor
+// (one row per source: report fee, admin adjustment, ...)
+// -----------------------------
+model SupervisorEarning {
+  id           String   @id @default(cuid())
+  supervisorId String
+  supervisor   Supervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  reportId     String?  @unique // link to the report that produced this earning
+  report       SupervisorReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  amountEGP    Int      @default(0) // in piasters (×100)
+  type         String   @default("REPORT_FEE") // REPORT_FEE | ADJUSTMENT | BONUS
+  note         String?
+  createdAt    DateTime @default(now())
+
+  @@index([supervisorId, createdAt])
+}
+
+// -----------------------------
+// SupervisorPayout — supervisor withdrawal request of their supervision earnings
+// -----------------------------
+model SupervisorPayout {
+  id            String   @id @default(cuid())
+  supervisorId  String
+  supervisor    Supervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  amountEGP     Int      @default(0) // in piasters (×100)
+  status        String   @default("PENDING") // PENDING | APPROVED | PROCESSING | COMPLETED | REJECTED | FAILED
+  notes         String?
+  processedById String?
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([supervisorId, status])
+  @@index([status])
 }
 
 // -----------------------------
@@ -1073,8 +1118,12 @@ model SupervisorReport {
   rating       Int      @default(0)
   notes        String?
   status       String   @default("SUBMITTED") // DRAFT | SUBMITTED
+  // supervision fee earned for this report (piasters, default 50 EGP)
+  feeEGP       Int      @default(5000)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  earning SupervisorEarning?
 
   @@index([sessionId])
   @@index([supervisorId])

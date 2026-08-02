@@ -5,8 +5,8 @@ import { Loader2, Upload, X, FileText, Image as ImageIcon, Video } from 'lucide-
 import { cn } from '@/lib/utils'
 
 interface FileUploadProps {
-  /** upload type: avatar, video, diploma, material */
-  type: 'avatar' | 'video' | 'diploma' | 'material'
+  /** upload type: avatar, video, diploma, material, banner, session-media, track */
+  type: 'avatar' | 'video' | 'diploma' | 'material' | 'banner' | 'session-media' | 'track'
   /** current URL (if any) */
   value?: string | null
   /** label */

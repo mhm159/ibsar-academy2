@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CalendarClock, FileText, ExternalLink, ClipboardCheck, ArrowLeft } from 'lucide-react'
+import { CalendarClock, FileText, ExternalLink, ClipboardCheck, ArrowLeft, Wallet, Sparkles, ChevronLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { StatCard, PageHeader, EmptyState, TrackBadge } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { fmtEgp } from '@/lib/money'
 
 export default function SupervisorHomePage() {
   return (
@@ -25,17 +26,20 @@ function SupervisorHome() {
   })
   const [reports, setReports] = useState<any[]>([])
   const [recentSessions, setRecentSessions] = useState<any[]>([])
+  const [finance, setFinance] = useState<{ balanceEGP?: number; credits?: number } | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/dashboard/admin/sessions').then((r) => r.json()),
       fetch('/api/supervisor/report?supervisor=me').then((r) => r.json()),
+      fetch('/api/supervisor/payout').then((r) => r.json()),
     ])
-      .then(([sessionsData, reportsData]) => {
+      .then(([sessionsData, reportsData, payoutData]) => {
         if (sessionsData.summary) setStats(sessionsData.summary)
         if (sessionsData.sessions) setRecentSessions(sessionsData.sessions.slice(0, 5))
         if (reportsData.reports) setReports(reportsData.reports)
+        if (payoutData.balance) setFinance({ balanceEGP: payoutData.balance.balanceEGP, credits: payoutData.credits })
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -65,6 +69,24 @@ function SupervisorHome() {
           </Link>
         }
       />
+
+      {finance && (
+        <Link href="/supervisor/finances" className="block mb-6">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold/25 bg-gradient-to-l from-gold/15 via-gold/5 to-transparent p-4">
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <Wallet className="h-4 w-4 text-gold" />
+              رصيدي: {fmtEgp(finance.balanceEGP ?? 0)}
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet/10 px-2.5 py-0.5 text-xs font-bold text-violet">
+                <Sparkles className="h-3 w-3" />
+                كراد: {finance.credits ?? 0}
+              </span>
+            </div>
+            <span className="flex items-center gap-1 text-xs font-bold text-gold">
+              التفاصيل <ChevronLeft className="h-3 w-3" />
+            </span>
+          </div>
+        </Link>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
         <StatCard icon={CalendarClock} label="إجمالي الحصص" value={stats.total ?? 0} color="var(--azure)" />

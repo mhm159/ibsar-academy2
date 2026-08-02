@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowLeft, PlayCircle, Sparkles, ShieldCheck, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { STATS } from '@/lib/constants'
 import { useTracks } from '@/lib/tracks-store'
 import { useSiteSettings } from '@/hooks/use-site-settings'
+import { useHomeData } from '@/hooks/use-home-data'
 
 export function HeroSection() {
   const { settings } = useSiteSettings()
+  const { stats } = useHomeData()
   return (
     <section className="relative overflow-hidden bg-pharaonic pt-12 pb-20 lg:pt-20 lg:pb-32">
       {/* Decorative hieroglyph pattern overlay */}
@@ -85,7 +86,7 @@ export function HeroSection() {
 
             {/* Stats */}
             <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0">
-              {STATS.map((stat, i) => (
+              {stats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 16 }}

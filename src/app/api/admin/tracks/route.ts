@@ -24,6 +24,26 @@ export async function GET() {
   const rows = await db.track.findMany({ orderBy: [{ orderIndex: 'asc' }, { createdAt: 'asc' }] })
   const fallback = rows.length === 0 ? TRACKS : []
 
+  const supervisingTeachers = await db.teacher.findMany({
+    where: { supervisorTrackId: { not: null } },
+    include: { user: { select: { id: true, name: true } } },
+  })
+  const supervisorByTrack = new Map<string, { id: string; name: string }>()
+  supervisingTeachers.forEach((t) => {
+    if (t.supervisorTrackId) {
+      supervisorByTrack.set(t.supervisorTrackId, { id: t.user.id, name: t.user.name ?? '' })
+    }
+  })
+
+  const decorate = (t: { id: string }, isFallback = false) => {
+    const sup = supervisorByTrack.get(t.id)
+    return {
+      supervisorTeacherId: sup?.id ?? null,
+      supervisorTeacherName: sup?.name ?? null,
+      isFallback,
+    }
+  }
+
   return NextResponse.json({
     tracks: [
       ...fallback.map((t, i) => ({
@@ -38,8 +58,10 @@ export async function GET() {
         descriptionAr: t.description,
         ageRange: t.ageRange,
         emoji: t.emoji,
+        imageUrl: undefined,
         isActive: true,
         orderIndex: i,
+        ...decorate(t, true),
       })),
       ...rows.map((t) => ({
         id: t.id,
@@ -53,8 +75,10 @@ export async function GET() {
         descriptionAr: t.descriptionAr,
         ageRange: t.ageRange,
         emoji: t.emoji,
+        imageUrl: t.imageUrl,
         isActive: t.isActive,
         orderIndex: t.orderIndex,
+        ...decorate(t),
       })),
     ],
   })
@@ -64,7 +88,7 @@ export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
 
   const body = await req.json()
-  const { id, nameAr, nameEn, descriptionAr, icon, colorVar, color, emoji, ageRange, orderIndex } = body as Record<string, string | number>
+  const { id, nameAr, nameEn, descriptionAr, icon, colorVar, color, emoji, ageRange, orderIndex, imageUrl } = body as Record<string, string | number>
 
   const trackId = String(id || '').toUpperCase().trim()
   if (!trackId || !nameAr || !nameEn) {
@@ -91,6 +115,7 @@ export async function POST(req: NextRequest) {
       descriptionAr: String(descriptionAr || ''),
       ageRange: String(ageRange || '7-16'),
       emoji: String(emoji || '💡'),
+      imageUrl: imageUrl ? String(imageUrl) : null,
       isActive: true,
       orderIndex: Number(orderIndex ?? 0),
     },
@@ -103,13 +128,31 @@ export async function PATCH(req: NextRequest) {
   if (!(await requireAdmin())) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
 
   const body = await req.json()
-  const { id, nameAr, nameEn, descriptionAr, icon, colorVar, color, emoji, ageRange, orderIndex, isActive } = body as Record<string, string | number | boolean>
+  const { id, nameAr, nameEn, descriptionAr, icon, colorVar, color, emoji, ageRange, orderIndex, isActive, imageUrl, supervisorTeacherId } = body as Record<string, string | number | boolean | null>
 
   if (!id) return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 422 })
 
   const existing = await db.track.findUnique({ where: { id: String(id) } })
   if (!existing) {
     return NextResponse.json({ error: 'المسار غير موجود' }, { status: 404 })
+  }
+
+  // Assign/unassign a teacher as the educational supervisor of this track
+  if (supervisorTeacherId !== undefined) {
+    if (supervisorTeacherId) {
+      const target = await db.teacher.findFirst({ where: { userId: String(supervisorTeacherId) } })
+      if (!target) {
+        return NextResponse.json({ error: 'المعلم غير موجود' }, { status: 404 })
+      }
+      await db.$transaction([
+        // unassign whoever was supervising this track before
+        db.teacher.updateMany({ where: { supervisorTrackId: String(id) }, data: { supervisorTrackId: null } }),
+        // if the teacher already supervises another track, release it (one track per teacher)
+        db.teacher.updateMany({ where: { id: target.id }, data: { supervisorTrackId: String(id) } }),
+      ])
+    } else {
+      await db.teacher.updateMany({ where: { supervisorTrackId: String(id) }, data: { supervisorTrackId: null } })
+    }
   }
 
   const track = await db.track.update({
@@ -124,6 +167,7 @@ export async function PATCH(req: NextRequest) {
       descriptionAr: descriptionAr !== undefined ? String(descriptionAr) : undefined,
       ageRange: ageRange !== undefined ? String(ageRange) : undefined,
       emoji: emoji !== undefined ? String(emoji) : undefined,
+      imageUrl: imageUrl !== undefined ? (imageUrl ? String(imageUrl) : null) : undefined,
       orderIndex: orderIndex !== undefined ? Number(orderIndex) : undefined,
       isActive: isActive !== undefined ? Boolean(isActive) : undefined,
     },
