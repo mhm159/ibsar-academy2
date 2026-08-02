@@ -52,6 +52,17 @@ docker compose up -d --build
    - VCN → Security List → Add Ingress Rule: المصدر `0.0.0.0/0`، المنفذ **80** (TCP).
 
 ### 2.2 تجهيز السيرفر
+
+#### الطريقة الأسرع — أمر واحد (موصى به)
+بعد الدخول على السيرفر بـ SSH، الصق هذا الأمر واضغط Enter — يثبّت Docker ويجلب الكود ويركّب كل شيء تلقائياً:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/mhm159/ibsar-academy2/main/deploy/install.sh)
+```
+
+> أول تشغيل يستغرق 5-10 دقائق (تثبيت + بناء). في النهاية سيطبع رابط `http://<IP>` لتفتحه في المتصفح.
+
+#### الطريقة اليدوية (للتحكم الكامل)
 ```bash
 # الدخول (من PowerShell في Windows)
 ssh ubuntu@<PUBLIC_IP>

@@ -2,6 +2,7 @@
 # valid inside Linux containers even when cloned on Windows.
 docker-entrypoint.sh text eol=lf
 deploy/Caddyfile text eol=lf
+deploy/install.sh text eol=lf
 Dockerfile text eol=lf
 docker-compose.yml text eol=lf
 mini-services/classroom-service/Dockerfile text eol=lf
