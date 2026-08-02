@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Phone, MapPin, Clock, CheckCircle2 } from 'lucide-react'
+import { Users, MapPin, Clock, CheckCircle2 } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { PageHeader, TrackBadge, EmptyState } from '@/components/dashboard/ui-bits'
 import { Card } from '@/components/ui/card'
@@ -10,7 +10,6 @@ interface TeacherStudent {
   id: string
   name: string
   parentName: string
-  parentPhone: string
   country: string
   totalSessions: number
   completedSessions: number
@@ -103,10 +102,6 @@ function StudentsList() {
               </div>
 
               <div className="space-y-1.5 text-xs text-muted-foreground border-t border-border/50 pt-3">
-                <p className="flex items-center gap-2">
-                  <Phone className="h-3 w-3" />
-                  <span dir="ltr">{s.parentPhone}</span>
-                </p>
                 <p className="flex items-center gap-2">
                   <MapPin className="h-3 w-3" />
                   {s.country}

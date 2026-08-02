@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Validate type
-  const allowedTypes = ['avatar', 'video', 'diploma', 'material']
+  const allowedTypes = ['avatar', 'video', 'diploma', 'material', 'banner', 'session-media']
   if (!allowedTypes.includes(type)) {
     return NextResponse.json({ error: 'نوع غير صالح' }, { status: 422 })
   }
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
   // Generate filename
   const ext = mimeType.split('/')[1].replace('jpeg', 'jpg')
   const hash = crypto.randomBytes(8).toString('hex')
-  const prefix = type === 'avatar' ? 'avatar' : type === 'video' ? 'video' : type === 'diploma' ? 'diploma' : 'material'
+  const prefix = type === 'avatar' ? 'avatar' : type === 'video' ? 'video' : type === 'diploma' ? 'diploma' : type === 'banner' ? 'banner' : type === 'session-media' ? 'session' : 'material'
   const newFileName = `${prefix}_${session.userId}_${hash}.${ext}`
   const uploadDir = path.join(process.cwd(), 'public', 'uploads')
   const filePath = path.join(uploadDir, newFileName)

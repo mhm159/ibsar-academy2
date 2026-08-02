@@ -19,6 +19,10 @@ import {
   Calendar,
   BookOpen,
   Layers,
+  CalendarClock,
+  Images,
+  FileText,
+  UserCog,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -60,6 +64,10 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/escrow', label: 'الضمان (Escrow)', icon: ShieldCheck },
   { href: '/admin/payouts', label: 'طلبات السحب', icon: CreditCard },
   { href: '/admin/financials', label: 'التقارير المالية', icon: ClipboardList },
+  { href: '/admin/reports', label: 'التقارير الإدارية', icon: FileBarChart },
+  { href: '/admin/sessions', label: 'سجل الحصص', icon: CalendarClock },
+  { href: '/admin/slider', label: 'سلايدر الواجهة', icon: Images },
+  { href: '/admin/supervisors', label: 'المشرفون التربويون', icon: UserCog },
   { href: '/admin/trials', label: 'الحصص التجريبية', icon: CalendarDays },
   { href: '/admin/whatsapp-reports', label: 'تقارير واتساب', icon: FileBarChart },
   { href: '/admin/teacher-pricing', label: 'تسعير المعلمين', icon: Settings },
@@ -70,6 +78,13 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/posts', label: 'منشورات AI', icon: Sparkles },
 ]
 
+export const SUPERVISOR_NAV: NavItem[] = [
+  { href: '/supervisor', label: 'الرئيسية', icon: LayoutDashboard },
+  { href: '/supervisor/sessions', label: 'الحصص والتقارير', icon: CalendarClock },
+  { href: '/supervisor/reports', label: 'تقاريري', icon: FileBarChart },
+  { href: '/supervisor/profile', label: 'الملف الشخصي', icon: Settings },
+]
+
 export function getNavForRole(role: string): NavItem[] {
   switch (role) {
     case 'PARENT':
@@ -78,6 +93,8 @@ export function getNavForRole(role: string): NavItem[] {
       return TEACHER_NAV
     case 'ADMIN':
       return ADMIN_NAV
+    case 'SUPERVISOR':
+      return SUPERVISOR_NAV
     default:
       return []
   }
@@ -90,4 +107,5 @@ export const ROLE_META: Record<
   PARENT: { label: 'ولي الأمر', emoji: '👨‍👩‍👧', home: '/parent' },
   TEACHER: { label: 'المعلم', emoji: '👩‍🏫', home: '/teacher' },
   ADMIN: { label: 'الإدارة', emoji: '⚙️', home: '/admin' },
+  SUPERVISOR: { label: 'مشرف تربوي', emoji: '📋', home: '/supervisor' },
 }

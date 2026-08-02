@@ -41,7 +41,9 @@ export function useDashboardUser(expectedRole?: string) {
               ? '/admin'
               : data.user.role === 'TEACHER'
                 ? '/teacher'
-                : '/parent'
+                : data.user.role === 'SUPERVISOR'
+                  ? '/supervisor'
+                  : '/parent'
           router.replace(dest)
           return
         }

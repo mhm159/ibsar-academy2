@@ -62,8 +62,9 @@ async function handlePost(req: NextRequest) {
     return NextResponse.json({ error: 'الحصة غير موجودة' }, { status: 404 })
   }
 
-  // Authorization: teacher OR parent with booking
+  // Authorization: teacher OR parent with booking OR admin/supervisor visitor
   let isOwner = false
+  let isVisitor = false
   let displayName = 'مشارك'
   let userRole = 'PARENT'
 
@@ -91,10 +92,23 @@ async function handlePost(req: NextRequest) {
     }
     displayName = parent.user.name ?? 'ولي الأمر'
     userRole = 'PARENT'
-  } else if (session.role === 'ADMIN') {
-    isOwner = true
-    displayName = 'إدارة'
-    userRole = 'ADMIN'
+  } else if (session.role === 'ADMIN' || session.role === 'SUPERVISOR') {
+    // Read-only observer (visitor) — can watch the class but cannot control recording/whiteboard
+    isVisitor = true
+    const user = await db.user.findUnique({
+      where: { id: session.userId },
+      select: { name: true },
+    })
+    displayName = session.role === 'ADMIN' ? `${user?.name ?? 'إدارة'} (متابعة)` : `${user?.name ?? 'مشرف'} (متابعة)`
+    userRole = session.role
+    // Ensure a Supervisor profile exists for the SUPERVISOR role
+    if (session.role === 'SUPERVISOR') {
+      await db.supervisor.upsert({
+        where: { userId: session.userId },
+        update: { isActive: true },
+        create: { userId: session.userId, title: 'مشرف تربوي' },
+      })
+    }
   } else {
     return NextResponse.json({ error: 'دور غير مدعوم' }, { status: 403 })
   }
@@ -144,6 +158,7 @@ async function handlePost(req: NextRequest) {
     token: tokenResult.token,
     sandbox: roomResult.sandbox || tokenResult.sandbox,
     isOwner,
+    isVisitor,
     displayName,
     userRole,
     session: {

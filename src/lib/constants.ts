@@ -64,6 +64,7 @@ export const ROLES = {
   TEACHER: "TEACHER",
   PARENT: "PARENT",
   STUDENT: "STUDENT",
+  SUPERVISOR: "SUPERVISOR",
 } as const;
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];

@@ -49,6 +49,7 @@ const ROLE_LABELS: Record<string, string> = {
   TEACHER: 'معلم',
   PARENT: 'ولي أمر',
   STUDENT: 'طالب',
+  SUPERVISOR: 'مشرف تربوي',
 }
 
 export default function AdminOverviewPage() {

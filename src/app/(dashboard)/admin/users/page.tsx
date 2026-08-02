@@ -35,6 +35,7 @@ const ROLE_LABELS: Record<string, string> = {
   TEACHER: 'معلم',
   PARENT: 'ولي أمر',
   STUDENT: 'طالب',
+  SUPERVISOR: 'مشرف تربوي',
 }
 
 export default function AdminUsersPage() {
@@ -123,6 +124,7 @@ function UsersManager() {
             <SelectItem value="">كل الأدوار</SelectItem>
             <SelectItem value="PARENT">أولياء الأمور</SelectItem>
             <SelectItem value="TEACHER">المعلمون</SelectItem>
+            <SelectItem value="SUPERVISOR">المشرفون التربويون</SelectItem>
             <SelectItem value="ADMIN">الإدارة</SelectItem>
           </SelectContent>
         </Select>

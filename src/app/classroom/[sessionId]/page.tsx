@@ -29,6 +29,7 @@ interface JoinResult {
   token: string
   sandbox: boolean
   isOwner: boolean
+  isVisitor?: boolean
   displayName: string
   userRole: string
   session: {
@@ -55,6 +56,19 @@ function ClassroomContent() {
   const [activeTab, setActiveTab] = useState('chat')
   const [isExpanded, setIsExpanded] = useState(false)
 
+  // Log a session activity event (fire-and-forget)
+  const logEvent = useCallback(
+    (event: string, detail?: string) => {
+      if (!sessionId) return
+      fetch('/api/classroom/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, event, detail }),
+      }).catch(() => {})
+    },
+    [sessionId],
+  )
+
   // 1. Join the classroom (creates Daily room + meeting token)
   useEffect(() => {
     if (!sessionId) return;
@@ -72,13 +86,14 @@ function ClassroomContent() {
       .then((d) => {
         setJoinResult(d);
         setLoading(false);
+        logEvent('JOIN', `دخل ${d.displayName} الحصة كـ ${d.userRole}`)
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
     
-  }, [sessionId])
+  }, [sessionId, logEvent])
 
   // 2. Fetch recording status
   useEffect(() => {
@@ -148,13 +163,25 @@ function ClassroomContent() {
     const handleFocusAlert = (e: any) => {
       if (joinResult?.userRole !== 'TEACHER') return
       const { name } = e.detail
+      logEvent('FOCUS_ALERT', `تنبيه تشتت: ${name}`)
       notify.error(`⚠️ تنبيه ذكاء اصطناعي: الطالب ${name} يبدو مشتتاً ولا ينظر للشاشة!`, {
         duration: 5000,
       })
     }
     window.addEventListener('focus:alert', handleFocusAlert)
     return () => window.removeEventListener('focus:alert', handleFocusAlert)
-  }, [joinResult])
+  }, [joinResult, logEvent])
+
+  // Log LEAVE when leaving the classroom tab (uses sendBeacon so it survives unload)
+  useEffect(() => {
+    if (!sessionId) return
+    const handleLeave = () => {
+      const payload = JSON.stringify({ sessionId, event: 'LEAVE' })
+      navigator.sendBeacon?.('/api/classroom/log', new Blob([payload], { type: 'application/json' }))
+    }
+    window.addEventListener('beforeunload', handleLeave)
+    return () => window.removeEventListener('beforeunload', handleLeave)
+  }, [sessionId])
 
   const handleSendChat = useCallback(
     (text: string) => {
@@ -247,7 +274,15 @@ function ClassroomContent() {
   }
 
   const handleLeave = () => {
-    const dest = joinResult?.userRole === 'TEACHER' ? '/teacher/schedule' : '/parent/sessions'
+    if (!joinResult) return
+    const dest =
+      joinResult.userRole === 'TEACHER'
+        ? '/teacher/schedule'
+        : joinResult.userRole === 'ADMIN'
+          ? '/admin/sessions'
+          : joinResult.userRole === 'SUPERVISOR'
+            ? '/supervisor/sessions'
+            : '/parent/sessions'
     router.push(dest)
   }
 
@@ -293,6 +328,7 @@ function ClassroomContent() {
   if (!joinResult) return null
 
   const isTeacher = joinResult.userRole === 'TEACHER'
+  const isVisitor = !!joinResult.isVisitor
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' })
   const fmtTime = (iso: string) =>
@@ -340,6 +376,13 @@ function ClassroomContent() {
               <Users className="h-3 w-3" />
               {rt.presence.length}
             </span>
+            {/* Visitor (observer) indicator */}
+            {isVisitor && (
+              <span className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-azure/20 text-azure font-bold">
+                <Users className="h-3 w-3" />
+                وضع المتابعة
+              </span>
+            )}
             <ThemeToggle />
           </div>
         </div>
@@ -443,7 +486,7 @@ function ClassroomContent() {
       </main>
 
       {/* AI Focus Tracker for Student */}
-      {!isTeacher && (
+      {!isTeacher && !isVisitor && (
         <FocusTracker
           sessionId={sessionId}
           studentName={joinResult.displayName}

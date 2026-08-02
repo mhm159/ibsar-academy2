@@ -19,7 +19,8 @@ export async function GET() {
     include: {
       student: {
         include: {
-          parent: { include: { user: { select: { name: true, phone: true, country: true } } } },
+          // NOTE: phone intentionally excluded — teachers must not see student/parent phone numbers
+          parent: { include: { user: { select: { name: true, country: true } } } },
           progressReports: { select: { id: true } },
         },
       },
@@ -33,7 +34,6 @@ export async function GET() {
     id: string
     name: string
     parentName: string
-    parentPhone: string
     country: string
     totalSessions: number
     completedSessions: number
@@ -50,7 +50,6 @@ export async function GET() {
         id: s.id,
         name: s.name,
         parentName: s.parent.user.name ?? '',
-        parentPhone: s.parent.user.phone ?? '',
         country: s.parent.user.country ?? 'EG',
         totalSessions: 0,
         completedSessions: 0,

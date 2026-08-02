@@ -15,7 +15,7 @@ import { getNavForRole, ROLE_META } from './nav-config'
 import type { NavItem } from './nav-config'
 
 interface DashboardShellProps {
-  role: 'PARENT' | 'TEACHER' | 'ADMIN'
+  role: 'PARENT' | 'TEACHER' | 'ADMIN' | 'SUPERVISOR'
   children: React.ReactNode
   /** optional page title override (defaults to matched nav label) */
   title?: string
