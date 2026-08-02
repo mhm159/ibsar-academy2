@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { TRACKS } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
 import { DAYS_AR_FULL } from '@/lib/datetime'
 import { Gift, Loader2 } from 'lucide-react'
 import { notify } from '@/lib/notify'
@@ -27,6 +27,7 @@ interface BookTrialModalProps {
 
 export function BookTrialModal({ students }: BookTrialModalProps) {
   const router = useRouter()
+  const tracks = useTracks()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
@@ -118,7 +119,7 @@ export function BookTrialModal({ students }: BookTrialModalProps) {
           <div className="grid gap-2">
             <label className="text-sm font-semibold text-foreground">المسار التعليمي</label>
             <div className="grid grid-cols-3 gap-2">
-              {TRACKS.map(t => (
+              {tracks.map(t => (
                 <button
                   key={t.id}
                   onClick={() => {

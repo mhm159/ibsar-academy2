@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { notify } from '@/lib/notify'
 import { TRACKS } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
 
 const DAYS = [
   { idx: 6, label: 'السبت' },
@@ -48,6 +49,7 @@ export default function TeacherProfilePage() {
 }
 
 function ProfileEditor() {
+  const trackOptions = useTracks()
   const [data, setData] = useState<ProfileData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -220,7 +222,7 @@ function ProfileEditor() {
           <div className="space-y-2">
             <Label>المواد التي تُدرّسها</Label>
             <div className="grid grid-cols-1 gap-2">
-              {TRACKS.map((track) => {
+              {trackOptions.map((track) => {
                 const selected = tracks.includes(track.id)
                 return (
                   <button

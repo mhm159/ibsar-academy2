@@ -11,7 +11,8 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-import { TRACKS, COUNTRIES } from '@/lib/constants'
+import { COUNTRIES } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
 import {
   Select,
   SelectContent,
@@ -26,8 +27,9 @@ type Step = 'FORM' | 'OTP'
 
 export default function RegisterTeacherPage() {
   const router = useRouter()
+  const trackOptions = useTracks()
   const [step, setStep] = React.useState<Step>('FORM')
-  const [channel, setChannel] = React.useState<Channel>('SMS')
+  const [channel, setChannel] = React.useState<Channel>('WHATSAPP')
   const [target, setTarget] = React.useState('')
   const [name, setName] = React.useState('')
   const [country, setCountry] = React.useState('EG')
@@ -135,7 +137,7 @@ export default function RegisterTeacherPage() {
           <div className="space-y-2">
             <Label>المواد التي تُدرّسها</Label>
             <div className="grid grid-cols-1 gap-2">
-              {TRACKS.map((track) => {
+              {trackOptions.map((track) => {
                 const selected = selectedTracks.includes(track.id)
                 return (
                   <button

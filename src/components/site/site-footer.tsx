@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Send } from 'lucide-react'
 import { Logo } from './logo'
 import { APP } from '@/lib/constants'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const FOOTER_LINKS = [
   {
@@ -41,6 +42,12 @@ const SOCIAL = [
 ]
 
 export function SiteFooter() {
+  const { settings } = useSiteSettings()
+  const about = settings['footer.about'] || APP.description
+  const phone = settings['footer.phone'] || APP.supportPhone
+  const email = settings['footer.email'] || APP.supportEmail
+  const slogan = settings['footer.slogan'] || APP.tagline
+
   return (
     <footer className="mt-auto relative border-t border-border bg-card">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -49,24 +56,25 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <Logo size={44} />
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-sm">
-              {APP.description}
+              {about}
             </p>
 
             {/* Contact */}
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="h-4 w-4 text-gold shrink-0" />
-                <span dir="ltr">{APP.supportPhone}</span>
+                <span dir="ltr">{phone}</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="h-4 w-4 text-gold shrink-0" />
-                <span dir="ltr">{APP.supportEmail}</span>
+                <span dir="ltr">{email}</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="h-4 w-4 text-gold shrink-0" />
                 <span>القاهرة، مصر</span>
               </li>
             </ul>
+            <p className="mt-3 text-sm font-semibold text-gold">{slogan}</p>
           </div>
 
           {/* Links columns */}

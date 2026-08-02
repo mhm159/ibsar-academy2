@@ -210,10 +210,74 @@ model Course {
   updatedAt     DateTime @updatedAt
 
   sessions Session[]
+  lessons  CourseLesson[]
 
   @@index([teacherId])
   @@index([track])
   @@index([status])
+}
+
+// -----------------------------
+// CourseLesson — attached learning content for a course
+// (viewable by enrolled students + manageable by the teacher)
+// -----------------------------
+model CourseLesson {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  titleAr     String?
+  description String?
+  // type: VIDEO | TEXT | FILE | QUIZ | PROJECT
+  type        String   @default("VIDEO")
+  // contentUrl: video/file link · content: body text
+  contentUrl  String?
+  content     String?
+  orderIndex  Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([courseId, orderIndex])
+}
+
+// -----------------------------
+// Track — configurable educational specialization
+// (admin-manageable so the academy can add new tracks)
+// -----------------------------
+model Track {
+  id            String  @id // e.g. PROGRAMMING, ROBOTICS, MENTAL_MATH, AI...
+  name          String
+  nameAr        String
+  icon          String  @default("Code2")
+  colorVar      String  @default("kids-teal")
+  color         String  @default("var(--azure)")
+  description   String
+  descriptionAr String?
+  ageRange      String  @default("7-16")
+  emoji         String  @default("💡")
+  isActive      Boolean @default(true)
+  orderIndex    Int     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// -----------------------------
+// SiteSetting — editable front-page texts (key/value)
+// -----------------------------
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  // label shown in the admin editor
+  label     String?
+  // group for grouping in the admin UI (HERO | FOOTER | CTA | GENERAL)
+  group     String   @default("GENERAL")
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
 }
 
 // -----------------------------
@@ -938,3 +1002,29 @@ enum Rarity {
   EPIC     // 🟣
   LEGENDARY // 🟡
 }
+
+// ============================================================
+// Phase 8 — AI Posts (stories & cards for the public feed)
+// ============================================================
+
+// -----------------------------
+// Post — AI-generated/edited stories & cards published to the site
+// -----------------------------
+model Post {
+  id        String   @id @default(cuid())
+  title     String   // short headline
+  content   String   // full body text
+  type      String   @default("CARD") // STORY | CARD | TIPS
+  emoji     String   @default("✨")
+  category  String?  // e.g. PROGRAMMING, ROBOTICS, MENTAL_MATH, GENERAL
+  status    String   @default("DRAFT") // DRAFT | PUBLISHED
+  source    String   @default("MANUAL") // AI_SUGGESTED | MANUAL
+  createdById String?
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, type])
+  @@index([createdAt])
+}
+

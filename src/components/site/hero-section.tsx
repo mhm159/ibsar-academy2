@@ -4,9 +4,12 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowLeft, PlayCircle, Sparkles, ShieldCheck, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { STATS, TRACKS } from '@/lib/constants'
+import { STATS } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function HeroSection() {
+  const { settings } = useSiteSettings()
   return (
     <section className="relative overflow-hidden bg-pharaonic pt-12 pb-20 lg:pt-20 lg:pb-32">
       {/* Decorative hieroglyph pattern overlay */}
@@ -29,7 +32,7 @@ export function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-6 border-glow">
               <Sparkles className="h-4 w-4 text-gold" />
-              <span>منصة تعليمية معتمدة لكل طفل عربي</span>
+              <span>{settings['hero.badge']}</span>
               <span className="hidden sm:inline-flex items-center gap-0.5 text-gold">
                 <Star className="h-3 w-3 fill-current" />
                 <Star className="h-3 w-3 fill-current" />
@@ -40,16 +43,15 @@ export function HeroSection() {
             </div>
 
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight">
-              نُبصرُ مستقبلَ طفلِك
+              {settings['hero.title.line1']}
               <br />
-              <span className="text-gradient-gold">بالبرمجة والروبوتيكس</span>
+              <span className="text-gradient-gold">{settings['hero.title.line2']}</span>
               <br />
-              <span className="text-gradient-azure-gold">والحساب الذهني</span>
+              <span className="text-gradient-azure-gold">{settings['hero.title.line3']}</span>
             </h1>
 
             <p className="mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              منصة عربية متكاملة تُعلّم الأطفال من 6 إلى 16 سنة مهارات المستقبل عبر معلمين
-              مختصين، حصص مباشرة، غرفة افتراضية متكاملة، ونظام دفع آمن محلي ودولي.
+              {settings['hero.subtitle']}
             </p>
 
             {/* CTAs */}
@@ -59,7 +61,7 @@ export function HeroSection() {
                   size="lg"
                   className="w-full sm:w-auto gap-2 text-base h-12 px-7 bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-xl hover:shadow-gold/40 transition-all shine relative overflow-hidden"
                 >
-                  ابدأ التعلّم مجاناً
+                  {settings['hero.cta.primary']}
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>
@@ -70,7 +72,7 @@ export function HeroSection() {
                   className="w-full sm:w-auto gap-2 text-base h-12 px-7 glass border-gold/30 hover:bg-gold/10"
                 >
                   <PlayCircle className="h-5 w-5 text-azure" />
-                  شاهد كيف نعمل
+                  {settings['hero.cta.secondary']}
                 </Button>
               </Link>
             </div>
@@ -78,7 +80,7 @@ export function HeroSection() {
             {/* Trust line */}
             <div className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-emerald-egypt" />
-              <span>ضمان استرجاع المبلغ خلال أول حصتين</span>
+              <span>{settings['hero.trust']}</span>
             </div>
 
             {/* Stats */}
@@ -119,6 +121,7 @@ export function HeroSection() {
 
 /** Floating cards visual — mock classroom + track previews */
 function HeroVisual() {
+  const tracks = useTracks()
   return (
     <div className="relative aspect-square max-w-md mx-auto">
       {/* Main glass card — classroom mock */}
@@ -186,7 +189,7 @@ function HeroVisual() {
       </div>
 
       {/* Floating track chips */}
-      {TRACKS.map((track, i) => {
+      {tracks.map((track, i) => {
         const positions = [
           'top-0 -right-4 sm:-right-8',
           'bottom-16 -left-4 sm:-left-8',

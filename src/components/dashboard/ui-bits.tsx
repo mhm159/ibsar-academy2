@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { Card } from '@/components/ui/card'
 import { LucideIcon } from 'lucide-react'
+import { useTracks } from '@/lib/tracks-store'
 
 /** StatCard — metric card with icon, value, label, optional trend */
 export function StatCard({
@@ -107,6 +108,8 @@ const STATUS_COLORS: Record<string, string> = {
   NO_SHOW: 'var(--destructive)',
   SUSPENDED: 'var(--destructive)',
   REFUNDED: 'var(--kids-teal)',
+  PUBLISHED: 'var(--emerald-egypt)',
+  DRAFT: 'var(--gold)',
   BEGINNER: 'var(--kids-teal)',
   INTERMEDIATE: 'var(--azure)',
   ADVANCED: 'var(--kids-red)',
@@ -135,7 +138,11 @@ const TRACK_META: Record<string, { label: string; color: string; emoji: string }
 }
 
 export function TrackBadge({ track }: { track: string }) {
-  const meta = TRACK_META[track]
+  const tracks = useTracks()
+  const live = tracks.find((t) => t.id === track)
+  const meta = live
+    ? { label: live.name, color: live.color, emoji: live.emoji }
+    : TRACK_META[track]
   if (!meta) return <span className="text-xs">{track}</span>
   return (
     <span

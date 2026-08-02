@@ -64,3 +64,6 @@ server.log
 download/
 .zscripts/
 worklog.md
+
+# local uploads (user data)
+/public/uploads/

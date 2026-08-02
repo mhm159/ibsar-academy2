@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Star, Users, Clock, ArrowLeft } from 'lucide-react'
-import { FEATURED_TEACHERS, TRACKS } from '@/lib/constants'
+import { FEATURED_TEACHERS } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from './tracks-section'
 
 export function TeachersSection() {
+  const tracks = useTracks()
   return (
     <section id="teachers" className="py-20 lg:py-28 bg-pharaonic relative overflow-hidden">
       <div className="absolute inset-0 bg-hieroglyphs opacity-40 pointer-events-none" aria-hidden />
@@ -30,7 +32,7 @@ export function TeachersSection() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURED_TEACHERS.map((teacher, i) => {
-            const teacherTracks = TRACKS.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
+            const teacherTracks = tracks.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
             return (
               <motion.div
                 key={teacher.id}

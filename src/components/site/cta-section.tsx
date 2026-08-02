@@ -5,8 +5,14 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { APP } from '@/lib/constants'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function CtaSection() {
+  const { settings } = useSiteSettings()
+  const title = settings['cta.title'] || 'مستقبل طفلك يبدأ بحصة تجريبية مجانية'
+  const subtitle = settings['cta.subtitle'] || ''
+  const buttonLabel = settings['cta.button'] || 'سجّل طفلك الآن'
+
   return (
     <section className="py-20 lg:py-28 relative overflow-hidden">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -37,12 +43,13 @@ export function CtaSection() {
             </div>
 
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight max-w-3xl mx-auto">
-              مستقبل طفلك يبدأ بحصة تجريبية مجانية
+              {title}
             </h2>
-            <p className="mt-5 text-base lg:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-              سجّل الآن واحصل على جلسة تقييم مجانية (15 دقيقة) مع أحد معلمينا المختصين.
-              بدون التزام، بدون رسوم، فقط قرار واعٍ لمستقبل طفلك.
-            </p>
+            {subtitle && (
+              <p className="mt-5 text-base lg:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
+                {subtitle}
+              </p>
+            )}
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Link href="/auth/register/student">
@@ -50,7 +57,7 @@ export function CtaSection() {
                   size="lg"
                   className="w-full sm:w-auto gap-2 text-base h-12 px-8 bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-xl hover:shadow-gold/50 transition-all shine relative overflow-hidden"
                 >
-                  سجّل طفلك الآن
+                  {buttonLabel}
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>

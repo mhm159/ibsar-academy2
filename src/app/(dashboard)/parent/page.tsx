@@ -11,6 +11,7 @@ import {
   Star,
   TrendingUp,
   Sparkles,
+  Gift,
 } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { StatCard, PageHeader, TrackBadge, StarRating, StatusBadge, EmptyState } from '@/components/dashboard/ui-bits'
@@ -41,6 +42,7 @@ interface OverviewData {
     endTime: string
     durationMins: number
     status: string
+    isTrial?: boolean
     teacherName: string | null
     studentName: string
     meetingUrl: string | null
@@ -120,12 +122,15 @@ function ProOverview({ data }: { data: OverviewData }) {
         title="مرحباً بك 👋"
         description="نظرة عامة على نشاط أبنائك في أكاديمية إبداع"
         action={
-          <Link href="/parent/sessions">
-            <Button className="gap-1.5 bg-gradient-to-l from-gold to-[#E8D488] text-night">
-              احجز حصة جديدة
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <BookTrialModal students={data.students} />
+            <Link href="/parent/sessions">
+              <Button className="gap-1.5 bg-gradient-to-l from-gold to-[#E8D488] text-night">
+                احجز حصة جديدة
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         }
       />
 
@@ -141,6 +146,34 @@ function ProOverview({ data }: { data: OverviewData }) {
           color="var(--kids-red)"
         />
       </div>
+
+      {data.upcomingSessions.filter((s) => s.isTrial).length > 0 && (
+        <Card className="p-4 glass border-gold/25 mb-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-display font-bold text-gradient-gold flex items-center gap-2">
+                <Gift className="h-5 w-5 text-gold" /> حصتك التجريبية المجانية
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                تم حجزها تلقائياً مع المعلم. تابع حالة الحجز هنا، وسيتواصل معك فريقنا للتأكيد.
+              </p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {data.upcomingSessions
+                .filter((s) => s.isTrial)
+                .map((s) => (
+                  <div key={s.id} className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">{s.studentName}</span>
+                    <span className="text-xs text-muted-foreground">
+                      • {new Date(s.startTime).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' })}
+                    </span>
+                    <StatusBadge status={s.status} />
+                  </div>
+                ))}
+            </div>
+          </div>
+        </Card>
+      )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-5 glass border-gold/15">
@@ -176,6 +209,11 @@ function ProOverview({ data }: { data: OverviewData }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <TrackBadge track={s.track} />
+                      {s.isTrial && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-l from-gold/20 to-amber-400/20 text-amber-500 border border-gold/30">
+                          🎁 تجريبية
+                        </span>
+                      )}
                       <StatusBadge status={s.status} />
                     </div>
                     <p className="text-sm font-bold truncate">{s.title}</p>
@@ -301,6 +339,7 @@ function KidsOverview({ data }: { data: OverviewData }) {
           >
             🎉 احتفل!
           </button>
+          <BookTrialModal students={data.students} />
         </div>
       </div>
 
@@ -367,7 +406,10 @@ function KidsOverview({ data }: { data: OverviewData }) {
                     <div className="text-4xl kids-bounce">{trackEmoji}</div>
                     <div className="flex-1">
                       <p className="font-extrabold text-lg leading-tight">{s.title}</p>
-                      <p className="text-xs opacity-90">{s.studentName} • {s.teacherName}</p>
+                      <p className="text-xs opacity-90">
+                        {s.studentName} • {s.teacherName}
+                        {s.isTrial && <span className="mx-1 rounded-full bg-white/25 px-2 py-0.5">🎁 تجريبية</span>}
+                      </p>
                     </div>
                   </div>
                   <div className="bg-white/20 rounded-xl p-2 text-sm font-bold">

@@ -18,6 +18,7 @@ import {
   Medal,
   Calendar,
   BookOpen,
+  Layers,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -45,6 +46,7 @@ export const TEACHER_NAV: NavItem[] = [
   { href: '/teacher/schedule', label: 'جدول الحصص', icon: CalendarDays },
   { href: '/teacher/students', label: 'الطلاب', icon: Users },
   { href: '/teacher/homework', label: 'الواجبات', icon: BookOpen },
+  { href: '/teacher/courses', label: 'الكورسات والمحتوى', icon: BookOpen },
   { href: '/teacher/reviews', label: 'التقييمات', icon: Star },
   { href: '/teacher/payouts', label: 'المحافظ والسحب', icon: Wallet },
   { href: '/teacher/profile', label: 'الملف الشخصي', icon: Settings },
@@ -63,6 +65,9 @@ export const ADMIN_NAV: NavItem[] = [
   { href: '/admin/teacher-pricing', label: 'تسعير المعلمين', icon: Settings },
   { href: '/admin/reviews', label: 'التقييمات', icon: Star },
   { href: '/admin/alerts', label: 'تنبيهات AI', icon: AlertTriangle },
+  { href: '/admin/tracks', label: 'المسارات', icon: Layers },
+  { href: '/admin/settings', label: 'إعدادات الموقع', icon: Settings },
+  { href: '/admin/posts', label: 'منشورات AI', icon: Sparkles },
 ]
 
 export function getNavForRole(role: string): NavItem[] {

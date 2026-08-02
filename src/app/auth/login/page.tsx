@@ -17,7 +17,7 @@ type Step = 'INPUT' | 'OTP'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [channel, setChannel] = React.useState<Channel>('SMS')
+  const [channel, setChannel] = React.useState<Channel>('WHATSAPP')
   const [step, setStep] = React.useState<Step>('INPUT')
   const [target, setTarget] = React.useState('')
   const [password, setPassword] = React.useState('')

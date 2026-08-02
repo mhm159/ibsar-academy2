@@ -100,6 +100,7 @@ export async function GET() {
       endTime: b.session.endTime,
       durationMins: b.session.durationMins,
       status: b.session.status,
+      isTrial: b.session.isTrial,
       teacherName: b.session.teacher.user.name,
       studentName: b.student.name,
       meetingUrl: b.session.meetingUrl,

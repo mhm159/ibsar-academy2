@@ -63,7 +63,7 @@ export function useRealtimeClassroom({
   const [whiteboardElements, setWhiteboardElements] = useState<any[]>([])
   const [cursors, setCursors] = useState<Map<string, CursorPayload>>(new Map())
   // Code Sandbox state
-  const [codeContent, setCodeContent] = useState<string>('# مرحباً! اكتب كودك هنا\nprint("Hello, Ibsar Academy!")')
+  const [codeContent, setCodeContent] = useState<string>('# مرحباً! اكتب كودك هنا\nprint("Hello, Ibdaa Academy!")')
   const [codeLanguage, setCodeLanguage] = useState<string>('python')
   const [codeLocked, setCodeLocked] = useState<boolean>(false)
   // Educational platforms + lesson content (broadcast by teacher)

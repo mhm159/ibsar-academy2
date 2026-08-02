@@ -16,6 +16,20 @@ interface Cached<T> {
   at: number
 }
 
+/** Read + parse the cached copy from localStorage (safe against corruption). */
+function readCache<T>(key: string): Cached<T> | null {
+  try {
+    const raw = localStorage.getItem(key)
+    if (raw) {
+      const cached = JSON.parse(raw) as Cached<T>
+      if (cached && cached.data) return cached
+    }
+  } catch {
+    /* ignore corrupted cache */
+  }
+  return null
+}
+
 /**
  * useSyncedData — syncs real DB data (via CRUD APIs) with a local browser cache.
  *
@@ -38,15 +52,25 @@ export function useSyncedData<T>({
   lastSync: number | null
   refresh: () => Promise<void>
 } {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
+  // Paint instantly from the local browser cache via lazy initializers
+  // (no effect needed → avoids setState-in-effect + infinite loop).
+  const [data, setData] = useState<T | null>(() => readCache<T>(key)?.data ?? null)
+  const [loading, setLoading] = useState(() => {
+    const c = readCache<T>(key)
+    return !(c && c.at && Date.now() - c.at < staleMs)
+  })
   const [lastSync, setLastSync] = useState<number | null>(null)
-  const staleRef = useRef(staleMs)
-  staleRef.current = staleMs
+
+  // Keep the fetcher in a ref so its identity can't change every render
+  // (callers pass an inline arrow → would re-trigger the effect infinitely).
+  const fetcherRef = useRef(fetcher)
+  useEffect(() => {
+    fetcherRef.current = fetcher
+  })
 
   const refresh = useCallback(async () => {
     try {
-      const fresh = await fetcher()
+      const fresh = await fetcherRef.current()
       setData(fresh)
       const at = Date.now()
       setLastSync(at)
@@ -60,32 +84,14 @@ export function useSyncedData<T>({
     } finally {
       setLoading(false)
     }
-  }, [key, fetcher])
+  }, [key])
 
   useEffect(() => {
-    let cancelled = false
-    // 1) Paint instantly from the local browser cache if available
-    try {
-      const raw = localStorage.getItem(key)
-      if (raw) {
-        const cached = JSON.parse(raw) as Cached<T>
-        if (cached && cached.data) {
-          if (!cancelled) setData(cached.data)
-          if (cached.at && Date.now() - cached.at < staleRef.current) {
-            if (!cancelled) setLoading(false)
-            return
-          }
-        }
-      }
-    } catch {
-      /* ignore corrupted cache */
+    const cached = readCache<T>(key)
+    if (!cached || !cached.at || Date.now() - cached.at >= staleMs) {
+      refresh()
     }
-    // 2) Fetch the real DB data (source of truth) — first run or stale cache
-    refresh()
-    return () => {
-      cancelled = true
-    }
-  }, [refresh])
+  }, [key, refresh, staleMs])
 
   return { data, loading, lastSync, refresh }
 }

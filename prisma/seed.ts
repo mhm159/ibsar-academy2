@@ -46,6 +46,71 @@ async function main() {
   })
   console.log(`  ✓ Admin: ${admin.name}`)
 
+  // ---------- Tracks ----------
+  const trackSeeds = [
+    {
+      id: 'PROGRAMMING',
+      name: 'PROGRAMMING',
+      nameAr: 'البرمجة',
+      icon: 'Code2',
+      colorVar: 'kids-teal',
+      color: 'var(--azure)',
+      description: 'برمجة',
+      descriptionAr: 'تعليم البرمجة بالتفكير الحسابي وحل المشكلات بأسلوب ممتع',
+      ageRange: '7-16',
+      emoji: '💻',
+      orderIndex: 0,
+    },
+    {
+      id: 'ROBOTICS',
+      name: 'ROBOTICS',
+      nameAr: 'الروبوتيكس',
+      icon: 'Bot',
+      colorVar: 'kids-green',
+      color: 'var(--emerald-egypt)',
+      description: 'Robotics',
+      descriptionAr: 'بناء وبرمجة الروبوتات وتطوير المهارات الهندسية والابتكار',
+      ageRange: '8-16',
+      emoji: '🤖',
+      orderIndex: 1,
+    },
+    {
+      id: 'MENTAL_MATH',
+      name: 'MENTAL_MATH',
+      nameAr: 'الحساب الذهني',
+      icon: 'Calculator',
+      colorVar: 'kids-yellow',
+      color: 'var(--gold)',
+      description: 'Mental Math',
+      descriptionAr: 'تنمية سرعة الحساب الذهني والتركيز باستخدام المعداد وأساليب حديثة',
+      ageRange: '5-14',
+      emoji: '🧮',
+      orderIndex: 2,
+    },
+    {
+      id: 'AI',
+      name: 'AI',
+      nameAr: 'الذكاء الاصطناعي',
+      icon: 'Brain',
+      colorVar: 'kids-purple',
+      color: 'var(--kids-purple)',
+      description: 'AI',
+      descriptionAr: 'مقدمة ممتعة للذكاء الاصطناعي وتعلم الآلة للأطفال',
+      ageRange: '10-17',
+      emoji: '🤖',
+      orderIndex: 3,
+    },
+  ]
+  for (const t of trackSeeds) {
+    const { id, ...trackFields } = t
+    await db.track.upsert({
+      where: { id },
+      update: { ...trackFields, isActive: true },
+      create: t,
+    })
+  }
+  console.log(`  ✓ Tracks: ${trackSeeds.length}`)
+
   // ---------- Teachers ----------
   const teacherData = [
     {
@@ -174,7 +239,7 @@ async function main() {
     { teacherIdx: 3, track: 'PROGRAMMING', title: 'تطوير الألعاب بـ Godot', level: 'INTERMEDIATE', ageMin: 10, ageMax: 16, totalSessions: 10, sessionDurationMins: 75, priceEGP: 549, priceUSD: 32, description: 'اصنع لعبتك الخاصة من الصفر باستخدام محرك Godot' },
   ]
 
-  const courses: Array<{ id: string; title: string }> = []
+  const courses: Array<{ id: string; title: string; track: string }> = []
   for (const cd of coursesData) {
     const teacher = teachers[cd.teacherIdx].teacher
     const existing = await db.course.findFirst({
@@ -202,6 +267,47 @@ async function main() {
     })
     courses.push(course)
     console.log(`  ✓ Course: ${course.title}`)
+  }
+
+  // ---------- Course lessons (attached content) ----------
+  const lessonTemplates: Record<string, Array<{ title: string; type: string; description: string; content: string }>> = {
+    PROGRAMMING: [
+      { title: 'التعريف بالبرمجة وأهميتها', type: 'VIDEO', description: 'فيديو تعريفي عن عالم البرمجة وأهميته', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+      { title: 'المتغيرات وأنواع البيانات', type: 'TEXT', description: 'شرح المتغيرات والأرقام والنصوص', content: 'المتغير هو وعاء يخزن قيمة. في Python: name = "Ali".' },
+      { title: 'الجمل الشرطية If/Else', type: 'QUIZ', description: 'اختبار قصير على الجمل الشرطية', content: 'سؤال: ما ناتج: if 5 > 3: print("نعم")؟' },
+      { title: 'الحلقات التكرارية Loops', type: 'TEXT', description: 'for و while والعمليات المتكررة', content: 'الحلقة for تكرر كتلة كود عدداً معروفاً من المرات.' },
+      { title: 'مشروع: أول لعبة بسيطة', type: 'PROJECT', description: 'طبّق ما تعلمته في مشروع صغير', content: 'أنشئ برنامجاً يطلب اسم الطفل ويرحب به ثم يسأله 3 مسائل حسابية.' },
+    ],
+    ROBOTICS: [
+      { title: 'مقدمة عن الروبوتات والمستشعرات', type: 'VIDEO', description: 'فيديو عن أنواع الروبوتات ومكوناتها', content: 'https://www.youtube.com/watch?v=6m3t0Pp2xRk' },
+      { title: 'توصيل لوحة Arduino', type: 'TEXT', description: 'أساسيات توصيل البورد والمكونات', content: 'Arduino Uno تعمل بجهد 5V. البور: 5V و GND. المدخلات الرقمية 0-13.' },
+      { title: 'إضاءة LED باستخدام الكود', type: 'PROJECT', description: 'أشعل LED وتحمكم بها من الكود', content: 'اكتب كوداً يجعل LED يومض كل ثانية باستخدام digitalWrite و delay.' },
+      { title: 'مستشعر المسافة Ultrasonic', type: 'TEXT', description: 'قياس المسافات باستخدام الموجات فوق الصوتية', content: 'مستشعر HC-SR04 يرسل موجة ويقيس زمن عودتها لحساب المسافة.' },
+    ],
+    MENTAL_MATH: [
+      { title: 'أساسيات السوروبان', type: 'VIDEO', description: 'تعرّف على السوروبان الياباني وطريقة استخدامه', content: 'https://www.youtube.com/watch?v=2DxY2SCSdIM' },
+      { title: 'الجمع الذهني السريع', type: 'TEXT', description: 'تقنيات جمع الأرقام ذهنياً', content: 'قرّب الأرقام لأقرب عشرة ثم صحّح الناتج. مثال: 47+38 = 50+38-3 = 85.' },
+      { title: 'الضرب باستخدام الأصابع', type: 'TEXT', description: 'ضرب الأعداد من 6 إلى 9 باستخدام الأصابع', content: 'طريقة الأصابع تصلح للجدول 6×6 حتى 9×9 بشكل ممتع وسريع.' },
+      { title: 'تحدي: سباق الحساب الذهني', type: 'QUIZ', description: 'اختبر سرعتك في الحساب الذهني', content: 'احسب ذهنياً: 123 + 77 = ؟ ثم 256 - 89 = ؟' },
+    ],
+  }
+
+  for (const course of courses) {
+    const existing = await db.courseLesson.count({ where: { courseId: course.id } })
+    if (existing > 0) continue
+    const templates = lessonTemplates[course.track] ?? lessonTemplates.PROGRAMMING
+    await db.courseLesson.createMany({
+      data: templates.map((l, i) => ({
+        courseId: course.id,
+        title: l.title,
+        description: l.description,
+        type: l.type,
+        content: l.content,
+        orderIndex: i + 1,
+        isPublished: true,
+      })),
+    })
+    console.log(`  ✓ Lessons: ${course.title} (${templates.length})`)
   }
 
   // ---------- Teacher availability (weekly) ----------
@@ -463,6 +569,56 @@ async function main() {
     },
   })
   console.log(`  ✓ 3 notifications created`)
+
+  // ---------- AI Posts ----------
+  const postSeeds = [
+    {
+      id: 'seed-post-1',
+      title: 'لماذا يتعلم طفلك البرمجة قبل سن المراهقة؟',
+      type: 'CARD',
+      emoji: '💻',
+      category: 'PROGRAMMING',
+      status: 'PUBLISHED',
+      source: 'AI_SUGGESTED',
+      content:
+        'البرمجة ليست مجرد مهارة تقنية، بل طريقة تفكير تعلّم الطفل حل المشكلات وتقسيم الأفكار الكبيرة إلى خطوات صغيرة.\n\nفي أكاديمية إبداع نبدأ من اللعب والقصص لنبني معاً عقلية المبرمج الصغير — خطوة بخطوة وبتشجيع مستمر.\n\n🎯 ابدأ رحلة طفلك الآن!',
+    },
+    {
+      id: 'seed-post-2',
+      title: 'رحلة يوسف مع الروبوت الذكي',
+      type: 'STORY',
+      emoji: '🤖',
+      category: 'ROBOTICS',
+      status: 'PUBLISHED',
+      source: 'AI_SUGGESTED',
+      content:
+        'كان يوسف (9 سنوات) يخاف من فكرة أن الروبوتات قد تحل محل أصدقائه... حتى بنى أول روبوت له في حصتنا!\n\nتعلم كيف يقسم المشكلة، يجرب، يفشل، ثم يعيد المحاولة حتى نجح الروبوت في عبور المتاهة.\n\nالقصة الحقيقية أن يوسف لم يتعلم الهندسة فقط، بل تعلم أن الفشل هو خطوة نحو النجاح. 🌟',
+    },
+    {
+      id: 'seed-post-3',
+      title: '3 ألعاب تنمّي الحساب الذهني في البيت',
+      type: 'TIPS',
+      emoji: '🧮',
+      category: 'MENTAL_MATH',
+      status: 'PUBLISHED',
+      source: 'AI_SUGGESTED',
+      content:
+        '١) لعبة التسوق: اطلب من طفلك حساب فاتورة بسيطة ذهنياً قبل الدفع.\n٢) لعبة الأرقام المعلقة: اكتب أرقاماً على بطاقات واطلب ترتيبها من الأصغر للأكبر بسرعة.\n٣) تحدي العد التنازلي: ابدأ من ١٠٠ وعدّ تنازلياً بخطوات متفاوتة.\n\n٥ دقائق يومياً كافية لنمو سرعة التركيز والحساب!',
+    },
+  ]
+  for (const p of postSeeds) {
+    const { id, ...postFields } = p
+    const data =
+      p.status === 'PUBLISHED'
+        ? { ...postFields, publishedAt: new Date() }
+        : postFields
+    await db.post.upsert({
+      where: { id },
+      update: data,
+      create: p.status === 'PUBLISHED' ? { ...p, publishedAt: new Date() } : p,
+    })
+  }
+  console.log(`  ✓ ${postSeeds.length} AI posts created`)
 
   console.log('\n✅ Seed completed successfully!')
   console.log('\n📋 Demo accounts (login with phone, use dev OTP):')

@@ -25,6 +25,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'الطالب غير موجود أو غير تابع لك' }, { status: 403 })
   }
 
+  // Guard: one free trial per student (skip CANCELLED / COMPLETED so it stays limited)
+  const existingTrial = await db.session.findFirst({
+    where: {
+      isTrial: true,
+      status: { notIn: ['CANCELLED'] },
+      bookings: { some: { studentId } },
+    },
+    include: { bookings: true },
+  })
+  if (existingTrial) {
+    return NextResponse.json(
+      {
+        error: `تم حجز حصة تجريبية بالفعل لهذا الطفل في ${existingTrial.startTime.toLocaleDateString('ar-EG')}. الحصة المجانية متاحة مرة واحدة لكل طالب.`,
+      },
+      { status: 409 },
+    )
+  }
+
   // Find a teacher available on this day who teaches this track
   const availableSlot = await db.availability.findFirst({
     where: {

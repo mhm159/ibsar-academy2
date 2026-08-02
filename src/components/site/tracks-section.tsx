@@ -2,25 +2,26 @@
 
 import { motion } from 'framer-motion'
 import { Code2, Bot, Calculator, ArrowLeft } from 'lucide-react'
-import { TRACKS } from '@/lib/constants'
+import { useTracks } from '@/lib/tracks-store'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 const ICONS = { Code2, Bot, Calculator }
 
 export function TracksSection() {
+  const tracks = useTracks()
   return (
     <section id="tracks" className="py-20 lg:py-28 relative">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="موادنا التعليمية"
-          title="ثلاث مسارات تصنع مستقبل طفلك"
+          title="مسارات تصنع مستقبل طفلك"
           description="نُعلّم مهارات القرن الواحد والعشرين بأسلوب عربي ممتع ومناسب لكل فئة عمرية، مع متابعة فردية وتقييم مستمر."
         />
 
         <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {TRACKS.map((track, i) => {
-            const Icon = ICONS[track.icon as keyof typeof ICONS]
+          {tracks.map((track, i) => {
+            const Icon = ICONS[track.icon as keyof typeof ICONS] ?? Code2
             return (
               <motion.div
                 key={track.id}

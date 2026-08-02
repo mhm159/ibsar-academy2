@@ -1,5 +1,5 @@
 /**
- * Ibsar Academy — Weekly WhatsApp Performance Reports
+ * Ibdaa Academy — Weekly WhatsApp Performance Reports
  *
  * Generates and sends a weekly Arabic performance summary for each student
  * to their parent via WhatsApp.
@@ -116,7 +116,7 @@ export async function collectWeeklyReports(): Promise<WeeklyReportData[]> {
 export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   const lines: string[] = []
 
-  lines.push(`🎓 *أكاديمية إبصار*`)
+  lines.push(`🎓 *أكاديمية إبداع*`)
   lines.push(`📊 *التقرير الأسبوعي لأداء أبنائك*`)
   lines.push(`━━━━━━━━━━━━━━━━━━━━`)
   lines.push(``)
@@ -164,7 +164,7 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   lines.push(`💬 للاستفسار أو التواصل مع المعلمين، زر لوحة التحكم:`)
   lines.push(`🔗 https://ibdaa-academy.vercel.app/parent`)
   lines.push(``)
-  lines.push(`_أكاديمية إبصار — نُبصرُ مستقبلَ طفلِك_ 🌟`)
+  lines.push(`_أكاديمية إبداع — نُبدِعُ مستقبلَ طفلِك_ 🌟`)
 
   return lines.join('\n')
 }

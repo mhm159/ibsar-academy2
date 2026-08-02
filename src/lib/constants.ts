@@ -6,8 +6,8 @@
 export const APP = {
   name: "أكاديمية إبداع",
   nameEn: "Ibdaa Academy",
-  tagline: "نُبصرُ مستقبلَ طفلِك",
-  taglineEn: "We envision your child's future",
+  tagline: "نُبدِعُ مستقبلَ طفلِك",
+  taglineEn: "We shape your child's future",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.",
   url: "https://ibdaa-academy.vercel.app",

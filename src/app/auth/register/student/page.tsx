@@ -25,7 +25,7 @@ type Step = 'FORM' | 'OTP'
 export default function RegisterStudentPage() {
   const router = useRouter()
   const [step, setStep] = React.useState<Step>('FORM')
-  const [channel, setChannel] = React.useState<Channel>('SMS')
+  const [channel, setChannel] = React.useState<Channel>('WHATSAPP')
   const [target, setTarget] = React.useState('')
   const [name, setName] = React.useState('')
   const [country, setCountry] = React.useState('EG')
