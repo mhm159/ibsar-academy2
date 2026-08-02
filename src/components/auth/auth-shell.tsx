@@ -66,7 +66,7 @@ export function AuthShell({
               <span className="text-gradient-gold">بمهارات القرن 21</span>
             </h1>
             <p className="mt-5 text-white/70 text-lg leading-relaxed max-w-md">
-              انضم لأكثر من 5000 عائلة عربية تثق بأكاديمية إبداع لتعلّم أبنائها
+              انضم لأكثر من 5000 عائلة عربية تثق بمنصة منهل لتعلّم أبنائها
               البرمجة، الروبوتيكس، والحساب الذهني.
             </p>
 

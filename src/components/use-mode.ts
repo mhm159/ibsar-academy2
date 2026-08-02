@@ -11,8 +11,8 @@ interface UseModeReturn {
   isKids: boolean
 }
 
-const MODE_KEY = 'ibdaa-mode'
-const MODE_CHANGE_EVENT = 'ibdaa-mode-change'
+const MODE_KEY = 'manhal-mode'
+const MODE_CHANGE_EVENT = 'manhal-mode-change'
 
 function getSnapshot(): Mode {
   if (typeof window === 'undefined') return 'pro'

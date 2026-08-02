@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — WhatsApp OTP Provider (via Twilio)
+ * Manhal Academy — WhatsApp OTP Provider (via Twilio)
  *
  * Sends OTP codes via WhatsApp Business API using Twilio.
  *
@@ -76,7 +76,7 @@ export async function sendWhatsAppOtp(params: {
     : purpose === 'RESET' ? 'إعادة تعيين كلمة المرور'
     : 'التحقق'
 
-  const body = `*🎓 أكاديمية إبداع* — Ibdaa Academy
+  const body = `*🎓 منصة منهل* — Manhal Academy
 
 مرحباً بك 👋
 رمز التحقق الخاص بـ ${purposeText} هو:
@@ -89,7 +89,7 @@ export async function sendWhatsAppOtp(params: {
 إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة فوراً.
 
 —
-تم الإرسال تلقائياً من أكاديمية إبداع | Ibdaa Academy`
+تم الإرسال تلقائياً من منصة منهل | Manhal Academy`
 
   try {
     const message = await c.messages.create({

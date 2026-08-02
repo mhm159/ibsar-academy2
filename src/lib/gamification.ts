@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Gamification Engine
+ * Manhal Academy — Gamification Engine
  *
  * Awards points + tracks streaks + unlocks badges when students:
  *   - Complete a session
@@ -33,7 +33,7 @@ export const LEVELS = [
   { level: 5, name: 'خبير', nameEn: 'Expert', icon: '🏅', minPoints: 1000, color: '#FF8E53' },
   { level: 6, name: 'محترف', nameEn: 'Professional', icon: '🏆', minPoints: 1500, color: '#A29BFE' },
   { level: 7, name: 'أسطورة', nameEn: 'Legend', icon: '👑', minPoints: 2500, color: '#FFD700' },
-  { level: 8, name: 'بطل إبداع', nameEn: 'Ibdaa Champion', icon: '🌟', minPoints: 5000, color: '#FF6B6B' },
+  { level: 8, name: 'بطل منهل', nameEn: 'Manhal Champion', icon: '🌟', minPoints: 5000, color: '#FF6B6B' },
 ]
 
 /** Get level info from total points */

@@ -19,12 +19,12 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "أكاديمية إبداع | Ibdaa Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
+  title: "منصة منهل | Manhal Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي. تدريس البرمجة، الروبوتيكس، والحساب الذهني أونلاين مع نخبة المعلمين ونظام دفع محلي ودولي آمن.",
   keywords: [
-    "أكاديمية إبداع",
-    "Ibdaa Academy",
+    "منصة منهل",
+    "Manhal Academy",
     "تعليم الأطفال",
     "البرمجة للأطفال",
     "الروبوتيكس",
@@ -34,22 +34,22 @@ export const metadata: Metadata = {
     "العالم العربي",
     "كورسات برمجة",
   ],
-  authors: [{ name: "Ibdaa Academy" }],
+  authors: [{ name: "Manhal Academy" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "أكاديمية إبداع | Ibdaa Academy",
+    title: "منصة منهل | Manhal Academy",
     description:
       "منصة تعليمية متكاملة للأطفال لتعلّم البرمجة والروبوتيكس والحساب الذهني أونلاين.",
-    siteName: "Ibdaa Academy",
+    siteName: "Manhal Academy",
     type: "website",
     locale: "ar_EG",
   },
   twitter: {
     card: "summary_large_image",
-    title: "أكاديمية إبداع",
+    title: "منصة منهل",
     description: "تعلّم البرمجة والروبوتيكس والحساب الذهني للأطفال أونلاين.",
   },
 };

@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — editable front-page site settings
+ * Manhal Academy — editable front-page site settings
  *
  * Defaults mirror the branding in constants.ts. Admins can override any of
  * these from the dashboard (Settings page) and the public pages pick them up
@@ -27,13 +27,13 @@ export const SITE_SETTING_DEFS: SiteSettingDef[] = [
 
   // CTA band
   { key: 'cta.title', label: 'عنوان شريط الدعوة', group: 'CTA', defaultValue: 'جاهز لتأمين مستقبل طفلك؟' },
-  { key: 'cta.subtitle', label: 'وصف شريط الدعوة', group: 'CTA', type: 'textarea', defaultValue: 'انضم الآن إلى آلاف العائلات التي تثق بأكاديمية إبداع لتعليم أطفالها مهارات القرن الحادي والعشرين.' },
+  { key: 'cta.subtitle', label: 'وصف شريط الدعوة', group: 'CTA', type: 'textarea', defaultValue: 'انضم الآن إلى آلاف العائلات التي تثق بمنصة منهل لتعليم أطفالها مهارات القرن الحادي والعشرين.' },
   { key: 'cta.button', label: 'زر شريط الدعوة', group: 'CTA', defaultValue: 'سجّل طفلك الآن' },
 
   // Footer
   { key: 'footer.about', label: 'نبذة عن الأكاديمية (الفوتر)', group: 'FOOTER', type: 'textarea', defaultValue: 'منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.' },
   { key: 'footer.phone', label: 'رقم الدعم (واتساب)', group: 'FOOTER', defaultValue: '+20 100 000 0000' },
-  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@ibdaa-academy.com' },
+  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@manhal-academy.com' },
   { key: 'footer.slogan', label: 'الشعار الترويجي', group: 'FOOTER', defaultValue: 'نُبدِعُ مستقبلَ طفلِك' },
 
   // Payment / financial info shown to parents at checkout

@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Daily.co Video Provider
+ * Manhal Academy — Daily.co Video Provider
  *
  * Daily.co flow:
  *   1. Create room via REST API (server-side)
@@ -38,7 +38,7 @@ export function isDailyConfigured(): boolean {
 
 /**
  * Create a Daily.co room for a session.
- * Room name = `ibdaa-{sessionId}` (deterministic, idempotent).
+ * Room name = `manhal-{sessionId}` (deterministic, idempotent).
  */
 export async function createDailyRoom(params: {
   sessionId: string
@@ -47,7 +47,7 @@ export async function createDailyRoom(params: {
   exp?: number
   enableRecording?: boolean
 }): Promise<{ ok: true; room: DailyRoom; sandbox: boolean } | { ok: false; error: string }> {
-  const roomName = `ibdaa-${params.sessionId}`
+  const roomName = `manhal-${params.sessionId}`
 
   // SANDBOX: no API key → return fake URL
   if (!isDailyConfigured()) {

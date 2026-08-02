@@ -27,7 +27,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="ibdaa-backup-${date}.db"`,
+        'Content-Disposition': `attachment; filename="manhal-backup-${date}.db"`,
         'Content-Length': String(buffer.length),
       },
     })

@@ -1,17 +1,17 @@
 /**
- * Ibdaa Academy — Brand constants & app-wide config
+ * Manhal Academy — Brand constants & app-wide config
  * Single source of truth for branding, tracks, currencies, etc.
  */
 
 export const APP = {
-  name: "أكاديمية إبداع",
-  nameEn: "Ibdaa Academy",
-  tagline: "نُبدِعُ مستقبلَ طفلِك",
-  taglineEn: "We shape your child's future",
+  name: "منصة منهل",
+  nameEn: "Manhal Academy",
+  tagline: "مَنهَل.. عِلمٌ بلا حدود",
+  taglineEn: "Knowledge without limits",
   description:
-    "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.",
-  url: "https://ibdaa-academy.vercel.app",
-  supportEmail: "support@ibdaa-academy.com",
+    "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي، تقدم دروساً عامة في البرمجة، الروبوتيكس، الحساب الذهني، والمواد الدراسية المختلفة — أونلاين وبجودة عالية.",
+  url: "https://manhal-academy.vercel.app",
+  supportEmail: "support@manhal-academy.com",
   supportPhone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",
 } as const;
@@ -204,7 +204,7 @@ export const TESTIMONIALS = [
     id: "tm1",
     name: "أم محمد",
     location: "القاهرة، مصر",
-    text: "ابني محمد (10 سنوات) كان يكره الرياضيات، وبعد 3 شهور مع أكاديمية إبداع بقى بيحب الحساب وبيقولي مسائل بنفسه! ربنا يبارك فيكم.",
+    text: "ابني محمد (10 سنوات) كان يكره الرياضيات، وبعد 3 شهور مع منصة منهل بقى بيحب الحساب وبيقولي مسائل بنفسه! ربنا يبارك فيكم.",
     rating: 5,
     avatar: "👩",
   },
@@ -262,7 +262,7 @@ export const FAQS = [
   },
   {
     q: "هل يحصل الطفل على شهادة في نهاية الكورس؟",
-    a: "نعم، يحصل كل طالب على شهادة إتمام معتمدة من أكاديمية إبداع بعد إكمال كل مستوى بنجاح، مع تقرير مفصّل عن مهاراته وتقدّمه.",
+    a: "نعم، يحصل كل طالب على شهادة إتمام معتمدة من منصة منهل بعد إكمال كل مستوى بنجاح، مع تقرير مفصّل عن مهاراته وتقدّمه.",
   },
   {
     q: "ما المعدل المثالي للحصص أسبوعياً؟",

@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Weekly WhatsApp Performance Reports
+ * Manhal Academy — Weekly WhatsApp Performance Reports
  *
  * Generates and sends a weekly Arabic performance summary for each student
  * to their parent via WhatsApp.
@@ -145,7 +145,7 @@ export async function collectWeeklyReports(): Promise<WeeklyReportData[]> {
 export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   const lines: string[] = []
 
-  lines.push(`🎓 *أكاديمية إبداع*`)
+  lines.push(`🎓 *منصة منهل*`)
   lines.push(`📊 *التقرير الأسبوعي لأداء أبنائك*`)
   lines.push(`━━━━━━━━━━━━━━━━━━━━`)
   lines.push(``)
@@ -191,9 +191,9 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   }
 
   lines.push(`💬 للاستفسار أو التواصل مع المعلمين، زر لوحة التحكم:`)
-  lines.push(`🔗 https://ibdaa-academy.vercel.app/parent`)
+  lines.push(`🔗 https://manhal-academy.vercel.app/parent`)
   lines.push(``)
-  lines.push(`_أكاديمية إبداع — نُبدِعُ مستقبلَ طفلِك_ 🌟`)
+  lines.push(`_منصة منهل — مَنهَل.. عِلمٌ بلا حدود_ 🌟`)
 
   return lines.join('\n')
 }

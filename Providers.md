@@ -134,22 +134,17 @@ feat(auth): add JWT authentication
 
 ## معلومات المشروع
 
-
-
 اسم المشروع:
-منصة ابداع
+منصة منهل (Manhal Academy)
 
 الوصف:
-منصة لإدارة  الدروس
+منصة تعليمية متكاملة للأطفال في مصر والعالم العربي للبرمجة، الروبوتيكس، والحساب الذهني — حصص مباشرة، فصل افتراضي، مدفوعات، ومكافآت.
 
 التقنيات:
-
-
+Next.js 16 (App Router) — TypeScript — Tailwind CSS 4 — Prisma ORM + SQLite — Socket.io — Daily.co — PayMob/Stripe
 
 البيئة:
-
-
-
+لوحات (أدمن/معلم/مشرف/ولي أمر/طالب) — REST API — RTL بالكامل
 هيكل العمل:
 
 - كل Feature في Branch مستقل.

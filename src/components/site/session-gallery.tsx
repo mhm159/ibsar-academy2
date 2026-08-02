@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { Camera } from 'lucide-react'
@@ -45,7 +45,7 @@ export function SessionGallery() {
             لحظات من <span className="text-gradient-gold">حصصنا الحقيقية</span>
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            صور من حصص مباشرة داخل أكاديمية إبداع — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
+            صور من حصص مباشرة داخل منصة منهل — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
           </p>
         </div>
 

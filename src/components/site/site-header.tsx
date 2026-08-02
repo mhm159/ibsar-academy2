@@ -43,7 +43,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className="flex items-center transition-transform hover:scale-[1.02]"
-            aria-label="الصفحة الرئيسية — أكاديمية إبداع"
+            aria-label="الصفحة الرئيسية — منصة منهل"
           >
             <Logo size={42} />
           </Link>

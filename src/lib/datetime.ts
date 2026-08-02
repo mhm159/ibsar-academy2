@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Date/Time formatting utilities
+ * Manhal Academy — Date/Time formatting utilities
  *
  * All times are displayed in Egypt timezone (Africa/Cairo, UTC+2)
  * using 12-hour format with Arabic AM/PM (ص/م).

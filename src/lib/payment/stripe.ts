@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Stripe Payment Provider (Gulf countries)
+ * Manhal Academy — Stripe Payment Provider (Gulf countries)
  *
  * Stripe flow (Checkout Sessions):
  *   1. Create a Checkout Session with line items

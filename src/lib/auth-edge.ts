@@ -70,4 +70,4 @@ async function hmacBase64Url(secret: string, data: string): Promise<string> {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
 
-export const SESSION_COOKIE_NAME = 'ibdaa_session'
+export const SESSION_COOKIE_NAME = 'manhal_session'

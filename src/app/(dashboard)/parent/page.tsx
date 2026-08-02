@@ -120,7 +120,7 @@ function ProOverview({ data }: { data: OverviewData }) {
       <SeasonalBanner />
       <PageHeader
         title="مرحباً بك 👋"
-        description="نظرة عامة على نشاط أبنائك في أكاديمية إبداع"
+        description="نظرة عامة على نشاط أبنائك في منصة منهل"
         action={
           <div className="flex flex-wrap items-center gap-2">
             <BookTrialModal students={data.students} />

@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Auth helpers (Phase 1)
+ * Manhal Academy — Auth helpers (Phase 1)
  *
  * Strategy:
  * - OTP-based auth for phone (SMS via Twilio/Vonage — placeholder) and email.
@@ -15,7 +15,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { sendWhatsAppOtp } from '@/lib/whatsapp'
 
-const SESSION_COOKIE = 'ibdaa_session'
+const SESSION_COOKIE = 'manhal_session'
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7 // 7 days
 
 /** Generate a 6-digit OTP code */
@@ -123,9 +123,9 @@ async function sendOtp(params: {
 }): Promise<void> {
   const subject =
     params.channel === 'EMAIL'
-      ? `رمز التحقق — أكاديمية إبداع`
+      ? `رمز التحقق — منصة منهل`
       : undefined
-  const body = `رمز التحقق الخاص بك في أكاديمية إبداع هو: ${params.code}
+  const body = `رمز التحقق الخاص بك في منصة منهل هو: ${params.code}
 صالح لمدة 5 دقائق فقط.
 إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة.`
 

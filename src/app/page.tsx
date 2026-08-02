@@ -13,7 +13,7 @@ import { FaqSection } from '@/components/site/faq-section'
 import { CtaSection } from '@/components/site/cta-section'
 
 /**
- * Ibdaa Academy — Landing Page (Phase 1)
+ * Manhal Academy — Landing Page (Phase 1)
  *
  * Composes all public sections in a single scrollable page.
  * Footer is sticky-to-bottom via the `mt-auto` on the footer + min-h-screen wrapper.

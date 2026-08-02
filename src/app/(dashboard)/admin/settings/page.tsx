@@ -73,7 +73,7 @@ function SettingsEditor() {
       setDirty(false)
       // refresh public cache
       try {
-        localStorage.removeItem('ibdaa:site-settings')
+        localStorage.removeItem('manhal:site-settings')
       } catch { /* ignore */ }
       return true
     } catch {

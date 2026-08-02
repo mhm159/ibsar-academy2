@@ -112,7 +112,7 @@ export default function RegisterTeacherPage() {
   return (
     <AuthShell
       title="انضم كمعلم"
-      subtitle="كن جزءاً من نخبة المعلمين في أكاديمية إبداع"
+      subtitle="كن جزءاً من نخبة المعلمين في منصة منهل"
     >
       {step === 'FORM' ? (
         <form onSubmit={handleSendOtp} className="space-y-5">

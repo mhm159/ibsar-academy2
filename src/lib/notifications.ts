@@ -1,5 +1,5 @@
 /**
- * Ibdaa Academy — Advanced Notification System
+ * Manhal Academy — Advanced Notification System
  *
  * Multi-channel notifications:
  *   - In-app (real-time via socket.io + persisted in DB)
@@ -84,7 +84,7 @@ const TEMPLATES: Record<NotificationType, (params: Record<string, string>) => No
   }),
   TEACHER_APPROVED: (p) => ({
     title: '🎉 تم اعتماد حسابك!',
-    body: 'مرحباً بك في أكاديمية إبداع! تم اعتماد حسابك كمعلم.',
+    body: 'مرحباً بك في منصة منهل! تم اعتماد حسابك كمعلم.',
     link: '/teacher',
   }),
   TEACHER_REJECTED: (p) => ({
@@ -143,7 +143,7 @@ const TEMPLATES: Record<NotificationType, (params: Record<string, string>) => No
     link: '/admin/escrow',
   }),
   WELCOME: (p) => ({
-    title: '🎉 مرحباً بك في أكاديمية إبداع!',
+    title: '🎉 مرحباً بك في منصة منهل!',
     body: `أهلاً ${p.name}! نحن سعداء بانضمامك إلينا.`,
     link: '/',
   }),
@@ -208,7 +208,7 @@ export async function sendNotification(
 
   // 2. WhatsApp (skip during quiet hours unless forced)
   if (user.phone && (whatsappEnabled || options.forceWhatsApp) && !inQuietHours) {
-    const waMessage = `🎓 *أكاديمية إبداع*
+    const waMessage = `🎓 *منصة منهل*
 
 *${template.title}*
 
