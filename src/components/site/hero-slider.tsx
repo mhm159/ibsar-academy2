@@ -18,7 +18,7 @@ export interface SiteBanner {
 }
 
 /**
- * HeroSlider â€” homepage carousel of admin-managed SiteBanners.
+ * HeroSlider — homepage carousel of admin-managed SiteBanners.
  * Falls back to nothing when no banners are configured.
  */
 export function HeroSlider() {
@@ -96,7 +96,7 @@ export function HeroSlider() {
                       href={b.linkUrl}
                       className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-gold to-[#E8D488] text-night font-bold text-sm px-5 py-2.5 hover:shadow-lg hover:shadow-gold/30 transition-shadow"
                     >
-                      ط§ظƒطھط´ظپ ط§ظ„ظ…ط²ظٹط¯
+                      اكتشف المزيد
                       <ChevronLeft className="h-4 w-4" />
                     </Link>
                   )}
@@ -109,14 +109,14 @@ export function HeroSlider() {
               <>
                 <button
                   onClick={prev}
-                  aria-label="ط§ظ„ط´ط±ظٹط­ط© ط§ظ„ط³ط§ط¨ظ‚ط©"
+                  aria-label="الشريحة السابقة"
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full glass border border-white/20 text-white hover:bg-white/20 transition-colors flex items-center justify-center"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
                 <button
                   onClick={next}
-                  aria-label="ط§ظ„ط´ط±ظٹط­ط© ط§ظ„طھط§ظ„ظٹط©"
+                  aria-label="الشريحة التالية"
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full glass border border-white/20 text-white hover:bg-white/20 transition-colors flex items-center justify-center"
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -131,7 +131,7 @@ export function HeroSlider() {
                   <button
                     key={b.id}
                     onClick={() => setIndex(i)}
-                    aria-label={`ط§ظ„ط´ط±ظٹط­ط© ${i + 1}`}
+                    aria-label={`الشريحة ${i + 1}`}
                     className={cn(
                       'h-2 rounded-full transition-all',
                       i === index ? 'w-6 bg-gold' : 'w-2 bg-white/40 hover:bg-white/70',

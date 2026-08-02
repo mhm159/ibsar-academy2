@@ -45,10 +45,10 @@ interface SessionRow {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  SCHEDULED: 'ظ…ط¬ط¯ظˆظ„ط©',
-  COMPLETED: 'ظ…ظƒطھظ…ظ„ط©',
-  CANCELLED: 'ظ…ظ„ط؛ط§ط©',
-  IN_PROGRESS: 'ط¬ط§ط±ظگظٹط©',
+  SCHEDULED: 'مجدولة',
+  COMPLETED: 'مكتملة',
+  CANCELLED: 'ملغاة',
+  IN_PROGRESS: 'جارِية',
 }
 
 export default function AdminSessionsPage() {
@@ -90,34 +90,34 @@ function SessionsReport() {
   return (
     <>
       <PageHeader
-        title="ط³ط¬ظ„ ط§ظ„ط­طµطµ"
-        description="ط³ط¬ظ„ ط§ظ„ظ…ط­ط§ط¯ط«ط§طھ ظˆظ†ط´ط§ط· ط§ظ„ط­طµطµ ظˆط§ظ„طھظ‚ط§ط±ظٹط± ظ„ظƒظ„ ط­طµط©"
+        title="سجل الحصص"
+        description="سجل المحادثات ونشاط الحصص والتقارير لكل حصة"
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
-        <StatCard icon={CalendarClock} label="ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ط­طµطµ" value={summary.total ?? 0} color="var(--azure)" />
-        <StatCard icon={CalendarClock} label="ظ…ظƒطھظ…ظ„ط©" value={summary.completed ?? 0} color="var(--emerald-egypt)" />
-        <StatCard icon={CalendarClock} label="ظ…ط¬ط¯ظˆظ„ط©/ط¬ط§ط±ظگظٹط©" value={(summary.scheduled ?? 0) + (summary.inProgress ?? 0)} color="var(--gold)" />
-        <StatCard icon={MessageSquare} label="ط±ط³ط§ط¦ظ„ ط§ظ„ط´ط§طھ" value={summary.totalChatMessages ?? 0} color="var(--kids-teal)" />
-        <StatCard icon={Activity} label="ط§ظ„ط£ط­ط¯ط§ط« ط§ظ„ظ…ط³ط¬ظ„ط©" value={sessions.reduce((a, s) => a + s.activityCount, 0)} color="var(--kids-yellow)" />
+        <StatCard icon={CalendarClock} label="إجمالي الحصص" value={summary.total ?? 0} color="var(--azure)" />
+        <StatCard icon={CalendarClock} label="مكتملة" value={summary.completed ?? 0} color="var(--emerald-egypt)" />
+        <StatCard icon={CalendarClock} label="مجدولة/جارِية" value={(summary.scheduled ?? 0) + (summary.inProgress ?? 0)} color="var(--gold)" />
+        <StatCard icon={MessageSquare} label="رسائل الشات" value={summary.totalChatMessages ?? 0} color="var(--kids-teal)" />
+        <StatCard icon={Activity} label="الأحداث المسجلة" value={sessions.reduce((a, s) => a + s.activityCount, 0)} color="var(--kids-yellow)" />
       </div>
 
       {/* Filters */}
       <div className="flex gap-3 mb-4 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <Input placeholder="ط¨ط­ط« ط¨ط§ط³ظ… ط§ظ„ط­طµط© ط£ظˆ ط§ظ„ظ…ط¹ظ„ظ…..." value={q} onChange={(e) => setQ(e.target.value)} className="pr-10 h-11" />
+          <Input placeholder="بحث باسم الحصة أو المعلم..." value={q} onChange={(e) => setQ(e.target.value)} className="pr-10 h-11" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[150px] h-11">
-            <SelectValue placeholder="ظƒظ„ ط§ظ„ط­ط§ظ„ط§طھ" />
+            <SelectValue placeholder="كل الحالات" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">ظƒظ„ ط§ظ„ط­ط§ظ„ط§طھ</SelectItem>
-            <SelectItem value="SCHEDULED">ظ…ط¬ط¯ظˆظ„ط©</SelectItem>
-            <SelectItem value="IN_PROGRESS">ط¬ط§ط±ظگظٹط©</SelectItem>
-            <SelectItem value="COMPLETED">ظ…ظƒطھظ…ظ„ط©</SelectItem>
-            <SelectItem value="CANCELLED">ظ…ظ„ط؛ط§ط©</SelectItem>
+            <SelectItem value="">كل الحالات</SelectItem>
+            <SelectItem value="SCHEDULED">مجدولة</SelectItem>
+            <SelectItem value="IN_PROGRESS">جارِية</SelectItem>
+            <SelectItem value="COMPLETED">مكتملة</SelectItem>
+            <SelectItem value="CANCELLED">ملغاة</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -130,7 +130,7 @@ function SessionsReport() {
         </div>
       ) : sessions.length === 0 ? (
         <Card className="glass border-gold/15">
-          <EmptyState icon={CalendarClock} title="ظ„ط§ طھظˆط¬ط¯ ط­طµطµ" description="ط¬ط±ظ‘ط¨ طھط؛ظٹظٹط± ظ…ط¹ط§ظٹظٹط± ط§ظ„ط¨ط­ط«" />
+          <EmptyState icon={CalendarClock} title="لا توجد حصص" description="جرّب تغيير معايير البحث" />
         </Card>
       ) : (
         <div className="space-y-3">
@@ -165,7 +165,7 @@ function SessionCard({
     fetch(`/api/dashboard/admin/sessions/${session.id}`)
       .then((r) => r.json())
       .then((d) => setDetail(d))
-      .catch(() => notify.error('طھط¹ط°ظ‘ط± طھط­ظ…ظٹظ„ طھظپط§طµظٹظ„ ط§ظ„ط­طµط©'))
+      .catch(() => notify.error('تعذّر تحميل تفاصيل الحصة'))
       .finally(() => setLoadingDetail(false))
   }
 
@@ -174,22 +174,22 @@ function SessionCard({
       {/* Row header */}
       <button onClick={onToggle} className="w-full flex items-center gap-4 p-4 text-right hover:bg-gold/5 transition-colors">
         <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-gold/30 to-azure/30 flex items-center justify-center text-lg shrink-0">
-          {session.track === 'ROBOTICS' ? 'ًں¤–' : session.track === 'PROGRAMMING' ? 'ًں’»' : session.track === 'MENTAL_MATH' ? 'ًں§®' : 'ًںژ¨'}
+          {session.track === 'ROBOTICS' ? '🤖' : session.track === 'PROGRAMMING' ? '💻' : session.track === 'MENTAL_MATH' ? '🧮' : '🎨'}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-display font-bold truncate">{session.title}</h3>
             <TrackBadge track={session.track} />
             {session.isTrial && (
-              <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-500">طھط¬ط±ظٹط¨ظٹط©</span>
+              <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-500">تجريبية</span>
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {session.teacherName} â€¢ {new Date(session.startTime).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })}
-            {' â€¢ '}
+            {session.teacherName} • {new Date(session.startTime).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })}
+            {' • '}
             {new Date(session.startTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
-            {' â€¢ '}
-            {session.durationMins} ط¯
+            {' • '}
+            {session.durationMins} د
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -198,7 +198,7 @@ function SessionCard({
             <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5" />{session.chatCount}</span>
             <span className="flex items-center gap-1"><Activity className="h-3.5 w-3.5" />{session.activityCount}</span>
             <span className="flex items-center gap-1"><ImagePlus className="h-3.5 w-3.5" />{session.mediaCount}</span>
-            <span>{session.studentsCount} ط·ط§ظ„ط¨</span>
+            <span>{session.studentsCount} طالب</span>
           </div>
           <ChevronDown className={cn('h-5 w-5 text-muted-foreground transition-transform', expanded && 'rotate-180')} />
         </div>
@@ -209,12 +209,12 @@ function SessionCard({
         <div className="border-t border-border/50 p-4 space-y-5">
           {loadingDetail ? (
             <div className="flex items-center justify-center py-8 text-muted-foreground text-sm">
-              <Loader2 className="h-5 w-5 animate-spin ml-2" /> ط¬ط§ط±ظچ طھط­ظ…ظٹظ„ ط§ظ„طھظپط§طµظٹظ„...
+              <Loader2 className="h-5 w-5 animate-spin ml-2" /> جارٍ تحميل التفاصيل...
             </div>
           ) : detail ? (
             <SessionDetail sessionId={session.id} detail={detail} onChanged={loadDetail} />
           ) : (
-            <button onClick={loadDetail} className="text-sm text-gold font-bold">ط¥ط¹ط§ط¯ط© ط§ظ„ظ…ط­ط§ظˆظ„ط©</button>
+            <button onClick={loadDetail} className="text-sm text-gold font-bold">إعادة المحاولة</button>
           )}
         </div>
       )}
@@ -240,19 +240,19 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
           body: JSON.stringify({ file: reader.result, type: 'session-media', fileName: file.name }),
         })
         const d = await res.json()
-        if (!res.ok || !d.url) return notify.error(d.error || 'ظپط´ظ„ ط§ظ„ط±ظپط¹')
+        if (!res.ok || !d.url) return notify.error(d.error || 'فشل الرفع')
         const attach = await fetch('/api/admin/session-media', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId, url: d.url, caption: mediaForm.caption, type: 'IMAGE', isPublished: true }),
         })
         const ad = await attach.json()
-        if (!attach.ok) return notify.error(ad.error || 'ظپط´ظ„ ط§ظ„ط¥ط¶ط§ظپط©')
-        notify.success('طھظ…طھ ط¥ط¶ط§ظپط© ط§ظ„طµظˆط±ط©')
+        if (!attach.ok) return notify.error(ad.error || 'فشل الإضافة')
+        notify.success('تمت إضافة الصورة')
         setMediaForm({ url: '', caption: '' })
         onChanged()
       } catch {
-        notify.error('طھط¹ط°ظ‘ط± ط§ظ„ط±ظپط¹')
+        notify.error('تعذّر الرفع')
       } finally {
         setUploading(false)
       }
@@ -263,8 +263,8 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
   const removeMedia = async (id: string) => {
     const res = await fetch(`/api/admin/session-media?id=${id}`, { method: 'DELETE' })
     const d = await res.json()
-    if (!res.ok) return notify.error(d.error || 'ظپط´ظ„ ط§ظ„ط­ط°ظپ')
-    notify.success('طھظ… ط§ظ„ط­ط°ظپ')
+    if (!res.ok) return notify.error(d.error || 'فشل الحذف')
+    notify.success('تم الحذف')
     onChanged()
   }
 
@@ -274,10 +274,10 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
       <div className="rounded-2xl border border-border/50 bg-muted/20 p-4">
         <h4 className="font-display font-bold mb-3 flex items-center gap-2">
           <MessageSquare className="h-4 w-4 text-gold" />
-          ط³ط¬ظ„ ط§ظ„ظ…ط­ط§ط¯ط«ط© ({detail.chatMessages.length})
+          سجل المحادثة ({detail.chatMessages.length})
         </h4>
         {detail.chatMessages.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">ظ„ط§ طھظˆط¬ط¯ ط±ط³ط§ط¦ظ„</p>
+          <p className="text-sm text-muted-foreground py-6 text-center">لا توجد رسائل</p>
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto pl-1">
             {detail.chatMessages.map((m: any) => (
@@ -301,17 +301,17 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
         <div className="rounded-2xl border border-border/50 bg-muted/20 p-4">
           <h4 className="font-display font-bold mb-3 flex items-center gap-2">
             <Activity className="h-4 w-4 text-gold" />
-            ظ†ط´ط§ط· ط§ظ„ط­طµط© ({detail.logs.length})
+            نشاط الحصة ({detail.logs.length})
           </h4>
           {detail.logs.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">ظ„ط§ ظٹظˆط¬ط¯ ظ†ط´ط§ط· ظ…ط³ط¬ظ„</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">لا يوجد نشاط مسجل</p>
           ) : (
             <div className="space-y-1.5 max-h-48 overflow-y-auto pl-1">
               {detail.logs.map((l: any) => (
                 <div key={l.id} className="flex items-start gap-2 text-xs">
                   <span className="rounded-full bg-muted px-2 py-0.5 font-bold shrink-0">{l.event}</span>
                   <span className="text-muted-foreground flex-1 min-w-0">
-                    {l.userName ?? 'ظ…ط´ط§ط±ظƒ'} ({l.userRole}) {l.detail}
+                    {l.userName ?? 'مشارك'} ({l.userRole}) {l.detail}
                   </span>
                   <span className="text-muted-foreground/60 shrink-0">{fmt(l.createdAt)}</span>
                 </div>
@@ -322,16 +322,16 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
 
         {/* Focus + attendance */}
         <div className="rounded-2xl border border-border/50 bg-muted/20 p-4">
-          <h4 className="font-display font-bold mb-3">طھط±ظƒظٹط² ط§ظ„ط·ظ„ط§ط¨</h4>
+          <h4 className="font-display font-bold mb-3">تركيز الطلاب</h4>
           {detail.progressReports.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-3 text-center">ظ„ط§ طھظˆط¬ط¯ طھظ‚ط§ط±ظٹط± طھظ‚ط¯ظ…</p>
+            <p className="text-sm text-muted-foreground py-3 text-center">لا توجد تقارير تقدم</p>
           ) : (
             <div className="space-y-1.5">
               {detail.progressReports.map((r: any) => (
                 <div key={r.id} className="flex items-center justify-between text-sm">
                   <span className="font-bold">{r.studentName}</span>
                   <span className="flex items-center gap-2">
-                    <StatusBadge status={r.attendance ?? 'UNKNOWN'} label={r.attendance ?? 'â€”'} />
+                    <StatusBadge status={r.attendance ?? 'UNKNOWN'} label={r.attendance ?? '—'} />
                     {r.focusScore != null && <span className="text-xs font-bold text-azure">{r.focusScore}%</span>}
                   </span>
                 </div>
@@ -339,26 +339,26 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
             </div>
           )}
           {s.avgFocusScore != null && (
-            <p className="mt-3 text-xs text-muted-foreground">ظ…طھظˆط³ط· ط§ظ„طھط±ظƒظٹط²: <span className="font-bold text-azure">{s.avgFocusScore}%</span></p>
+            <p className="mt-3 text-xs text-muted-foreground">متوسط التركيز: <span className="font-bold text-azure">{s.avgFocusScore}%</span></p>
           )}
         </div>
 
         {/* Supervisor reports */}
         <div className="rounded-2xl border border-border/50 bg-muted/20 p-4">
-          <h4 className="font-display font-bold mb-3">طھظ‚ط§ط±ظٹط± ط§ظ„ظ…ط´ط±ظپظٹظ† ({detail.supervisorReports.length})</h4>
+          <h4 className="font-display font-bold mb-3">تقارير المشرفين ({detail.supervisorReports.length})</h4>
           {detail.supervisorReports.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-3 text-center">ظ„ط§ طھظˆط¬ط¯ طھظ‚ط§ط±ظٹط± ط¨ط¹ط¯</p>
+            <p className="text-sm text-muted-foreground py-3 text-center">لا توجد تقارير بعد</p>
           ) : (
             <div className="space-y-2">
               {detail.supervisorReports.map((r: any) => (
                 <div key={r.id} className="rounded-xl bg-card/60 p-3 border border-border/30">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold">{r.supervisorName}</p>
-                    <span className="text-xs font-bold text-gold">{'âک…'.repeat(r.rating)}</span>
+                    <span className="text-xs font-bold text-gold">{'★'.repeat(r.rating)}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{r.notes || 'ط¨ط¯ظˆظ† ظ…ظ„ط§ط­ط¸ط§طھ'}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{r.notes || 'بدون ملاحظات'}</p>
                   <p className="text-[0.65rem] text-muted-foreground mt-1">
-                    {r.chatCount} ط±ط³ط§ظ„ط© â€¢ {r.studentCount} ط·ط§ظ„ط¨ â€¢ طھط±ظƒظٹط² {r.avgFocusScore}% â€¢ {fmt(r.createdAt)}
+                    {r.chatCount} رسالة • {r.studentCount} طالب • تركيز {r.avgFocusScore}% • {fmt(r.createdAt)}
                   </p>
                 </div>
               ))}
@@ -371,7 +371,7 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
       <div className="lg:col-span-2 rounded-2xl border border-border/50 bg-muted/20 p-4">
         <h4 className="font-display font-bold mb-3 flex items-center gap-2">
           <ImagePlus className="h-4 w-4 text-gold" />
-          طµظˆط± ط§ظ„ط­طµط© ({detail.media.length})
+          صور الحصة ({detail.media.length})
         </h4>
         {detail.media.length > 0 && (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-4">
@@ -381,7 +381,7 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
                 <button
                   onClick={() => removeMedia(m.id)}
                   className="absolute top-1 left-1 h-6 w-6 rounded-full bg-night/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="ط­ط°ظپ"
+                  title="حذف"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -391,18 +391,18 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
         )}
         <div className="flex gap-3 items-end flex-wrap">
           <div className="flex-1 min-w-[180px] space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground">ط±ط§ط¨ط· طµظˆط±ط© ط£ظˆ ط±ظپط¹ ظ…ظ„ظپ</label>
-            <Input value={mediaForm.url} onChange={(e) => setMediaForm({ ...mediaForm, url: e.target.value })} placeholder="/uploads/... ط£ظˆ ط±ط§ط¨ط· ط®ط§ط±ط¬ظٹ" dir="ltr" />
+            <label className="text-xs font-bold text-muted-foreground">رابط صورة أو رفع ملف</label>
+            <Input value={mediaForm.url} onChange={(e) => setMediaForm({ ...mediaForm, url: e.target.value })} placeholder="/uploads/... أو رابط خارجي" dir="ltr" />
           </div>
           <div className="flex-1 min-w-[180px] space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground">ظˆطµظپ (ط§ط®طھظٹط§ط±ظٹ)</label>
+            <label className="text-xs font-bold text-muted-foreground">وصف (اختياري)</label>
             <Input value={mediaForm.caption} onChange={(e) => setMediaForm({ ...mediaForm, caption: e.target.value })} />
           </div>
           <div className="flex gap-2">
             <input type="file" accept="image/*" id={`upload-${sessionId}`} className="hidden" onChange={(e) => e.target.files?.[0] && handleMediaUpload(e.target.files[0])} />
             <label htmlFor={`upload-${sessionId}`} className="cursor-pointer">
               <Button asChild variant="outline" disabled={uploading}>
-                <span className="gap-1.5">{uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />} ط±ظپط¹</span>
+                <span className="gap-1.5">{uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />} رفع</span>
               </Button>
             </label>
             <Button
@@ -415,13 +415,13 @@ function SessionDetail({ sessionId, detail, onChanged }: { sessionId: string; de
                   body: JSON.stringify({ sessionId, url: mediaForm.url.trim(), caption: mediaForm.caption, type: 'IMAGE', isPublished: true }),
                 })
                 const d = await res.json()
-                if (!res.ok) return notify.error(d.error || 'ظپط´ظ„ ط§ظ„ط¥ط¶ط§ظپط©')
-                notify.success('طھظ…طھ ط§ظ„ط¥ط¶ط§ظپط©')
+                if (!res.ok) return notify.error(d.error || 'فشل الإضافة')
+                notify.success('تمت الإضافة')
                 setMediaForm({ url: '', caption: '' })
                 onChanged()
               }}
             >
-              ط¥ط¶ط§ظپط©
+              إضافة
             </Button>
           </div>
         </div>

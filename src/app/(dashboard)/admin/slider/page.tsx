@@ -48,11 +48,11 @@ function SliderManager() {
   }, [load])
 
   const remove = async (b: SiteBanner) => {
-    if (!confirm(`ط­ط°ظپ ط§ظ„ط´ط±ظٹط­ط© آ«${b.title}آ»طں`)) return
+    if (!confirm(`حذف الشريحة «${b.title}»؟`)) return
     const res = await fetch(`/api/admin/slider?id=${b.id}`, { method: 'DELETE' })
     const d = await res.json()
-    if (!res.ok) return notify.error(d.error || 'ظپط´ظ„ ط§ظ„ط­ط°ظپ')
-    notify.success('طھظ… ط§ظ„ط­ط°ظپ')
+    if (!res.ok) return notify.error(d.error || 'فشل الحذف')
+    notify.success('تم الحذف')
     load()
   }
 
@@ -61,23 +61,23 @@ function SliderManager() {
   return (
     <>
       <PageHeader
-        title="ط³ظ„ط§ظٹط¯ط± ط§ظ„ظˆط§ط¬ظ‡ط©"
-        description="ط´ط±ط§ط¦ط­ ط§ظ„ط¹ط±ط¶ ط£ط¹ظ„ظ‰ ط§ظ„طµظپط­ط© ط§ظ„ط±ط¦ظٹط³ظٹط©"
+        title="سلايدر الواجهة"
+        description="شرائح العرض أعلى الصفحة الرئيسية"
         action={
           <Button
             className="gap-1.5 bg-gradient-to-l from-gold to-[#E8D488] text-night"
             onClick={() => setCreating(true)}
           >
             <Plus className="h-4 w-4" />
-            ط´ط±ظٹط­ط© ط¬ط¯ظٹط¯ط©
+            شريحة جديدة
           </Button>
         }
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <StatCard icon={ImagePlus} label="ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ط´ط±ط§ط¦ط­" value={banners.length} color="var(--azure)" />
-        <StatCard icon={ImagePlus} label="ط§ظ„ط´ط±ط§ط¦ط­ ط§ظ„ظ†ط´ط·ط©" value={activeCount} color="var(--emerald-egypt)" />
-        <StatCard icon={ImagePlus} label="ط§ظ„ط´ط±ط§ط¦ط­ ط§ظ„ظ…ط¹ط·ظ„ط©" value={banners.length - activeCount} color="var(--kids-red)" />
+        <StatCard icon={ImagePlus} label="إجمالي الشرائح" value={banners.length} color="var(--azure)" />
+        <StatCard icon={ImagePlus} label="الشرائح النشطة" value={activeCount} color="var(--emerald-egypt)" />
+        <StatCard icon={ImagePlus} label="الشرائح المعطلة" value={banners.length - activeCount} color="var(--kids-red)" />
       </div>
 
       {loading ? (
@@ -90,8 +90,8 @@ function SliderManager() {
         <Card className="glass border-gold/15">
           <EmptyState
             icon={ImagePlus}
-            title="ظ„ط§ طھظˆط¬ط¯ ط´ط±ط§ط¦ط­ ط¨ط¹ط¯"
-            description="ط£ط¶ظپ ط´ط±ظٹط­ط© ظ„ط¹ط±ط¶ظ‡ط§ ط£ط¹ظ„ظ‰ ط§ظ„طµظپط­ط© ط§ظ„ط±ط¦ظٹط³ظٹط©"
+            title="لا توجد شرائح بعد"
+            description="أضف شريحة لعرضها أعلى الصفحة الرئيسية"
           />
         </Card>
       ) : (
@@ -110,11 +110,11 @@ function SliderManager() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-display font-bold truncate">{b.emoji} {b.title}</h3>
-                    <StatusBadge status={b.isActive ? 'APPROVED' : 'SUSPENDED'} label={b.isActive ? 'ظ†ط´ط·' : 'ظ…ط¹ط·ظ„'} />
+                    <StatusBadge status={b.isActive ? 'APPROVED' : 'SUSPENDED'} label={b.isActive ? 'نشط' : 'معطل'} />
                   </div>
                   {b.subtitle && <p className="text-xs text-muted-foreground truncate mt-0.5">{b.subtitle}</p>}
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    ط§ظ„طھط±طھظٹط¨: {b.order} â€¢ {b.badge ?? 'ط¨ط¯ظˆظ† ط´ط§ط±ط©'}
+                    الترتيب: {b.order} • {b.badge ?? 'بدون شارة'}
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
@@ -125,7 +125,7 @@ function SliderManager() {
                     className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
                   >
                     <Pencil className="h-4 w-4" />
-                    طھط¹ط¯ظٹظ„
+                    تعديل
                   </Button>
                   <Button
                     size="sm"
@@ -134,7 +134,7 @@ function SliderManager() {
                     className="h-9 gap-1.5 text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4" />
-                    ط­ط°ظپ
+                    حذف
                   </Button>
                 </div>
               </div>
@@ -200,13 +200,13 @@ function BannerDialog({
         })
         const d = await res.json()
         if (!res.ok || !d.url) {
-          notify.error(d.error || 'ظپط´ظ„ ط±ظپط¹ ط§ظ„طµظˆط±ط©')
+          notify.error(d.error || 'فشل رفع الصورة')
         } else {
           set('imageUrl', d.url)
-          notify.success('طھظ… ط±ظپط¹ ط§ظ„طµظˆط±ط©')
+          notify.success('تم رفع الصورة')
         }
       } catch {
-        notify.error('طھط¹ط°ظ‘ط± ط±ظپط¹ ط§ظ„طµظˆط±ط©')
+        notify.error('تعذّر رفع الصورة')
       } finally {
         setUploading(false)
       }
@@ -215,7 +215,7 @@ function BannerDialog({
   }
 
   const save = async () => {
-    if (!form.title.trim()) return notify.error('ط§ظ„ط¹ظ†ظˆط§ظ† ظ…ط·ظ„ظˆط¨')
+    if (!form.title.trim()) return notify.error('العنوان مطلوب')
     setSaving(true)
     const res = await fetch('/api/admin/slider', {
       method: initial ? 'PATCH' : 'POST',
@@ -224,8 +224,8 @@ function BannerDialog({
     })
     const d = await res.json()
     setSaving(false)
-    if (!res.ok) return notify.error(d.error || 'ظپط´ظ„ ط§ظ„ط­ظپط¸')
-    notify.success(initial ? 'طھظ… ط§ظ„طھط­ط¯ظٹط«' : 'طھظ…طھ ط§ظ„ط¥ط¶ط§ظپط©')
+    if (!res.ok) return notify.error(d.error || 'فشل الحفظ')
+    notify.success(initial ? 'تم التحديث' : 'تمت الإضافة')
     onSaved()
   }
 
@@ -233,35 +233,35 @@ function BannerDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{initial ? 'طھط¹ط¯ظٹظ„ ط§ظ„ط´ط±ظٹط­ط©' : 'ط´ط±ظٹط­ط© ط¬ط¯ظٹط¯ط©'}</DialogTitle>
+          <DialogTitle>{initial ? 'تعديل الشريحة' : 'شريحة جديدة'}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>ط§ظ„ط¹ظ†ظˆط§ظ† *</Label>
-              <Input value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="ظ…ط«ط§ظ„: ط¹ط±ظˆط¶ ط§ظ„طµظٹظپ" />
+              <Label>العنوان *</Label>
+              <Input value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="مثال: عروض الصيف" />
             </div>
             <div className="space-y-1.5">
-              <Label>ط§ظ„ط±ظ…ط² ًںڈ†</Label>
+              <Label>الرمز 🏆</Label>
               <Input value={form.emoji} onChange={(e) => set('emoji', e.target.value)} />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label>ط§ظ„ظˆطµظپ</Label>
+            <Label>الوصف</Label>
             <Input value={form.subtitle} onChange={(e) => set('subtitle', e.target.value)} />
           </div>
 
           <div className="space-y-1.5">
-            <Label>ط§ظ„ط´ط§ط±ط© (Badge)</Label>
-            <Input value={form.badge} onChange={(e) => set('badge', e.target.value)} placeholder="ظ…ط«ط§ظ„: ط¹ط±ط¶ ظ…ط­ط¯ظˆط¯" />
+            <Label>الشارة (Badge)</Label>
+            <Input value={form.badge} onChange={(e) => set('badge', e.target.value)} placeholder="مثال: عرض محدود" />
           </div>
 
           <div className="space-y-1.5">
-            <Label>ط§ظ„طµظˆط±ط©</Label>
+            <Label>الصورة</Label>
             <div className="flex items-center gap-3">
-              <Input value={form.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} placeholder="ط±ط§ط¨ط· طµظˆط±ط© ط£ظˆ ط§ط±ظپط¹ظ‡ط§" />
+              <Input value={form.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} placeholder="رابط صورة أو ارفعها" />
               <input
                 ref={fileRef}
                 type="file"
@@ -271,22 +271,22 @@ function BannerDialog({
               />
               <Button type="button" variant="outline" disabled={uploading} onClick={() => fileRef.current?.click()} className="shrink-0 gap-1.5">
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-                ط±ظپط¹
+                رفع
               </Button>
             </div>
             {form.imageUrl && (
-              <img src={form.imageUrl} alt="ظ…ط¹ط§ظٹظ†ط©" className="h-24 rounded-xl object-cover border border-border/50 mt-2" />
+              <img src={form.imageUrl} alt="معاينة" className="h-24 rounded-xl object-cover border border-border/50 mt-2" />
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label>ط±ط§ط¨ط· ط§ظ„ط²ط±</Label>
+            <Label>رابط الزر</Label>
             <Input value={form.linkUrl} onChange={(e) => set('linkUrl', e.target.value)} placeholder="/auth/register/student" dir="ltr" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>ط§ظ„طھط±طھظٹط¨</Label>
+              <Label>الترتيب</Label>
               <Input type="number" value={form.order} onChange={(e) => set('order', Number(e.target.value) || 0)} />
             </div>
             <div className="space-y-1.5 flex items-end">
@@ -296,14 +296,14 @@ function BannerDialog({
                 className={form.isActive ? 'bg-gradient-to-l from-emerald-egypt to-emerald-egypt/70 text-white w-full' : 'w-full'}
                 onClick={() => set('isActive', !form.isActive)}
               >
-                {form.isActive ? 'ظ†ط´ط·ط©' : 'ظ…ط¹ط·ظ„ط©'}
+                {form.isActive ? 'نشطة' : 'معطلة'}
               </Button>
             </div>
           </div>
 
           <Button onClick={save} disabled={saving} className="w-full gap-1.5 bg-gradient-to-l from-gold to-[#E8D488] text-night">
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            ط­ظپط¸
+            حفظ
           </Button>
         </div>
       </DialogContent>

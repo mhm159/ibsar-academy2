@@ -13,7 +13,7 @@ export interface GalleryMedia {
 }
 
 /**
- * SessionGallery â€” public gallery of processed session images.
+ * SessionGallery — public gallery of processed session images.
  * Renders nothing when no media has been published yet.
  */
 export function SessionGallery() {
@@ -39,13 +39,13 @@ export function SessionGallery() {
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-4">
             <Camera className="h-4 w-4 text-gold" />
-            ظ…ظ† ط¯ط§ط®ظ„ ط§ظ„ط­طµطµ
+            من داخل الحصص
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-extrabold">
-            ظ„ط­ط¸ط§طھ ظ…ظ† <span className="text-gradient-gold">ط­طµطµظ†ط§ ط§ظ„ط­ظ‚ظٹظ‚ظٹط©</span>
+            لحظات من <span className="text-gradient-gold">حصصنا الحقيقية</span>
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            طµظˆط± ظ…ظ† ط­طµطµ ظ…ط¨ط§ط´ط±ط© ط¯ط§ط®ظ„ ط£ظƒط§ط¯ظٹظ…ظٹط© ط¥ط¨ط¯ط§ط¹ â€” طھط¹ظ„ظٹظ… ظ…ظ…طھط¹طŒ طھظپط§ط¹ظ„ ط­ظ‚ظٹظ‚ظٹطŒ ظˆط¥ط¨ط¯ط§ط¹ ط¨ظ„ط§ ط­ط¯ظˆط¯.
+            صور من حصص مباشرة داخل أكاديمية إبداع — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export function SessionGallery() {
                 onClick={() => setActive(null)}
                 className="mt-3 rounded-full glass px-4 py-1.5 text-sm text-white/80 hover:bg-white/10"
               >
-                ط¥ط؛ظ„ط§ظ‚
+                إغلاق
               </button>
             </div>
           </div>
