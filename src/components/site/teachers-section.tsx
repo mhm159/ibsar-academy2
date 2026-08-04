@@ -8,6 +8,7 @@ import { useHomeData } from '@/hooks/use-home-data'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from './tracks-section'
+import { Stagger, StaggerItem } from './motion-reveal'
 
 export function TeachersSection() {
   const tracks = useTracks()
@@ -31,20 +32,19 @@ export function TeachersSection() {
           </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {teachers.map((teacher, i) => {
+        <Stagger className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {teachers.map((teacher) => {
             const teacherTracks = tracks.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
             return (
-              <motion.div
-                key={teacher.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.45, delay: i * 0.08 }}
-              >
+              <StaggerItem key={teacher.id} className="h-full">
                 <Card className="group h-full p-6 glass border-gold/15 hover:border-gold/40 hover-bounce transition-colors text-center">
                   {/* Avatar */}
-                  <div className="relative mx-auto mb-4 w-24 h-24">
+                  <motion.div
+                    className="relative mx-auto mb-4 w-24 h-24"
+                    whileHover={{ scale: 1.08, y: -4 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 16 }}
+                  >
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/40 to-azure/40 blur-md group-hover:blur-lg transition-all" aria-hidden />
                     <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-gold/20 to-azure/20 flex items-center justify-center text-5xl neu-inset">
                       {teacher.avatar}
@@ -55,7 +55,7 @@ export function TeachersSection() {
                         مميّز
                       </span>
                     )}
-                  </div>
+                  </motion.div>
 
                   <h3 className="font-display text-lg font-bold mb-0.5">{teacher.name}</h3>
                   <p className="text-xs text-muted-foreground mb-3 min-h-[2.5rem]">
@@ -103,10 +103,10 @@ export function TeachersSection() {
                     ))}
                   </div>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   )

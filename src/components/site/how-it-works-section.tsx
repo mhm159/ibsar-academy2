@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { UserPlus, MessageSquare, CalendarCheck, Rocket } from 'lucide-react'
 import { SectionHeading } from './tracks-section'
+import { Stagger, StaggerItem } from './motion-reveal'
 
 const STEPS = [
   {
@@ -52,18 +53,21 @@ export function HowItWorksSection() {
             aria-hidden
           />
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative">
-            {STEPS.map((step, i) => (
-              <motion.div
+          <Stagger className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative">
+            {STEPS.map((step) => (
+              <StaggerItem
                 key={step.step}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
                 className="relative text-center"
+                y={32}
+                duration={0.55}
               >
                 {/* Icon circle */}
-                <div className="relative mx-auto mb-5 w-24 h-24">
+                <motion.div
+                  className="relative mx-auto mb-5 w-24 h-24"
+                  whileHover={{ scale: 1.06, rotate: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 16 }}
+                >
                   <div
                     className="absolute inset-0 rounded-full neu"
                     aria-hidden
@@ -81,15 +85,15 @@ export function HowItWorksSection() {
                   >
                     {step.step}
                   </span>
-                </div>
+                </motion.div>
 
                 <h3 className="font-display text-xl font-bold mb-2">{step.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
                   {step.description}
                 </p>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </div>
     </section>

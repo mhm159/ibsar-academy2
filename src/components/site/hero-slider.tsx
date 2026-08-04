@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { EASE } from './motion-reveal'
 
 export interface SiteBanner {
   id: string
@@ -65,12 +67,15 @@ export function HeroSlider() {
                 )}
               >
                 {b.imageUrl && (
-                  <img
+                  <motion.img
                     src={b.imageUrl}
                     alt={b.title}
                     loading={i === index ? 'eager' : 'lazy'}
                     decoding="async"
                     className="absolute inset-0 h-full w-full object-cover opacity-30"
+                    initial={false}
+                    animate={i === index ? { scale: 1.12 } : { scale: 1 }}
+                    transition={{ duration: 7, ease: 'linear' }}
                   />
                 )}
                 <div
@@ -79,7 +84,19 @@ export function HeroSlider() {
                     b.imageUrl ? 'from-night/90 via-night/60 to-night/30' : 'from-night via-night/80 to-night/40',
                   )}
                 />
-                <div className="relative z-10 p-6 sm:p-10 lg:p-12 max-w-2xl">
+                <motion.div
+                  className="relative z-10 p-6 sm:p-10 lg:p-12 max-w-2xl"
+                  initial="hidden"
+                  animate={i === index ? 'show' : 'hidden'}
+                  variants={{
+                    hidden: { opacity: 0, y: 26 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.55, ease: EASE, delay: 0.15 },
+                    },
+                  }}
+                >
                   {b.badge && (
                     <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-bold text-gold mb-4 border border-gold/30">
                       <Sparkles className="h-3.5 w-3.5" />
@@ -102,7 +119,7 @@ export function HeroSlider() {
                       <ChevronLeft className="h-4 w-4" />
                     </Link>
                   )}
-                </div>
+                </motion.div>
               </div>
             ))}
 

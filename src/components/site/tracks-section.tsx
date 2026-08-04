@@ -5,6 +5,7 @@ import { Code2, Bot, Calculator, ArrowLeft } from 'lucide-react'
 import { useTracks } from '@/lib/tracks-store'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { Stagger, StaggerItem } from './motion-reveal'
 
 const ICONS = { Code2, Bot, Calculator }
 
@@ -19,17 +20,11 @@ export function TracksSection() {
           description="نُعلّم مهارات القرن الواحد والعشرين بأسلوب عربي ممتع ومناسب لكل فئة عمرية، مع متابعة فردية وتقييم مستمر."
         />
 
-        <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {tracks.map((track, i) => {
+        <Stagger className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {tracks.map((track) => {
             const Icon = ICONS[track.icon as keyof typeof ICONS] ?? Code2
             return (
-              <motion.div
-                key={track.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
+              <StaggerItem key={track.id}>
                 <Card
                   className={cn(
                     'group relative overflow-hidden neu hover-bounce h-full p-7 border-0',
@@ -93,10 +88,10 @@ export function TracksSection() {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   )

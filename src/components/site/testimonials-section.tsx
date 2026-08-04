@@ -1,9 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Quote, Star } from 'lucide-react'
 import { useHomeData } from '@/hooks/use-home-data'
 import { SectionHeading } from './tracks-section'
+import { Stagger, StaggerItem } from './motion-reveal'
 
 export function TestimonialsSection() {
   const { testimonials } = useHomeData()
@@ -16,44 +16,39 @@ export function TestimonialsSection() {
           description="آلاف العائلات وثقت بمنصة منهل لتعلّم أبنائها. هذه بعض قصصهم."
         />
 
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {testimonials.slice(0, 8).map((tm, i) => (
-            <motion.figure
-              key={tm.id ?? `${tm.name}-${i}`}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: i * 0.08 }}
-              className="group relative p-6 rounded-3xl glass border-gold/15 hover:border-gold/40 transition-colors flex flex-col"
-            >
-              <Quote className="absolute top-4 left-4 h-8 w-8 text-gold/20 group-hover:text-gold/40 transition-colors" aria-hidden />
+            <StaggerItem key={tm.id ?? `${tm.name}-${i}`} className="h-full">
+              <figure className="group relative p-6 rounded-3xl glass border-gold/15 hover:border-gold/40 hover-bounce transition-colors flex flex-col h-full">
+                <Quote className="absolute top-4 left-4 h-8 w-8 text-gold/20 group-hover:text-gold/40 transition-colors" aria-hidden />
 
-              {/* Rating */}
-              <div className="flex gap-0.5 mb-3">
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <Star
-                    key={idx}
-                    className={`h-4 w-4 ${idx < tm.rating ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`}
-                  />
-                ))}
-              </div>
-
-              <blockquote className="text-sm leading-relaxed text-foreground/90 flex-1">
-                "{tm.text}"
-              </blockquote>
-
-              <figcaption className="mt-4 pt-4 border-t border-border/50 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gold/30 to-azure/30 flex items-center justify-center text-xl shrink-0">
-                  {tm.avatar}
+                {/* Rating */}
+                <div className="flex gap-0.5 mb-3">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <Star
+                      key={idx}
+                      className={`h-4 w-4 ${idx < tm.rating ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`}
+                    />
+                  ))}
                 </div>
-                <div className="flex flex-col leading-tight">
-                  <span className="text-sm font-bold">{tm.name}</span>
-                  <span className="text-xs text-muted-foreground">{tm.location}</span>
-                </div>
-              </figcaption>
-            </motion.figure>
+
+                <blockquote className="text-sm leading-relaxed text-foreground/90 flex-1">
+                  "{tm.text}"
+                </blockquote>
+
+                <figcaption className="mt-4 pt-4 border-t border-border/50 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gold/30 to-azure/30 flex items-center justify-center text-xl shrink-0">
+                    {tm.avatar}
+                  </div>
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-sm font-bold">{tm.name}</span>
+                    <span className="text-xs text-muted-foreground">{tm.location}</span>
+                  </div>
+                </figcaption>
+              </figure>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   )

@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { SectionHeading } from './tracks-section'
+import { EASE, Stagger, StaggerItem } from './motion-reveal'
 
 export function PricingSection() {
   const [currency, setCurrency] = useState<'EGP' | 'USD'>('EGP')
@@ -52,17 +53,13 @@ export function PricingSection() {
         </div>
 
         {/* Plans */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-          {PRICING_PLANS.map((plan, i) => {
+        <Stagger className="mt-12 grid md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+          {PRICING_PLANS.map((plan) => {
             const price = currency === 'EGP' ? plan.priceEGP : plan.priceUSD
             const period = currency === 'EGP' ? 'شهر' : 'month'
             return (
-              <motion.div
+              <StaggerItem
                 key={plan.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
                 className={cn('relative', plan.highlight && 'lg:-mt-4 lg:mb-4')}
               >
                 <Card
@@ -91,9 +88,15 @@ export function PricingSection() {
                   {/* Price */}
                   <div className="text-center mb-6">
                     <div className="flex items-end justify-center gap-1">
-                      <span className="text-5xl font-extrabold font-display text-gradient-gold">
+                      <motion.span
+                        key={currency}
+                        className="text-5xl font-extrabold font-display text-gradient-gold"
+                        initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.4, ease: EASE }}
+                      >
                         {price}
-                      </span>
+                      </motion.span>
                       <span className="text-sm font-bold text-muted-foreground mb-2">
                         {currency} / {period}
                       </span>
@@ -132,10 +135,10 @@ export function PricingSection() {
                     </Button>
                   </Link>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </Stagger>
 
         {/* Payment methods */}
         <div className="mt-12 text-center">

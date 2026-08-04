@@ -1,62 +1,128 @@
 'use client'
 
+import { useRef } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowLeft, PlayCircle, Sparkles, ShieldCheck, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTracks } from '@/lib/tracks-store'
 import { useSiteSettings } from '@/hooks/use-site-settings'
 import { useHomeData } from '@/hooks/use-home-data'
+import {
+  CountUp,
+  EASE,
+  blurRevealItem,
+  fadeUpItem,
+  scaleInItem,
+  staggerContainer,
+} from './motion-reveal'
 
 export function HeroSection() {
   const { settings } = useSiteSettings()
   const { stats } = useHomeData()
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Gentle parallax drift on the decorative blobs while scrolling away.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const blobY1 = useTransform(scrollYProgress, [0, 1], [0, 140])
+  const blobY2 = useTransform(scrollYProgress, [0, 1], [0, -90])
+  const blobY3 = useTransform(scrollYProgress, [0, 1], [0, 70])
+
   return (
-    <section className="relative overflow-hidden bg-pharaonic pt-12 pb-20 lg:pt-20 lg:pb-32">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-pharaonic pt-12 pb-20 lg:pt-20 lg:pb-32"
+    >
       {/* Decorative hieroglyph pattern overlay */}
       <div className="absolute inset-0 bg-hieroglyphs opacity-60 pointer-events-none" aria-hidden />
 
-      {/* Floating decorative blobs */}
-      <div className="absolute top-20 -left-16 w-72 h-72 rounded-full bg-gold/20 blur-3xl animate-float-soft pointer-events-none" aria-hidden />
-      <div className="absolute bottom-10 -right-16 w-96 h-96 rounded-full bg-azure/20 blur-3xl animate-float-soft pointer-events-none" style={{ animationDelay: '2s' }} aria-hidden />
-      <div className="absolute top-1/2 left-1/3 w-64 h-64 rounded-full bg-kids-teal/15 blur-3xl animate-float-soft pointer-events-none" style={{ animationDelay: '4s' }} aria-hidden />
+      {/* Floating decorative blobs (CSS float + scroll parallax) */}
+      <motion.div
+        className="absolute top-20 -left-16 w-72 h-72 pointer-events-none"
+        style={{ y: blobY1 }}
+        aria-hidden
+      >
+        <div className="w-72 h-72 rounded-full bg-gold/20 blur-3xl animate-float-soft" />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-10 -right-16 w-96 h-96 pointer-events-none"
+        style={{ y: blobY2 }}
+        aria-hidden
+      >
+        <div
+          className="w-96 h-96 rounded-full bg-azure/20 blur-3xl animate-float-soft"
+          style={{ animationDelay: '2s' }}
+        />
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/3 w-64 h-64 pointer-events-none"
+        style={{ y: blobY3 }}
+        aria-hidden
+      >
+        <div
+          className="w-64 h-64 rounded-full bg-kids-teal/15 blur-3xl animate-float-soft"
+          style={{ animationDelay: '4s' }}
+        />
+      </motion.div>
 
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           {/* Text column (RTL: appears on the right) */}
           <motion.div
             className="lg:col-span-7 text-center lg:text-right"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-6 border-glow">
-              <Sparkles className="h-4 w-4 text-gold" />
-              <span>{settings['hero.badge']}</span>
-              <span className="hidden sm:inline-flex items-center gap-0.5 text-gold">
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-              </span>
-            </div>
+            <motion.div variants={fadeUpItem}>
+              <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-6 border-glow">
+                <Sparkles className="h-4 w-4 text-gold" />
+                <span>{settings['hero.badge']}</span>
+                <span className="hidden sm:inline-flex items-center gap-0.5 text-gold">
+                  <Star className="h-3 w-3 fill-current" />
+                  <Star className="h-3 w-3 fill-current" />
+                  <Star className="h-3 w-3 fill-current" />
+                  <Star className="h-3 w-3 fill-current" />
+                  <Star className="h-3 w-3 fill-current" />
+                </span>
+              </div>
+            </motion.div>
 
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight">
-              {settings['hero.title.line1']}
-              <br />
-              <span className="text-gradient-gold">{settings['hero.title.line2']}</span>
-              <br />
-              <span className="text-gradient-azure-gold">{settings['hero.title.line3']}</span>
-            </h1>
+            {/* Title — lines blur in one after another */}
+            <motion.h1
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
+              }}
+            >
+              <motion.span variants={blurRevealItem} className="block">
+                {settings['hero.title.line1']}
+              </motion.span>
+              <motion.span variants={blurRevealItem} className="block text-gradient-gold">
+                {settings['hero.title.line2']}
+              </motion.span>
+              <motion.span variants={blurRevealItem} className="block text-gradient-azure-gold">
+                {settings['hero.title.line3']}
+              </motion.span>
+            </motion.h1>
 
-            <p className="mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            <motion.p
+              variants={fadeUpItem}
+              className="mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0"
+            >
               {settings['hero.subtitle']}
-            </p>
+            </motion.p>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+            <motion.div
+              variants={fadeUpItem}
+              className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
+            >
               <Link href="/auth/register/student">
                 <Button
                   size="lg"
@@ -76,43 +142,54 @@ export function HeroSection() {
                   {settings['hero.cta.secondary']}
                 </Button>
               </Link>
-            </div>
+            </motion.div>
 
             {/* Trust line */}
-            <div className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-muted-foreground">
+            <motion.div
+              variants={fadeUpItem}
+              className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-muted-foreground"
+            >
               <ShieldCheck className="h-4 w-4 text-emerald-egypt" />
               <span>{settings['hero.trust']}</span>
-            </div>
+            </motion.div>
 
-            {/* Stats */}
-            <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0">
+            {/* Stats — count up when they enter the viewport */}
+            <motion.dl
+              variants={fadeUpItem}
+              className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0"
+            >
               {stats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+                  transition={{ delay: 0.35 + i * 0.1, duration: 0.5, ease: EASE }}
                   className="neu-sm rounded-2xl p-4 text-center"
                 >
                   <dt className="text-2xl sm:text-3xl font-extrabold text-gradient-gold font-display">
-                    {stat.value}
+                    <CountUp key={stat.value} value={stat.value} />
                   </dt>
                   <dd className="mt-1 text-xs sm:text-sm text-muted-foreground">
                     {stat.label}
                   </dd>
                 </motion.div>
               ))}
-            </dl>
+            </motion.dl>
           </motion.div>
 
           {/* Visual column (RTL: appears on the left) */}
           <motion.div
             className="lg:col-span-5"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+            }}
           >
-            <HeroVisual />
+            <motion.div variants={scaleInItem}>
+              <HeroVisual />
+            </motion.div>
           </motion.div>
         </div>
       </div>

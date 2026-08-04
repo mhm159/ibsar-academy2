@@ -6,6 +6,7 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { APP } from '@/lib/constants'
 import { useSiteSettings } from '@/hooks/use-site-settings'
+import { EASE, fadeUpItem } from './motion-reveal'
 
 export function CtaSection() {
   const { settings } = useSiteSettings()
@@ -17,10 +18,17 @@ export function CtaSection() {
     <section className="py-20 lg:py-28 relative overflow-hidden">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6 }}
+          variants={{
+            hidden: { opacity: 0, scale: 0.97 },
+            visible: {
+              opacity: 1,
+              scale: 1,
+              transition: { duration: 0.6, ease: EASE, staggerChildren: 0.12, delayChildren: 0.15 },
+            },
+          }}
           className="relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden neu"
         >
           {/* Background */}
@@ -37,21 +45,33 @@ export function CtaSection() {
           />
 
           <div className="relative px-6 py-14 lg:px-16 lg:py-20 text-center text-white">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-4 py-1.5 text-sm font-medium mb-6 border border-white/20">
+            <motion.div
+              variants={fadeUpItem}
+              className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-4 py-1.5 text-sm font-medium mb-6 border border-white/20"
+            >
               <Sparkles className="h-4 w-4 text-kids-yellow" />
               <span>جرّب أول حصة مجاناً</span>
-            </div>
+            </motion.div>
 
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight max-w-3xl mx-auto">
+            <motion.h2
+              variants={fadeUpItem}
+              className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight max-w-3xl mx-auto"
+            >
               {title}
-            </h2>
+            </motion.h2>
             {subtitle && (
-              <p className="mt-5 text-base lg:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
+              <motion.p
+                variants={fadeUpItem}
+                className="mt-5 text-base lg:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed"
+              >
                 {subtitle}
-              </p>
+              </motion.p>
             )}
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <motion.div
+              variants={fadeUpItem}
+              className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
+            >
               <Link href="/auth/register/student">
                 <Button
                   size="lg"
@@ -70,11 +90,11 @@ export function CtaSection() {
                   انضم كمعلم
                 </Button>
               </Link>
-            </div>
+            </motion.div>
 
-            <p className="mt-6 text-xs text-white/60">
+            <motion.p variants={fadeUpItem} className="mt-6 text-xs text-white/60">
               {APP.supportPhone} • {APP.supportEmail}
-            </p>
+            </motion.p>
           </div>
         </motion.div>
       </div>

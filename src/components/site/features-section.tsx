@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { SectionHeading } from './tracks-section'
+import { Stagger, StaggerItem } from './motion-reveal'
 
 const FEATURES = [
   {
@@ -62,33 +63,30 @@ export function FeaturesSection() {
           description="بُنيت المنصة بمعايير عالمية وتصميم عربي يُلامس احتياجات أولياء الأمور في مصر والعالم العربي."
         />
 
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((feature, i) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: i * 0.08 }}
-            >
+        <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {FEATURES.map((feature) => (
+            <StaggerItem key={feature.title} className="h-full">
               <Card className="group h-full p-6 glass border-gold/15 hover:border-gold/40 hover-bounce transition-colors">
-                <div
-                  className="inline-flex items-center justify-center h-12 w-12 rounded-xl mb-4 transition-transform group-hover:scale-110"
+                <motion.div
+                  className="inline-flex items-center justify-center h-12 w-12 rounded-xl mb-4"
                   style={{
                     color: feature.color,
                     background: `color-mix(in srgb, ${feature.color} 12%, transparent)`,
                   }}
+                  whileHover={{ scale: 1.15, rotate: -4 }}
+                  whileTap={{ scale: 0.94 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 18 }}
                 >
                   <feature.icon className="h-6 w-6" strokeWidth={2} />
-                </div>
+                </motion.div>
                 <h3 className="font-display text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </Card>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   )
