@@ -47,8 +47,10 @@ if [ ! -f .env ]; then
   cp .env.example .env
   SECRET=$(openssl rand -hex 32)
   OTP=$(openssl rand -hex 32)
+  MEDIA=$(openssl rand -hex 32)
   sed -i "s|NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=\"$SECRET\"|" .env
   sed -i "s|OTP_SECRET=.*|OTP_SECRET=\"$OTP\"|" .env
+  sed -i "s|MEDIA_SECRET=.*|MEDIA_SECRET=\"$MEDIA\"|" .env
   printf '\n# إظهار رمز الدخول في الصندوق الأصفر أثناء التجربة (امسحه بعد ربط Twilio)\nOTP_DEBUG=1\n' >> .env
 else
   echo "[3/4] ملف .env موجود مسبقاً (لم نغيّره)"

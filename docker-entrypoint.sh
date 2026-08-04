@@ -9,7 +9,7 @@ set -e
 
 echo "[manhal] entrypoint: DATABASE_URL=$DATABASE_URL"
 
-mkdir -p /data
+mkdir -p /data /data/media
 
 if [ ! -f /data/custom.db ]; then
   echo "[manhal] no database found -> seeding from bundled copy"

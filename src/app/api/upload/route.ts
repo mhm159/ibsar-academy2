@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { ensureMediaDir, MEDIA_DIR } from '@/lib/media'
 import fs from 'fs/promises'
 import path from 'path'
 import crypto from 'crypto'
@@ -8,8 +9,12 @@ import crypto from 'crypto'
  * POST /api/upload
  * Body: { file: "base64data", type: "avatar|video|diploma|material", fileName: "original.jpg" }
  *
- * Saves file to /public/uploads/<hash>.<ext>
- * Returns: { url: "/uploads/<hash>.<ext>" }
+ * Images (and other small files) are saved to /public/uploads/<hash>.<ext>.
+ * VIDEOS are saved to MEDIA_DIR (protected, outside `public/`) and referenced
+ * via /media/<fileName> — they can only be played through a short-lived signed
+ * URL from /api/media/token (see src/lib/media.ts).
+ *
+ * Returns: { url: "/uploads/<hash>.<ext>" } or { url: "/media/<hash>.<ext>" }
  *
  * Restrictions:
  * - Max 5MB for images, 50MB for videos
@@ -80,12 +85,20 @@ export async function POST(req: NextRequest) {
   const hash = crypto.randomBytes(8).toString('hex')
   const prefix = type === 'avatar' ? 'avatar' : type === 'video' ? 'video' : type === 'diploma' ? 'diploma' : type === 'banner' ? 'banner' : type === 'session-media' ? 'session' : type === 'track' ? 'track' : 'material'
   const newFileName = `${prefix}_${session.userId}_${hash}.${ext}`
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+
+  // Videos go to the protected media dir (outside public/); everything else
+  // stays in public/uploads as before.
+  const isVideo = mimeType.startsWith('video/')
+  const uploadDir = isVideo ? MEDIA_DIR : path.join(process.cwd(), 'public', 'uploads')
   const filePath = path.join(uploadDir, newFileName)
 
   try {
     // Ensure dir exists
-    await fs.mkdir(uploadDir, { recursive: true })
+    if (isVideo) {
+      await ensureMediaDir()
+    } else {
+      await fs.mkdir(uploadDir, { recursive: true })
+    }
     // Write file
     await fs.writeFile(filePath, buffer)
   } catch (err) {
@@ -93,7 +106,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'فشل حفظ الملف' }, { status: 500 })
   }
 
-  const url = `/uploads/${newFileName}`
+  const url = isVideo ? `/media/${newFileName}` : `/uploads/${newFileName}`
 
   return NextResponse.json({
     ok: true,

@@ -24,6 +24,8 @@ services:
     environment:
       # Absolute path on the persistent volume
       DATABASE_URL: file:/data/custom.db
+      # Protected videos live here (outside public/, on the same volume)
+      MEDIA_DIR: /data/media
     volumes:
       - manhal-db:/data
       - manhal-uploads:/app/public/uploads

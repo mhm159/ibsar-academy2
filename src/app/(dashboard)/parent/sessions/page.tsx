@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { notify } from '@/lib/notify'
+import { ProtectedVideo } from '@/components/media/protected-video'
 
 interface CourseData {
   id: string
@@ -359,18 +360,21 @@ function CourseDetails({ course }: { course: CourseData }) {
                 {l.content && (
                   <p className="text-xs text-muted-foreground mt-2 whitespace-pre-line">{l.content}</p>
                 )}
-                {l.contentUrl && (
-                  <a
-                    href={l.contentUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-flex items-center gap-1 text-xs text-azure font-bold hover:underline"
-                    dir="ltr"
-                  >
-                    <Video className="h-3 w-3" />
-                    {l.contentUrl}
-                  </a>
-                )}
+                {l.contentUrl &&
+                  (l.type === 'VIDEO' ? (
+                    <ProtectedVideo src={l.contentUrl} title={l.title} className="mt-3" />
+                  ) : (
+                    <a
+                      href={l.contentUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs text-azure font-bold hover:underline"
+                      dir="ltr"
+                    >
+                      <Video className="h-3 w-3" />
+                      {l.contentUrl}
+                    </a>
+                  ))}
               </li>
             ))}
           </ul>
