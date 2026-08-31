@@ -1,0 +1,1190 @@
+﻿// ============================================================
+// Ibsar Academy â€” Prisma Schema (Phase 1 + 2)
+// ============================================================
+// Notes:
+// - SQLite is used locally; can migrate to PostgreSQL at deployment.
+// - Enums are represented as String (SQLite-friendly) with @default.
+// - All timestamps stored as ISO DateTime.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------
+// Core Account Model
+// -----------------------------
+model User {
+  id            String   @id @default(cuid())
+  email         String?  @unique
+  phone         String?  @unique
+  // role: ADMIN | TEACHER | PARENT | STUDENT
+  role          String   @default("PARENT")
+  name          String?
+  nameAr        String?
+  passwordHash  String?
+  avatarUrl     String?
+  country       String?  // EG, SA, AE, KW, QA, BH, OM, JO, etc.
+  city          String?
+  preferredLang String   @default("ar")
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  teacher Teacher?
+  student Student?
+  parent  Parent?
+  supervisor Supervisor?
+  otpCodes OtpCode[]
+  notifications Notification[]
+  transactions Transaction[]
+  sessionLogs SessionLog[]
+
+  @@index([role])
+  @@index([phone])
+  @@index([email])
+}
+
+// -----------------------------
+// Teacher profile
+// -----------------------------
+model Teacher {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio             String?
+  bioAr           String?
+  // tracks: comma-separated list e.g. "PROGRAMMING,ROBOTICS,MENTAL_MATH"
+  tracks          String   @default("")
+  experienceYears Int      @default(0)
+  rating          Float    @default(0)
+  reviewsCount    Int      @default(0)
+  hourlyRateEGP   Int      @default(150)
+  hourlyRateUSD   Int      @default(15)
+  // status: PENDING | APPROVED | REJECTED | SUSPENDED
+  status          String   @default("PENDING")
+  videoUrl        String?
+  diplomaUrl      String?
+  availabilityJson String? // JSON string for weekly availability
+  isFeatured      Boolean  @default(false)
+  // Phase 6: Flexible pricing controls
+  // pricingMode: FREE (teacher sets own price) | CAPPED (up to maxHourlyRateEGP) | FIXED (academy sets price)
+  pricingMode     String   @default("FREE")
+  maxHourlyRateEGP Int?     // when CAPPED: teacher can't exceed this
+  fixedHourlyRateEGP Int?  // when FIXED: academy sets this, teacher can't change
+  fixedHourlyRateUSD Int?  // when FIXED: USD equivalent
+  // Phase 9: a teacher may be assigned as supervisor of a specific track
+  supervisorTrackId String? // track id this teacher supervises (e.g. "PROGRAMMING")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  courses        Course[]
+  sessions       Session[]
+  availabilities Availability[]
+  progressReports ProgressReport[]
+  walletAccounts  WalletAccount[]
+  payouts         Payout[]
+  escrows         Escrow[]
+  homeworks       Homework[]
+
+  @@index([status])
+  @@index([isFeatured])
+}
+
+// -----------------------------
+// Student profile (child)
+// -----------------------------
+model Student {
+  id            String   @id @default(cuid())
+  userId        String?  @unique // optional login account for older students
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  name          String
+  nameAr        String?
+  birthDate     DateTime?
+  gender        String?  // MALE | FEMALE
+  grade         String?  // school grade
+  // level per track: JSON string e.g. {"PROGRAMMING":"BEGINNER"}
+  levelsJson    String   @default("{}")
+  // Gamification properties
+  pointsBalance Int      @default(0)
+  // Active equipped reward references (store RewardItem IDs)
+  activeFrameId Int?      // FK to RewardItem (type FRAME)
+  activeTitleId Int?      // FK to RewardItem (type TITLE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookings        Booking[]
+  progressReports ProgressReport[]
+  homeworks       Homework[]
+  rewards         StudentReward[]
+
+  @@index([parentId])
+}
+
+// -----------------------------
+// Parent profile (family account)
+// -----------------------------
+model Parent {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students      Student[]
+  transactions  Transaction[]
+  refundRequests RefundRequest[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// -----------------------------
+// OTP verification codes
+// -----------------------------
+model OtpCode {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  target    String   // phone number or email
+  channel   String   // SMS | EMAIL
+  codeHash  String   // hashed OTP code
+  purpose   String   // REGISTER | LOGIN | RESET
+  attempts  Int      @default(0)
+  consumed  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([target, purpose])
+  @@index([expiresAt])
+}
+
+// -----------------------------
+// Generic notification log (used from Phase 1 for OTP delivery)
+// -----------------------------
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  channel   String   // SMS | EMAIL | PUSH
+  to        String
+  subject   String?
+  body      String
+  status    String   @default("PENDING") // PENDING | SENT | FAILED
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ============================================================
+// Phase 2 models
+// ============================================================
+
+// -----------------------------
+// Course â€” a bookable learning package
+// -----------------------------
+model Course {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // track: PROGRAMMING | ROBOTICS | MENTAL_MATH
+  track         String
+  title         String
+  titleAr       String?
+  description   String?
+  descriptionAr String?
+  // level: BEGINNER | INTERMEDIATE | ADVANCED
+  level         String   @default("BEGINNER")
+  ageMin        Int      @default(6)
+  ageMax        Int      @default(16)
+  totalSessions Int      @default(8)
+  sessionDurationMins Int @default(60)
+  priceEGP      Int      @default(499)
+  priceUSD      Int      @default(29)
+  // status: DRAFT | PUBLISHED | ARCHIVED
+  status        String   @default("PUBLISHED")
+  thumbnailUrl  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  lessons  CourseLesson[]
+
+  @@index([teacherId])
+  @@index([track])
+  @@index([status])
+}
+
+// -----------------------------
+// CourseLesson â€” attached learning content for a course
+// (viewable by enrolled students + manageable by the teacher)
+// -----------------------------
+model CourseLesson {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  titleAr     String?
+  description String?
+  // type: VIDEO | TEXT | FILE | QUIZ | PROJECT
+  type        String   @default("VIDEO")
+  // contentUrl: video/file link آ· content: body text
+  contentUrl  String?
+  content     String?
+  orderIndex  Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([courseId, orderIndex])
+}
+
+// -----------------------------
+// Track â€” configurable educational specialization
+// (admin-manageable so the academy can add new tracks)
+// -----------------------------
+model Track {
+  id            String  @id // e.g. PROGRAMMING, ROBOTICS, MENTAL_MATH, AI...
+  name          String
+  nameAr        String
+  icon          String  @default("Code2")
+  colorVar      String  @default("kids-teal")
+  color         String  @default("var(--azure)")
+  description   String
+  descriptionAr String?
+  ageRange      String  @default("7-16")
+  emoji         String  @default("ًں’،")
+  // optional expressive image â€” shown on cards instead of the emoji when set
+  imageUrl      String?
+  isActive      Boolean @default(true)
+  orderIndex    Int     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// -----------------------------
+// SiteSetting â€” editable front-page texts (key/value)
+// -----------------------------
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  // label shown in the admin editor
+  label     String?
+  // group for grouping in the admin UI (HERO | FOOTER | CTA | GENERAL)
+  group     String   @default("GENERAL")
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+}
+
+// -----------------------------
+// Session â€” a scheduled class instance
+// -----------------------------
+model Session {
+  id            String   @id @default(cuid())
+  courseId      String?
+  course        Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  title         String
+  // track context (denormalized for quick filtering)
+  track         String
+  startTime     DateTime
+  endTime       DateTime
+  durationMins  Int      @default(60)
+  // status: SCHEDULED | COMPLETED | CANCELLED | IN_PROGRESS
+  status        String   @default("SCHEDULED")
+  isTrial       Boolean  @default(false)
+  meetingUrl    String?  // Daily.co room URL (Phase 4)
+  recordingUrl  String?
+  notes         String?
+  // Phase 4: Daily.co room
+  dailyRoomName String?  @unique
+  dailyRoomUrl  String?
+  recordingStatus String? @default("NONE") // NONE | STARTED | STOPPED | PROCESSING | READY
+  chatMessages  ChatMessage[]
+  whiteboard    WhiteboardState?
+  homeworks     Homework[]
+  sessionLogs   SessionLog[]
+  media         SessionMedia[]
+  supervisorReports SupervisorReport[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookings        Booking[]
+  progressReports ProgressReport[]
+
+  @@index([teacherId, startTime])
+  @@index([status])
+  @@index([startTime])
+}
+
+// -----------------------------
+// Booking â€” links a student to a session
+// -----------------------------
+model Booking {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  // status: CONFIRMED | CANCELLED | COMPLETED | NO_SHOW
+  status        String   @default("CONFIRMED")
+  isTrial       Boolean  @default(false)
+  priceEGP      Int      @default(0)
+  priceUSD      Int      @default(0)
+  transactionId String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  escrow        Escrow?
+
+  @@index([sessionId])
+  @@index([studentId])
+  @@index([status])
+}
+
+// -----------------------------
+// Availability â€” teacher weekly recurring slots
+// -----------------------------
+model Availability {
+  id          String   @id @default(cuid())
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // dayOfWeek: 0 (Sunday) .. 6 (Saturday)
+  dayOfWeek   Int
+  startHour   Int      // 0-23
+  endHour     Int      // 1-24
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([teacherId, dayOfWeek, startHour, endHour])
+  @@index([teacherId])
+}
+
+// -----------------------------
+// Transaction â€” payment record (Phase 3 will add Escrow/Settlement)
+// -----------------------------
+model Transaction {
+  id            String   @id @default(cuid())
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  // userId for quick lookup (the parent's user)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // type: SESSION_BOOKING | PACKAGE | SUBSCRIPTION | REFUND
+  type          String   @default("SESSION_BOOKING")
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  currency      String   @default("EGP")
+  // status: PENDING | PAID | FAILED | REFUNDED | SETTLED
+  status        String   @default("PENDING")
+  // provider: PAYMOB | STRIPE | MANUAL
+  provider      String   @default("MANUAL")
+  providerRef   String?  // provider transaction id
+  description   String?
+  bookingId     String?  @unique
+  booking       Booking?
+  escrow        Escrow?
+  couponId      String?
+  coupon        Coupon?  @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  refundRequest RefundRequest?
+  // breakdown: original amount, discount, platform fee
+  originalAmountEGP Int @default(0)
+  originalAmountUSD Int @default(0)
+  discountEGP   Int      @default(0)
+  discountUSD   Int      @default(0)
+  platformFeeEGP Int     @default(0)
+  platformFeeUSD Int     @default(0)
+  // buyer country + payment method details
+  buyerCountry  String?
+  paymentMethod String?  // CARD | FAWRY | VODAFONE_CASH | etc.
+  checkoutUrl   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([userId])
+  @@index([status])
+  @@index([provider])
+}
+
+// -----------------------------
+// ProgressReport â€” per-session per-student progress
+// -----------------------------
+model ProgressReport {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // attendance: PRESENT | ABSENT | LATE
+  attendance    String   @default("PRESENT")
+  // score 0-100
+  score         Int      @default(0)
+  // skill ratings 1-5
+  engagement    Int      @default(3)
+  understanding Int      @default(3)
+  homework      Int      @default(3)
+  // focusScore 0-100 measured automatically by AI
+  focusScore    Int?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([sessionId, studentId])
+  @@index([studentId])
+  @@index([teacherId])
+}
+
+// -----------------------------
+// Notification â€” in-app notifications
+// -----------------------------
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // type: SESSION_REMINDER | BOOKING_CONFIRMED | PAYMENT_RECEIVED | TEACHER_APPROVED | etc.
+  type      String
+  title     String
+  body      String
+  // link to navigate when clicked
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Gamification models â€” Points, Badges, Streaks, Leaderboard
+// ============================================================
+
+// -----------------------------
+// PointsLog â€” every points transaction for a student
+// -----------------------------
+model PointsLog {
+  id          String   @id @default(cuid())
+  studentId   String
+  studentName String
+  // amount (can be negative for refunds)
+  points      Int
+  // reason category: SESSION_COMPLETED | HIGH_SCORE | STREAK_BONUS | BADGE_UNLOCKED | QUIZ_PASS | HOMEWORK_DONE | REFUND
+  reason      String
+  description String
+  // optional reference (sessionId, badgeId, etc.)
+  refId       String?
+  createdAt   DateTime @default(now())
+
+  @@index([studentId, createdAt])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// Badge â€” definable achievement badges
+// -----------------------------
+model Badge {
+  id            String   @id @default(cuid())
+  // slug identifier e.g. "first_lesson", "streak_7", "math_master"
+  slug          String   @unique
+  name          String
+  nameAr        String
+  description   String
+  // icon emoji
+  icon          String   @default("ًںڈ†")
+  // color hex
+  color         String   @default("#FFE66D")
+  // requirement type: SESSIONS_COMPLETED | STREAK_DAYS | TOTAL_POINTS | TRACK_LEVEL | HIGH_SCORES
+  requirementType  String
+  requirementValue Int
+  // tier: BRONZE | SILVER | GOLD | PLATINUM
+  tier          String   @default("BRONZE")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  studentBadges StudentBadge[]
+
+  @@index([requirementType])
+}
+
+// -----------------------------
+// StudentBadge â€” badge unlocked by a student
+// -----------------------------
+model StudentBadge {
+  id          String   @id @default(cuid())
+  studentId   String
+  badgeId     String
+  badge       Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  unlockedAt  DateTime @default(now())
+
+  @@unique([studentId, badgeId])
+  @@index([studentId])
+}
+
+// -----------------------------
+// Streak â€” daily learning streak per student
+// -----------------------------
+model Streak {
+  id              String   @id @default(cuid())
+  studentId       String   @unique
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastSessionDate DateTime?
+  updatedAt       DateTime @updatedAt
+
+  @@index([currentStreak])
+}
+
+// -----------------------------
+// Review â€” mutual reviews (teacher â†” student/parent)
+// -----------------------------
+model Review {
+  id            String   @id @default(cuid())
+  sessionId     String
+  // who is being reviewed (the subject)
+  reviewedId    String   // userId of the reviewed person
+  reviewedRole  String   // TEACHER | PARENT
+  // who wrote the review
+  reviewerId    String   // userId of the reviewer
+  reviewerRole  String   // TEACHER | PARENT
+  reviewerName  String
+  // ratings 1-5
+  rating        Int
+  // review text
+  comment       String?
+  // category tags (comma-separated): PATIENCE | PROFESSIONALISM | PUNCTUALITY | ENGAGEMENT | PROGRESS | COMMUNICATION
+  tags          String   @default("")
+  // moderation
+  isApproved    Boolean  @default(true) // auto-approved unless flagged
+  isFlagged     Boolean  @default(false)
+  flagReason    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([sessionId, reviewerId, reviewedId]) // one review per session per direction
+  @@index([reviewedId])
+  @@index([reviewerId])
+  @@index([isFlagged])
+}
+
+// -----------------------------
+// RecommendationLog â€” AI recommendations given to a student
+// -----------------------------
+model RecommendationLog {
+  id            String   @id @default(cuid())
+  studentId     String
+  // type: TEACHER | COURSE | TRACK
+  type          String
+  // the recommended entity id (teacherId/courseId/track)
+  entityId      String
+  entityName    String
+  // AI reasoning (why this was recommended)
+  reason        String
+  // AI confidence 0-100
+  score         Int      @default(50)
+  // did the parent act on it?
+  clicked       Boolean  @default(false)
+  booked        Boolean  @default(false)
+  // the full AI response (JSON)
+  aiResponseJson String?
+  createdAt     DateTime @default(now())
+
+  @@index([studentId, type])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// LinkFilterLog â€” blocked/flagged chat messages
+// -----------------------------
+model LinkFilterLog {
+  id            String   @id @default(cuid())
+  sessionId     String
+  userId        String
+  userName      String
+  // original message text
+  originalText  String
+  // filtered/cleaned text
+  filteredText  String
+  // what was detected: EXTERNAL_LINK | INAPPROPRIATE | PROFANITY | SPAM | PERSONAL_INFO
+  category      String
+  // AI confidence 0-100
+  confidence    Int      @default(80)
+  // was the message blocked entirely or just filtered?
+  action        String   @default("FILTERED") // FILTERED | BLOCKED
+  createdAt     DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([category])
+}
+
+// -----------------------------
+// BehaviorAlert â€” AI-detected concerns about a student
+// -----------------------------
+model BehaviorAlert {
+  id            String   @id @default(cuid())
+  studentId     String
+  studentName   String
+  parentId      String
+  // type: LOW_ENGAGEMENT | STRUGGLING | ABSENT | BEHIND | EXCELLENT_PROGRESS
+  type          String
+  // severity: LOW | MEDIUM | HIGH
+  severity      String   @default("MEDIUM")
+  // AI-generated description
+  description   String
+  // recommended action
+  recommendation String
+  // AI analysis JSON (scores, patterns)
+  analysisJson  String?
+  // status
+  status        String   @default("NEW") // NEW | ACKNOWLEDGED | RESOLVED
+  acknowledgedAt DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([studentId])
+  @@index([parentId, status])
+  @@index([status])
+}
+
+// -----------------------------
+// WalletAccount â€” teacher payout destinations
+// -----------------------------
+model WalletAccount {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // type: VODAFONE_CASH | ETISALAT_CASH | ORANGE_CASH | FAWRY | BANK_TRANSFER | PAYPAL | WISE
+  type          String
+  // human-readable label e.g. "ظ…ط­ظپط¸طھظٹ ظپظˆط¯ط§ظپظˆظ†"
+  label         String?
+  // the destination identifier (phone number, IBAN, email, account number)
+  identifier    String
+  // holder name (for bank transfers)
+  holderName    String?
+  // additional info JSON (bank name, branch, swift code, etc.)
+  detailsJson   String?
+  // currency this wallet prefers
+  currency      String   @default("EGP")
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payouts Payout[]
+
+  @@index([teacherId])
+  @@index([type])
+}
+
+// -----------------------------
+// Payout â€” teacher withdrawal request + execution
+// -----------------------------
+model Payout {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // requested amount (in teacher's preferred currency)
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  currency      String   @default("EGP")
+  // status: PENDING | APPROVED | PROCESSING | COMPLETED | REJECTED | FAILED
+  status        String   @default("PENDING")
+  // payout method
+  walletAccountId String?
+  walletAccount WalletAccount? @relation(fields: [walletAccountId], references: [id], onDelete: SetNull)
+  // admin who approved/processed
+  processedById String?
+  processedAt   DateTime?
+  // provider reference (e.g. Fawry ref, bank transfer ref)
+  providerRef   String?
+  // admin notes / rejection reason
+  notes         String?
+  // breakdown: which transactions are being settled
+  transactionIdsJson String? // JSON array of transaction IDs
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([teacherId, status])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// Escrow â€” funds held until session completion
+// -----------------------------
+model Escrow {
+  id            String   @id @default(cuid())
+  transactionId String  @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  bookingId     String?  @unique
+  booking       Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  // amounts held
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  platformFeeEGP Int     @default(0) // commission
+  platformFeeUSD Int     @default(0)
+  teacherShareEGP Int    @default(0) // amount teacher will receive
+  teacherShareUSD Int    @default(0)
+  // status: HELD | RELEASED | REFUNDED
+  status        String   @default("HELD")
+  // when funds were released to teacher
+  releasedAt    DateTime?
+  payoutId      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([teacherId, status])
+  @@index([status])
+}
+
+// -----------------------------
+// CurrencyRate â€” cached exchange rates (base: USD)
+// -----------------------------
+model CurrencyRate {
+  id        String   @id @default(cuid())
+  code      String   @unique // USD, EGP, SAR, AED, KWD, QAR, BHD, OMR, JOD
+  name      String
+  nameAr    String
+  symbol    String
+  // rate relative to USD (1 USD = rate X)
+  rateToUSD Float
+  // supported payment methods (comma-separated): PAYMOB,STRIPE
+  providers String  @default("")
+  updatedAt DateTime @updatedAt
+}
+
+// -----------------------------
+// Coupon â€” discount codes
+// -----------------------------
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  // type: PERCENTAGE | FIXED_AMOUNT
+  type          String
+  value         Float    // percentage 0-100 OR fixed amount
+  currency      String   @default("EGP")
+  // usage limits
+  maxUses       Int      @default(100)
+  usedCount     Int      @default(0)
+  // validity
+  validFrom     DateTime @default(now())
+  validUntil    DateTime?
+  isActive      Boolean  @default(true)
+  // applicable tracks (empty = all)
+  tracksJson    String   @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transactions Transaction[]
+
+  @@index([code])
+  @@index([isActive])
+}
+
+// -----------------------------
+// RefundRequest â€” parent refund requests
+// -----------------------------
+model RefundRequest {
+  id            String   @id @default(cuid())
+  transactionId String  @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  // reason categories
+  reason        String
+  details       String?
+  // status: PENDING | APPROVED | REJECTED | PROCESSED
+  status        String   @default("PENDING")
+  processedById String?
+  processedAt   DateTime?
+  adminNotes    String?
+  // refund amount (may be partial)
+  amountEGP     Int      @default(0)
+  amountUSD     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([status])
+}
+
+// ============================================================
+// Phase 4 models â€” Realtime chat + whiteboard
+// ============================================================
+
+// -----------------------------
+// ChatMessage â€” persisted chat messages per session
+// -----------------------------
+model ChatMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String
+  // sender name denormalized for quick display
+  senderName  String
+  senderRole  String   // TEACHER | PARENT | STUDENT | ADMIN
+  text        String
+  // optional attachment URL (file upload via Supabase Storage later)
+  attachmentUrl String?
+  attachmentType String? // IMAGE | FILE | AUDIO
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([userId])
+}
+
+// -----------------------------
+// WhiteboardState â€” snapshot of whiteboard elements per session
+// -----------------------------
+model WhiteboardState {
+  id          String   @id @default(cuid())
+  sessionId   String  @unique
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  // Excalidraw elements JSON (array of elements)
+  elementsJson String  @default("[]")
+  // app state JSON (scroll, zoom)
+  appStateJson String  @default("{}")
+  updatedAt    DateTime @updatedAt
+
+  @@index([sessionId])
+}
+
+// ============================================================
+// Phase 6 â€” Homework system + Financial audit + Notifications
+// ============================================================
+
+// -----------------------------
+// Homework â€” teacher assigns homework to students
+// -----------------------------
+model Homework {
+  id            String   @id @default(cuid())
+  sessionId     String?
+  session       Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  // type: PRACTICAL | WRITTEN | READING | QUIZ | PROJECT | INTERACTIVE
+  type          String   @default("PRACTICAL")
+  // attachment URL (PDF, image, video) from teacher
+  attachmentUrl String?
+  attachmentName String?
+  // deadline
+  dueDate       DateTime
+  // status: ASSIGNED | SUBMITTED | REVIEWED | LATE | OVERDUE
+  status        String   @default("ASSIGNED")
+  // student submission
+  submissionText  String?
+  submissionUrl   String?  // student's uploaded file
+  submissionName  String?
+  submittedAt     DateTime?
+  // teacher review
+  grade          Int?     // 0-100
+  feedback       String?
+  reviewedAt     DateTime?
+  // Phase 6: Interactive homework
+  // questionsJson: JSON array of questions
+  //   [{ id, type: 'MCQ'|'TRUE_FALSE'|'FILL_BLANK'|'ESSAY', question, options?, correctAnswer?, points, explanation? }]
+  questionsJson  String?
+  // answersJson: student's answers (JSON array matching questions)
+  //   [{ questionId, answer }]
+  answersJson    String?
+  // autoGraded: true if all questions are auto-gradable (MCQ + TRUE_FALSE + FILL_BLANK)
+  autoGraded     Boolean  @default(false)
+  // totalPoints: sum of all question points
+  totalPoints    Int      @default(0)
+  // earnedPoints: points earned from auto-graded questions
+  earnedPoints   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([teacherId])
+  @@index([studentId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+// -----------------------------
+// FinancialAudit â€” immutable audit trail for all financial operations
+// -----------------------------
+model FinancialAudit {
+  id            String   @id @default(cuid())
+  // entity type: TRANSACTION | ESCROW | PAYOUT | REFUND
+  entityType    String
+  entityId      String
+  // action: CREATED | UPDATED | RELEASED | REFUNDED | COMPLETED | APPROVED | REJECTED
+  action        String
+  // who performed the action
+  performedById String?
+  // before/after JSON snapshots
+  beforeJson    String?
+  afterJson     String?
+  // metadata
+  description   String
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([performedById])
+  @@index([createdAt])
+}
+
+// -----------------------------
+// NotificationPreference â€” user's notification channel preferences
+// -----------------------------
+model NotificationPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  // channel preferences
+  inAppEnabled    Boolean  @default(true)
+  whatsappEnabled Boolean  @default(true)
+  emailEnabled    Boolean  @default(false)
+  // type-level overrides (JSON: { "SESSION_REMINDER": { "whatsapp": false } })
+  typeOverridesJson String @default("{}")
+  // quiet hours (don't send between these hours)
+  quietStartHour  Int      @default(22) // 10 PM
+  quietEndHour    Int      @default(7)  // 7 AM
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================================
+// Phase 7 â€” Mystery Boxes & Avatar Store
+// ============================================================
+
+// -----------------------------
+// RewardItem â€” Items won from mystery boxes (Frames, Titles)
+// -----------------------------
+// -----------------------------
+// RewardItem â€” Items won from mystery boxes (Frames, Titles)
+// -----------------------------
+model RewardItem {
+  id        Int      @id @default(autoincrement())
+  name      String   // Display name (e.g., "Golden Frame")
+  type      RewardType
+  rarity    Rarity
+  cssValue  String   // CSS class or styling value used in UI
+  imageUrl  String?
+  students  StudentReward[]
+}
+
+// -----------------------------
+// StudentReward â€” The items a student owns
+// -----------------------------
+model StudentReward {
+  id          Int      @id @default(autoincrement())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  rewardId    Int
+  reward      RewardItem @relation(fields: [rewardId], references: [id])
+  unlockedAt  DateTime @default(now())
+
+  @@unique([studentId, rewardId])
+}
+
+enum RewardType {
+  FRAME
+  TITLE
+}
+
+enum Rarity {
+  COMMON   // ًںں¢
+  RARE     // ًں”µ
+  EPIC     // ًںں£
+  LEGENDARY // ًںں،
+}
+
+// ============================================================
+// Phase 8 â€” AI Posts (stories & cards for the public feed)
+// ============================================================
+
+// -----------------------------
+// Post â€” AI-generated/edited stories & cards published to the site
+// -----------------------------
+model Post {
+  id        String   @id @default(cuid())
+  title     String   // short headline
+  content   String   // full body text
+  type      String   @default("CARD") // STORY | CARD | TIPS
+  emoji     String   @default("âœ¨")
+  category  String?  // e.g. PROGRAMMING, ROBOTICS, MENTAL_MATH, GENERAL
+  status    String   @default("DRAFT") // DRAFT | PUBLISHED
+  source    String   @default("MANUAL") // AI_SUGGESTED | MANUAL
+  createdById String?
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, type])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Phase 9 â€” Supervision + Session Reports + Site Banners
+// ============================================================
+
+// -----------------------------
+// Supervisor â€” educational supervisor / academic mentor
+// (created by admins; can join sessions as a read-only observer)
+// -----------------------------
+model Supervisor {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?  // e.g. "ظ…ط´ط±ظپ طھط±ط¨ظˆظٹ", "ظ…ظ†ط³ظ‚ ط§ظ„ظ…طھط§ط¨ط¹ط©"
+  isActive  Boolean  @default(true)
+  // Phase 9: gamified credits (ظ†ظ‚ط§ط·) granted by admins or earned via supervision
+  creditBalance Int   @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reports  SupervisorReport[]
+  earnings SupervisorEarning[]
+  payouts  SupervisorPayout[]
+}
+
+// -----------------------------
+// SupervisorEarning â€” financial ledger entry for a supervisor
+// (one row per source: report fee, admin adjustment, ...)
+// -----------------------------
+model SupervisorEarning {
+  id           String   @id @default(cuid())
+  supervisorId String
+  supervisor   Supervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  reportId     String?  @unique // link to the report that produced this earning
+  report       SupervisorReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  amountEGP    Int      @default(0) // in piasters (أ—100)
+  type         String   @default("REPORT_FEE") // REPORT_FEE | ADJUSTMENT | BONUS
+  note         String?
+  createdAt    DateTime @default(now())
+
+  @@index([supervisorId, createdAt])
+}
+
+// -----------------------------
+// SupervisorPayout â€” supervisor withdrawal request of their supervision earnings
+// -----------------------------
+model SupervisorPayout {
+  id            String   @id @default(cuid())
+  supervisorId  String
+  supervisor    Supervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  amountEGP     Int      @default(0) // in piasters (أ—100)
+  status        String   @default("PENDING") // PENDING | APPROVED | PROCESSING | COMPLETED | REJECTED | FAILED
+  notes         String?
+  processedById String?
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([supervisorId, status])
+  @@index([status])
+}
+
+// -----------------------------
+// SupervisorReport â€” one-click session evaluation report
+// (generated by supervisors/admins from a session's activity)
+// -----------------------------
+model SupervisorReport {
+  id           String   @id @default(cuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  supervisorId String
+  supervisor   Supervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  // snapshot of the session at report time
+  chatCount    Int      @default(0)
+  studentCount Int      @default(0)
+  avgFocusScore Int     @default(0)
+  durationMins Int      @default(0)
+  eventsCount  Int      @default(0)
+  // evaluator notes + rating (1-5)
+  rating       Int      @default(0)
+  notes        String?
+  status       String   @default("SUBMITTED") // DRAFT | SUBMITTED
+  // supervision fee earned for this report (piasters, default 50 EGP)
+  feeEGP       Int      @default(5000)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  earning SupervisorEarning?
+
+  @@index([sessionId])
+  @@index([supervisorId])
+}
+
+// -----------------------------
+// SessionLog â€” chronological event log for a live session
+// (JOIN, LEAVE, FOCUS_ALERT, WHITEBOARD, CODE, PLATFORM, RECORDING...)
+// -----------------------------
+model SessionLog {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName  String?
+  userRole  String?  // TEACHER | PARENT | STUDENT | ADMIN | SUPERVISOR
+  event     String   // JOIN | LEAVE | FOCUS_ALERT | WHITEBOARD | CODE | PLATFORM | RECORDING | CHAT
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([event])
+}
+
+// -----------------------------
+// SiteBanner â€” homepage hero slider managed from the admin
+// -----------------------------
+model SiteBanner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String?
+  linkUrl   String?
+  emoji     String   @default("ًںڈ†")
+  badge     String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// -----------------------------
+// SessionMedia â€” processed session images (thumbnails/snapshots)
+// shown in the site gallery + admin session gallery
+// -----------------------------
+model SessionMedia {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  url       String
+  type      String   @default("IMAGE") // IMAGE | VIDEO
+  caption   String?
+  order     Int      @default(0)
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([isPublished])
+}
+
+

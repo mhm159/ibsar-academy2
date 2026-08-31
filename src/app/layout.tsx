@@ -3,6 +3,8 @@ import { Tajawal, Cairo } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PopupNotificationContainer } from "@/components/site/popup-notification";
+import { CookieConsent } from "@/components/site/cookie-consent";
+import Script from "next/script";
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -71,6 +73,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        {/* Google Analytics 4 */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX`}
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-XXXXXXXXXX', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${tajawal.variable} ${cairo.variable} font-sans antialiased bg-background text-foreground min-h-screen`}
       >
@@ -82,6 +105,7 @@ export default function RootLayout({
         >
           {children}
           <PopupNotificationContainer />
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>
