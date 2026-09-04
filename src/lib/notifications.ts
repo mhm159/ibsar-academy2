@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Advanced Notification System
+ * Dars Academy — Advanced Notification System
  *
  * Multi-channel notifications:
  *   - In-app (real-time via socket.io + persisted in DB)

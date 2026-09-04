@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Weekly WhatsApp Performance Reports
+ * Dars Academy — Weekly WhatsApp Performance Reports
  *
  * Generates and sends a weekly Arabic performance summary for each student
  * to their parent via WhatsApp.
@@ -191,7 +191,7 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   }
 
   lines.push(`💬 للاستفسار أو التواصل مع المعلمين، زر لوحة التحكم:`)
-  lines.push(`🔗 https://manhal-academy.vercel.app/parent`)
+  lines.push(`🔗 https://www.ibsar.eu/parent`)
   lines.push(``)
   lines.push(`_منصة منهل — مَنهَل.. عِلمٌ بلا حدود_ 🌟`)
 

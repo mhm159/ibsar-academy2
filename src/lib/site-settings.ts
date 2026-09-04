@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — editable front-page site settings
+ * Dars Academy — editable front-page site settings
  *
  * Defaults mirror the branding in constants.ts. Admins can override any of
  * these from the dashboard (Settings page) and the public pages pick them up
@@ -33,7 +33,7 @@ export const SITE_SETTING_DEFS: SiteSettingDef[] = [
   // Footer
   { key: 'footer.about', label: 'نبذة عن الأكاديمية (الفوتر)', group: 'FOOTER', type: 'textarea', defaultValue: 'منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.' },
   { key: 'footer.phone', label: 'رقم الدعم (واتساب)', group: 'FOOTER', defaultValue: '+20 100 000 0000' },
-  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@manhal-academy.com' },
+  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@ibsar.eu' },
   { key: 'footer.slogan', label: 'الشعار الترويجي', group: 'FOOTER', defaultValue: 'نُبدِعُ مستقبلَ طفلِك' },
 
   // Payment / financial info shown to parents at checkout

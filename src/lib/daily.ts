@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Daily.co Video Provider
+ * Dars Academy — Daily.co Video Provider
  *
  * Daily.co flow:
  *   1. Create room via REST API (server-side)
@@ -47,7 +47,7 @@ export async function createDailyRoom(params: {
   exp?: number
   enableRecording?: boolean
 }): Promise<{ ok: true; room: DailyRoom; sandbox: boolean } | { ok: false; error: string }> {
-  const roomName = `manhal-${params.sessionId}`
+  const roomName = `dars-${params.sessionId}`
 
   // SANDBOX: no API key → return fake URL
   if (!isDailyConfigured()) {

@@ -59,7 +59,7 @@ export default function TeacherOverviewPage() {
 
 function TeacherOverviewContent() {
   const { data, loading } = useSyncedData<TeacherOverview>({
-    key: 'ibsar:teacher-overview',
+    key: 'dars:teacher-overview',
     fetcher: async () => {
       const r = await fetch('/api/dashboard/teacher/overview')
       const d = await r.json()

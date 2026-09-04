@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Auth helpers (Phase 1)
+ * Dars Academy — Auth helpers (Phase 1)
  *
  * Strategy:
  * - OTP-based auth for phone (SMS via Twilio/Vonage — placeholder) and email.
@@ -15,7 +15,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { sendWhatsAppOtp } from '@/lib/whatsapp'
 
-const SESSION_COOKIE = 'manhal_session'
+const SESSION_COOKIE = 'dars_session'
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7 // 7 days
 
 /** Generate a 6-digit OTP code */

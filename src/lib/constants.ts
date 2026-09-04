@@ -11,7 +11,7 @@ export const APP = {
   description:
     "منصة تعليمية رائدة تقدم فصولاً افتراضية تفاعلية، وبرامج تعليمية متطورة تلبي احتياجات الطلاب بمعايير جودة عالية وأساليب مبتكرة.",
   url: "https://dars-academy.com",
-  supportEmail: "support@manhal-academy.com",
+  supportEmail: "support@ibsar.eu",
   supportPhone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",
 } as const;

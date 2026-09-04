@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — AI Recommendations Engine
+ * Dars Academy — AI Recommendations Engine
  *
  * Uses z-ai-web-dev-sdk LLM to analyze a student's profile (age, level,
  * past sessions, progress reports) and recommend the best teachers/courses.

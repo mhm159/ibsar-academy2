@@ -102,7 +102,7 @@ export function triggerStarBurst(element: HTMLElement, count = 8) {
 }
 
 /**
- * Mascot — Manhal's friendly owl mascot.
+ * Mascot — Dars friendly owl mascot.
  * Shows different expressions based on mood.
  */
 export function Mascot({

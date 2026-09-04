@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — AI Behavior Analysis
+ * Dars Academy — AI Behavior Analysis
  *
  * Analyzes a student's progress reports + attendance patterns to detect:
  *   - LOW_ENGAGEMENT: consistently low engagement scores

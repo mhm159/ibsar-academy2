@@ -123,7 +123,7 @@ export function playCoin() {
 }
 
 /** Toggle sound on/off preference in localStorage */
-const SOUND_KEY = 'manhal-sound-enabled'
+const SOUND_KEY = 'dars-sound-enabled'
 
 export function isSoundEnabled(): boolean {
   if (typeof window === 'undefined') return true

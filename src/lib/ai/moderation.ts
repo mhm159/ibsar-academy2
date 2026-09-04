@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — AI Content Moderation for Chat
+ * Dars Academy — AI Content Moderation for Chat
  *
  * Uses z-ai-web-dev-sdk LLM to detect:
  *   - External links (block — kid safety)
@@ -83,7 +83,7 @@ export async function moderateChatMessage(
 
 /** Fast regex-based filter for obvious violations */
 function regexFilter(text: string): ModerationResult {
-  // External links (http/https/www) — block unless it's manhal-academy.com
+  // External links (http/https/www) — block unless it's ibsar.eu
   const urlRegex = /https?:\/\/(?!manhal-academy\.com)[^\s]+|www\.(?!manhal-academy\.com)[^\s]+/gi
   if (urlRegex.test(text)) {
     const filtered = text.replace(urlRegex, '[رابط محظور]')

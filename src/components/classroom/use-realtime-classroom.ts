@@ -14,7 +14,7 @@ export function useRealtimeClassroom(sessionId?: string, userId?: string, userNa
   const [messages, setMessages] = useState<ChatMessagePayload[]>([])
   const [whiteboardElements, setWhiteboardElements] = useState<any[]>([])
   const [cursors, setCursors] = useState<Map<string, CursorPayload>>(new Map())
-  const [codeContent, setCodeContent] = useState<string>('# مرحباً بك!\nprint("Hello, Manhal Academy!")')
+  const [codeContent, setCodeContent] = useState<string>('# مرحباً بك!\nprint("Hello, Dars Academy!")')
   const [codeLanguage, setCodeLanguage] = useState<string>('python')
   const [codeLocked, setCodeLocked] = useState<boolean>(false)
   const [platformUrl, setPlatformUrl] = useState<string | null>(null)

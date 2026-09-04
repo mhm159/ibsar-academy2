@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — PayMob Payment Provider (Egypt)
+ * Dars Academy — PayMob Payment Provider (Egypt)
  *
  * PayMob flow (3 steps):
  *   1. Authenticate → get API token
@@ -136,8 +136,8 @@ export async function createPayMobCheckout(
 
     const billingData = {
       first_name: intent.buyer.name.split(' ')[0] ?? 'Parent',
-      last_name: intent.buyer.name.split(' ').slice(1).join(' ') ?? 'Manhal',
-      email: intent.buyer.email ?? 'parent@manhal.academy',
+      last_name: intent.buyer.name.split(' ').slice(1).join(' ') ?? 'Dars',
+      email: intent.buyer.email ?? 'parent@ibsar.eu',
       phone_number: intent.buyer.phone ?? '01000000000',
       country: intent.buyer.country ?? 'EG',
       city: 'Cairo',

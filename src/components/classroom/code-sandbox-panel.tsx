@@ -18,8 +18,8 @@ import { notify } from '@/lib/notify'
 
 // ─── Language configs ────────────────────────────────────────────────────────
 const LANGUAGES = [
-  { id: 'python', label: 'Python 🐍', monacoId: 'python', starter: '# مرحباً! اكتب كودك هنا\nprint("Hello, Manhal Academy! 🚀")\n\n# جرّب مثالاً:\nfor i in range(1, 6):\n    print(f"رقم {i}")\n' },
-  { id: 'javascript', label: 'JavaScript ⚡', monacoId: 'javascript', starter: '// مرحباً! اكتب كودك هنا\nconsole.log("Hello, Manhal Academy! 🚀");\n\n// جرّب مثالاً:\nfor (let i = 1; i <= 5; i++) {\n  console.log(`رقم ${i}`);\n}\n' },
+  { id: 'python', label: 'Python 🐍', monacoId: 'python', starter: '# مرحباً! اكتب كودك هنا\nprint("Hello, Dars Academy! 🚀")\n\n# جرّب مثالاً:\nfor i in range(1, 6):\n    print(f"رقم {i}")\n' },
+  { id: 'javascript', label: 'JavaScript ⚡', monacoId: 'javascript', starter: '// مرحباً! اكتب كودك هنا\nconsole.log("Hello, Dars Academy! 🚀");\n\n// جرّب مثالاً:\nfor (let i = 1; i <= 5; i++) {\n  console.log(`رقم ${i}`);\n}\n' },
   { id: 'html', label: 'HTML 🌐', monacoId: 'html', starter: '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <title>صفحتي</title>\n  <style>\n    body { font-family: Arial; background: #0a0a0a; color: #FFD700; text-align: center; padding: 40px; }\n    h1 { font-size: 2rem; }\n  </style>\n</head>\n<body>\n  <h1>🚀 مرحباً بك في منصة منهل!</h1>\n  <p>ابدأ بتعديل هذا الكود</p>\n</body>\n</html>' },
 ]
 

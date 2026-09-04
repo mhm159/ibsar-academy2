@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Escrow & Settlement logic
+ * Dars Academy — Escrow & Settlement logic
  *
  * Flow:
  *   1. Parent pays → funds held in ESCROW (status: HELD)

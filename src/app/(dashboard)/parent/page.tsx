@@ -74,7 +74,7 @@ export default function ParentOverviewPage() {
 function ParentOverviewContent() {
   const { isKids } = useMode()
   const { data, loading } = useSyncedData<OverviewData>({
-    key: 'ibsar:parent-overview',
+    key: 'dars:parent-overview',
     fetcher: async () => {
       const r = await fetch('/api/dashboard/parent/overview')
       const d = await r.json()

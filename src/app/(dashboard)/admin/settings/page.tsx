@@ -73,7 +73,7 @@ function SettingsEditor() {
       setDirty(false)
       // refresh public cache
       try {
-        localStorage.removeItem('manhal:site-settings')
+        localStorage.removeItem('dars:site-settings')
       } catch { /* ignore */ }
       return true
     } catch {

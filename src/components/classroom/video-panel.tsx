@@ -148,7 +148,7 @@ export function VideoPanel({
         src={fullUrl}
         allow="camera; microphone; fullscreen; display-capture; speaker-selection"
         className="flex-1 w-full border-0"
-        title="Manhal Classroom — Video"
+        title="Dars Classroom — Video"
       />
       {recordingStatus === 'STARTED' && (
         <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-kids-red text-white text-xs font-bold animate-pulse z-10">
