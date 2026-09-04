@@ -27,13 +27,13 @@ export const SITE_SETTING_DEFS: SiteSettingDef[] = [
 
   // CTA band
   { key: 'cta.title', label: 'عنوان شريط الدعوة', group: 'CTA', defaultValue: 'جاهز لتأمين مستقبل طفلك؟' },
-  { key: 'cta.subtitle', label: 'وصف شريط الدعوة', group: 'CTA', type: 'textarea', defaultValue: 'انضم الآن إلى آلاف العائلات التي تثق بمنصة منهل لتعليم أطفالها مهارات القرن الحادي والعشرين.' },
+  { key: 'cta.subtitle', label: 'وصف شريط الدعوة', group: 'CTA', type: 'textarea', defaultValue: 'انضم الآن إلى آلاف العائلات التي تثق بمنصة درس لتعليم أطفالها مهارات القرن الحادي والعشرين.' },
   { key: 'cta.button', label: 'زر شريط الدعوة', group: 'CTA', defaultValue: 'سجّل طفلك الآن' },
 
   // Footer
   { key: 'footer.about', label: 'نبذة عن الأكاديمية (الفوتر)', group: 'FOOTER', type: 'textarea', defaultValue: 'منصة تعليمية متكاملة للأطفال في مصر والعالم العربي لتعلّم البرمجة، الروبوتيكس، والحساب الذهني أونلاين.' },
   { key: 'footer.phone', label: 'رقم الدعم (واتساب)', group: 'FOOTER', defaultValue: '+20 100 000 0000' },
-  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@ibsar.eu' },
+  { key: 'footer.email', label: 'بريد الدعم', group: 'FOOTER', defaultValue: 'support@dars-academy.com' },
   { key: 'footer.slogan', label: 'الشعار الترويجي', group: 'FOOTER', defaultValue: 'نُبدِعُ مستقبلَ طفلِك' },
 
   // Payment / financial info shown to parents at checkout
@@ -43,6 +43,7 @@ export const SITE_SETTING_DEFS: SiteSettingDef[] = [
   { key: 'payment.walletType', label: 'نوع المحفظة الإلكترونية', group: 'PAYMENT', defaultValue: 'فودافون كاش' },
   { key: 'payment.walletNumber', label: 'رقم المحفظة الإلكترونية', group: 'PAYMENT', defaultValue: '+20 100 000 0000' },
   { key: 'payment.instructions', label: 'رسالة/إرشادات الدفع للعملاء', group: 'PAYMENT', type: 'textarea', defaultValue: 'بعد إتمام الطلب سيصلك تأكيد عبر الواتساب. يمكنك سداد الرسوم عبر التحويل البنكي أو المحافظ الإلكترونية أو البطاقات، وسيتم تفعيل الحصص فور تأكيد الدفع.' },
+  { key: 'payment.platformFeePercent', label: 'نسبة عمولة المنصة (٪) — تُخصم من نصيب المعلم', group: 'PAYMENT', defaultValue: '15' },
 ]
 
 export const DEFAULT_SITE_SETTINGS: Record<string, string> = Object.fromEntries(

@@ -6,7 +6,7 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { APP } from '@/lib/constants'
 import { useSiteSettings } from '@/hooks/use-site-settings'
-import { EASE, fadeUpItem } from './motion-reveal'
+import { EASE, fadeUpItem } from '@/features/shared/motion-reveal'
 
 export function CtaSection() {
   const { settings } = useSiteSettings()

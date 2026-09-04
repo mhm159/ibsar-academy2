@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Plus, Loader2, Pencil, Trash2, ImagePlus, GripVertical } from 'lucide-react'
@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { notify } from '@/lib/notify'
-import type { SiteBanner } from '@/components/site/hero-slider'
+import type { SiteBanner } from '@/features/landing/hero-slider'
 
 export default function AdminSliderPage() {
   return (

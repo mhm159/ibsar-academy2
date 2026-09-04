@@ -167,7 +167,7 @@ export async function getRecommendationsForStudent(
   }))
 
   // 3. Build LLM prompt
-  const systemPrompt = `أنت مستشار تعليمي خبير في منصة منهل لتعليم الأطفال.
+  const systemPrompt = `أنت مستشار تعليمي خبير في منصة درس لتعليم الأطفال.
 مهمتك: تحليل ملف الطفل واقتراح أفضل المعلمين/الكورسات المناسبة له.
 
 قواعد التوصية:

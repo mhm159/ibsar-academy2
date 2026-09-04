@@ -1,5 +1,5 @@
 @echo off
-title Manhal Academy Server
+title Dars Academy Server
 cd /d "%~dp0"
 color 0A
 
@@ -55,7 +55,7 @@ echo  [OK] Seeding done
 echo.
 
 echo  [5/6] Starting classroom service (port 3003)...
-start "Manhal Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"
+start "Dars Classroom (3003)" /min cmd /c "cd /d "%~dp0mini-services\classroom-service" && call %CMD% install --no-audit --no-fund && call %CMD% run dev"
 
 echo  Waiting 5 seconds...
 timeout /t 5 /nobreak >nul

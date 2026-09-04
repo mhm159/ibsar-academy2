@@ -452,6 +452,18 @@ function PayoutForm({
   const [withdrawAll, setWithdrawAll] = useState(true)
   const [amount, setAmount] = useState('')
   const [saving, setSaving] = useState(false)
+  const [feePercent, setFeePercent] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/site/settings')
+      .then((r) => r.json())
+      .then((d) => {
+        const raw = d?.settings?.['payment.platformFeePercent']
+        const n = raw != null ? Number(raw) : NaN
+        if (!Number.isNaN(n)) setFeePercent(n)
+      })
+      .catch(() => {})
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -544,7 +556,7 @@ function PayoutForm({
       )}
 
       <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
-        💡 سيتم مراجعة طلبك من الإدارة وتحويل المبلغ خلال 1-3 أيام عمل. العمولة (15%) محسوبة من الأصل.
+        💡 سيتم مراجعة طلبك من الإدارة وتحويل المبلغ خلال 1-3 أيام عمل. {feePercent != null ? `العمولة (${feePercent}%) محسوبة من الأصل` : 'العمولة محسوبة من الأصل'}.
       </div>
 
       <Button

@@ -46,7 +46,19 @@
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+--color-chart-5: var(--chart-5);
+
+  /* Educate Style — brand tokens (gold/azure/night/emerald + kids) */
+  --color-gold: var(--gold);
+  --color-azure: var(--azure);
+  --color-night: var(--night);
+  --color-emerald-egypt: var(--emerald-egypt);
+  --color-kids-teal: var(--kids-teal);
+  --color-kids-purple: var(--kids-purple);
+  --color-kids-pink: var(--kids-pink);
+  --color-kids-orange: var(--kids-orange);
+  --color-kids-red: var(--kids-red);
+  --color-kids-yellow: var(--kids-yellow);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -59,14 +71,27 @@
 :root {
   --radius: 1rem;
 
-  /* Brand palette */
+/* Brand palette */
   --dars-turquoise: #0D9488;
   --dars-purple: #7C3AED;
   --dars-green: #10B981;
   --slate-50: #F8FAFC;
   --slate-900: #0F172A;
 
-  /* Semantic tokens ?? Dars palette */
+  /* Educate Style — signature brand tokens */
+  --gold: #FFB800;
+  --azure: #3E6BFF;
+  --night: #1B2A6B;
+  --emerald-egypt: #0E7A62;
+  /* Kids palette (playful, for children-facing surfaces) */
+  --kids-teal: #14B8A6;
+  --kids-purple: #A78BFA;
+  --kids-pink: #F472B6;
+  --kids-orange: #FB923C;
+  --kids-red: #F87171;
+  --kids-yellow: #FACC15;
+
+  /* Semantic tokens ?? Educate palette */
   --background: #F8FAFC;
   --foreground: #0F172A;
   --card: #FFFFFF;
@@ -74,15 +99,15 @@
   --popover: #FFFFFF;
   --popover-foreground: #0F172A;
 
-  /* Primary = Turquoise */
-  --primary: #0D9488;
+  /* Primary = Royal Navy */
+  --primary: #1B2A6B;
   --primary-foreground: #FFFFFF;
-  /* Secondary = Purple */
+  /* Secondary = Muted purple (kept for depth) */
   --secondary: #7C3AED;
   --secondary-foreground: #FFFFFF;
-  /* Accent = Green */
-  --accent: #10B981;
-  --accent-foreground: #FFFFFF;
+  /* Accent = Egyptian Gold */
+  --accent: #FFB800;
+  --accent-foreground: #1B2A6B;
 
   --muted: #F1F5F9;
   --muted-foreground: #64748B;
@@ -90,22 +115,22 @@
   --destructive-foreground: #FFFFFF;
   --border: #E2E8F0;
   --input: #E2E8F0;
-  --ring: #0D9488;
+  --ring: #1B2A6B;
 
-  --chart-1: #0D9488;
-  --chart-2: #7C3AED;
-  --chart-3: #10B981;
-  --chart-4: #F59E0B;
-  --chart-5: #3B82F6;
+  --chart-1: #FFB800;
+  --chart-2: #3E6BFF;
+  --chart-3: #0E7A62;
+  --chart-4: #0D9488;
+  --chart-5: #7C3AED;
 
   --sidebar: #FFFFFF;
   --sidebar-foreground: #0F172A;
-  --sidebar-primary: #0D9488;
+  --sidebar-primary: #1B2A6B;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #F1F5F9;
   --sidebar-accent-foreground: #0F172A;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #0D9488;
+  --sidebar-ring: #1B2A6B;
 }
 
 /* ============ DARK (Slate Base) ============ */
@@ -117,12 +142,14 @@
   --popover: #1E293B;
   --popover-foreground: #F8FAFC;
 
-  --primary: #14B8A6;
-  --primary-foreground: #022C22;
-  --secondary: #8B5CF6;
+  /* Primary = luminous navy (keeps contrast on slate) */
+  --primary: #4F5BD5;
+  --primary-foreground: #FFFFFF;
+  --secondary: #9E8CF5;
   --secondary-foreground: #FFFFFF;
-  --accent: #10B981;
-  --accent-foreground: #022C22;
+  /* Accent = Egyptian Gold */
+  --accent: #FFB800;
+  --accent-foreground: #1B2A6B;
 
   --muted: #334155;
   --muted-foreground: #94A3B8;
@@ -130,22 +157,22 @@
   --destructive-foreground: #000000;
   --border: #334155;
   --input: #334155;
-  --ring: #14B8A6;
+  --ring: #4F5BD5;
 
-  --chart-1: #14B8A6;
-  --chart-2: #8B5CF6;
-  --chart-3: #10B981;
+  --chart-1: #FFB800;
+  --chart-2: #7C9BFF;
+  --chart-3: #34D399;
   --chart-4: #FBBF24;
-  --chart-5: #60A5FA;
+  --chart-5: #A78BFA;
 
   --sidebar: #1E293B;
   --sidebar-foreground: #F8FAFC;
-  --sidebar-primary: #14B8A6;
-  --sidebar-primary-foreground: #022C22;
+  --sidebar-primary: #4F5BD5;
+  --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #334155;
   --sidebar-accent-foreground: #F8FAFC;
   --sidebar-border: #334155;
-  --sidebar-ring: #14B8A6;
+  --sidebar-ring: #4F5BD5;
 }
 
 /* ============================================================

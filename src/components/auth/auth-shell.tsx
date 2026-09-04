@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Logo } from '@/components/site/logo'
-import { ThemeToggle } from '@/components/site/theme-toggle'
+import { Logo } from '@/features/shared/logo'
+import { ThemeToggle } from '@/features/shared/theme-toggle'
 import { APP, STATS } from '@/lib/constants'
 import { ShieldCheck, Sparkles, HeartHandshake } from 'lucide-react'
 
@@ -66,7 +66,7 @@ export function AuthShell({
               <span className="text-gradient-gold">بمهارات القرن 21</span>
             </h1>
             <p className="mt-5 text-white/70 text-lg leading-relaxed max-w-md">
-              انضم لأكثر من 5000 عائلة عربية تثق بمنصة منهل لتعلّم أبنائها
+              انضم لأكثر من 5000 عائلة عربية تثق بمنصة درس لتعلّم أبنائها
               البرمجة، الروبوتيكس، والحساب الذهني.
             </p>
 

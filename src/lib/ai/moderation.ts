@@ -83,8 +83,8 @@ export async function moderateChatMessage(
 
 /** Fast regex-based filter for obvious violations */
 function regexFilter(text: string): ModerationResult {
-  // External links (http/https/www) — block unless it's ibsar.eu
-  const urlRegex = /https?:\/\/(?!manhal-academy\.com)[^\s]+|www\.(?!manhal-academy\.com)[^\s]+/gi
+  // External links (http/https/www) — block unless it's dars-academy.com
+  const urlRegex = /https?:\/\/(?!(?:www\.)?dars-academy\.com)[^\s]+|www\.(?!dars-academy\.com)[^\s]+/gi
   if (urlRegex.test(text)) {
     const filtered = text.replace(urlRegex, '[رابط محظور]')
     return {

@@ -145,7 +145,7 @@ export async function collectWeeklyReports(): Promise<WeeklyReportData[]> {
 export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   const lines: string[] = []
 
-  lines.push(`🎓 *منصة منهل*`)
+  lines.push(`🎓 *منصة درس*`)
   lines.push(`📊 *التقرير الأسبوعي لأداء أبنائك*`)
   lines.push(`━━━━━━━━━━━━━━━━━━━━`)
   lines.push(``)
@@ -191,9 +191,9 @@ export function buildWeeklyReportMessage(data: WeeklyReportData): string {
   }
 
   lines.push(`💬 للاستفسار أو التواصل مع المعلمين، زر لوحة التحكم:`)
-  lines.push(`🔗 https://www.ibsar.eu/parent`)
+  lines.push(`🔗 https://www.dars-academy.com/parent`)
   lines.push(``)
-  lines.push(`_منصة منهل — مَنهَل.. عِلمٌ بلا حدود_ 🌟`)
+  lines.push(`_منصة درس — تعلّمٌ بلا حدود_ 🌟`)
 
   return lines.join('\n')
 }

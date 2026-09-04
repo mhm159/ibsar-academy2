@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Send } from 'lucide-react'
-import { Logo } from './logo'
+import { Logo } from '@/features/shared/logo'
 import { APP } from '@/lib/constants'
 import { useSiteSettings } from '@/hooks/use-site-settings'
 
@@ -49,27 +49,27 @@ export function SiteFooter() {
   const slogan = settings['footer.slogan'] || APP.tagline
 
   return (
-    <footer className="mt-auto relative border-t border-border bg-card">
+    <footer className="mt-auto relative border-t border-white/10 bg-gradient-to-b from-night to-[#101A45] text-white">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid gap-10 lg:gap-8 lg:grid-cols-12">
           {/* Brand column */}
           <div className="lg:col-span-4">
-            <Logo size={44} />
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-sm">
+            <Logo size={44} variant="light" />
+            <p className="mt-4 text-sm text-white/70 leading-relaxed max-w-sm">
               {about}
             </p>
 
             {/* Contact */}
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2 text-muted-foreground">
+              <li className="flex items-center gap-2 text-white/70">
                 <Phone className="h-4 w-4 text-gold shrink-0" />
                 <span dir="ltr">{phone}</span>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
+              <li className="flex items-center gap-2 text-white/70">
                 <Mail className="h-4 w-4 text-gold shrink-0" />
                 <span dir="ltr">{email}</span>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
+              <li className="flex items-center gap-2 text-white/70">
                 <MapPin className="h-4 w-4 text-gold shrink-0" />
                 <span>القاهرة، مصر</span>
               </li>
@@ -81,7 +81,7 @@ export function SiteFooter() {
           <div className="lg:col-span-6 grid grid-cols-2 sm:grid-cols-3 gap-8">
             {FOOTER_LINKS.map((col) => (
               <div key={col.title}>
-                <h3 className="font-display font-bold text-sm mb-4 text-foreground">
+                <h3 className="font-display font-bold text-sm mb-4 text-white">
                   {col.title}
                 </h3>
                 <ul className="space-y-2.5">
@@ -89,7 +89,7 @@ export function SiteFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                        className="text-sm text-white/70 hover:text-gold transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -102,7 +102,7 @@ export function SiteFooter() {
 
           {/* Newsletter + social */}
           <div className="lg:col-span-2">
-            <h3 className="font-display font-bold text-sm mb-4 text-foreground">تابعنا</h3>
+            <h3 className="font-display font-bold text-sm mb-4 text-white">تابعنا</h3>
             <div className="flex flex-wrap gap-2">
               {SOCIAL.map((s) => (
                 <a
@@ -111,7 +111,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="inline-flex items-center justify-center h-10 w-10 rounded-xl glass border-gold/15 hover:border-gold/40 hover:bg-gold/10 transition-colors"
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-white/15 bg-white/10 backdrop-blur-md hover:border-gold/40 hover:bg-gold/15 transition-colors"
                 >
                   <s.icon className="h-4 w-4" />
                 </a>
@@ -121,7 +121,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
           <p>
             © {new Date().getFullYear()} {APP.name}. جميع الحقوق محفوظة.
           </p>

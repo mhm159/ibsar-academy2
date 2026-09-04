@@ -1,16 +1,42 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import * as Ably from 'ably'
-import { ChatMessagePayload, CursorPayload, PresenceUser, WhiteboardUpdatePayload } from '@/types/classroom'
+import type {
+  ChatMessagePayload,
+  CursorPayload,
+  PresenceUser,
+  WhiteboardUpdatePayload,
+} from '@/types/classroom'
+
+export type {
+  ChatMessagePayload,
+  CursorPayload,
+  PresenceUser,
+  WhiteboardUpdatePayload,
+} from '@/types/classroom'
 
 const CURSOR_COLORS = ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899']
 
-export function useRealtimeClassroom(sessionId?: string, userId?: string, userName?: string, userRole?: string) {
+interface RealtimeClassroomOptions {
+  sessionId?: string | null
+  userId?: string | null
+  userName?: string | null
+  userRole?: string | null
+}
+
+export function useRealtimeClassroom({
+  sessionId,
+  userId,
+  userName,
+  userRole,
+}: RealtimeClassroomOptions = {}) {
   const [connected, setConnected] = useState(false)
   const ablyRef = useRef<Ably.Realtime | null>(null)
   const channelRef = useRef<Ably.RealtimeChannel | null>(null)
 
   const [presence, setPresence] = useState<PresenceUser[]>([])
-  const [yourCursorColor, setYourCursorColor] = useState<string>(CURSOR_COLORS[0])
+  const [yourCursorColor, setYourCursorColor] = useState<string>(
+    () => CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)],
+  )
   const [messages, setMessages] = useState<ChatMessagePayload[]>([])
   const [whiteboardElements, setWhiteboardElements] = useState<any[]>([])
   const [cursors, setCursors] = useState<Map<string, CursorPayload>>(new Map())
@@ -23,9 +49,7 @@ export function useRealtimeClassroom(sessionId?: string, userId?: string, userNa
   useEffect(() => {
     if (!sessionId || !userId || !userName) return
 
-    // Choose random color
-    const color = CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)]
-    setYourCursorColor(color)
+    const color = yourCursorColor
 
     const client = new Ably.Realtime({ authUrl: '/api/ably/auth' })
     ablyRef.current = client
@@ -41,19 +65,21 @@ export function useRealtimeClassroom(sessionId?: string, userId?: string, userNa
     const presenceData = { userId, name: userName, role: userRole ?? 'PARENT', cursorColor: color }
     channel.presence.enter(presenceData)
 
-    channel.presence.subscribe((msg) => {
-      channel.presence.get((err, members) => {
-        if (members) {
-          const currentUsers: PresenceUser[] = members.map(m => ({
+    channel.presence.subscribe(() => {
+      channel.presence.get({ waitForSync: false })
+        .then((members) => {
+          const currentUsers: PresenceUser[] = members.map((m) => ({
             userId: m.data.userId,
             name: m.data.name,
             role: m.data.role,
             cursorColor: m.data.cursorColor,
-            isOnline: true
+            isOnline: true,
           }))
           setPresence(currentUsers)
-        }
-      })
+        })
+        .catch((err) => {
+          console.error('[ably] presence.get failed:', err)
+        })
     })
 
     // Subscriptions
@@ -121,7 +147,7 @@ export function useRealtimeClassroom(sessionId?: string, userId?: string, userNa
       if (!channelRef.current || !sessionId || !userId || !userName) return
       const payload: ChatMessagePayload = { ...msg, sessionId, userId, senderName: userName, senderRole: userRole ?? 'PARENT' }
       channelRef.current.publish('chat:message', payload)
-    }, [sessionId, userId, userName, userRole])
+}, [sessionId, userId, userName, userRole, yourCursorColor])
 
   const sendWhiteboardUpdate = useCallback((elements: any[], appState?: any) => {
       channelRef.current?.publish('whiteboard:update', { sessionId, elements, appState })

@@ -5,7 +5,7 @@ import { Code2, Bot, Calculator, ArrowLeft } from 'lucide-react'
 import { useTracks } from '@/lib/tracks-store'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 const ICONS = { Code2, Bot, Calculator }
 

@@ -16,7 +16,7 @@ export default function SupervisorProfilePage() {
           </div>
           <div>
             <h3 className="font-display font-bold text-lg">مشرف تربوي</h3>
-            <p className="text-sm text-muted-foreground">منصة منهل — متابعة الجودة التعليمية</p>
+            <p className="text-sm text-muted-foreground">منصة درس — متابعة الجودة التعليمية</p>
           </div>
         </div>
         <div className="space-y-3 text-sm">

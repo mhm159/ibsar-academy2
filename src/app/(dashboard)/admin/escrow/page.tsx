@@ -67,7 +67,19 @@ function EscrowAdmin() {
   const [data, setData] = useState<Data | null>(null)
   const [statusFilter, setStatusFilter] = useState('HELD')
   const [acting, setActing] = useState<string | null>(null)
+  const [feePercent, setFeePercent] = useState<number | null>(null)
   const loading = data === null
+
+  useEffect(() => {
+    fetch('/api/site/settings')
+      .then((r) => r.json())
+      .then((d) => {
+        const raw = d?.settings?.['payment.platformFeePercent']
+        const n = raw != null ? Number(raw) : NaN
+        if (!Number.isNaN(n)) setFeePercent(n)
+      })
+      .catch(() => {})
+  }, [])
 
   const load = () => {
     fetch(`/api/dashboard/admin/escrow?status=${statusFilter}`)
@@ -227,7 +239,7 @@ function EscrowAdmin() {
                       <p className="font-bold">{fmtEGP(e.amountEGP)}</p>
                     </div>
                     <div className="rounded-lg bg-azure/10 p-2">
-                      <p className="text-muted-foreground">عمولة المنصة (15%)</p>
+                      <p className="text-muted-foreground">{feePercent != null ? `عمولة المنصة (${feePercent}%)` : 'عمولة المنصة'}</p>
                       <p className="font-bold text-azure">{fmtEGP(e.platformFeeEGP)}</p>
                     </div>
                     <div className="rounded-lg bg-emerald-egypt/10 p-2">

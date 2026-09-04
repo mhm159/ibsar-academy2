@@ -1,6 +1,6 @@
 'use client'
 
-import { showPopup, showConfirm, showPrompt } from '@/components/site/popup-notification'
+import { showPopup, showConfirm, showPrompt } from '@/features/shared/popup-notification'
 
 interface NotifyOptions {
   duration?: number

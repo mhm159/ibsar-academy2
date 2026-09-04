@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Gift, Loader2, Sparkles, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { notify } from '@/lib/notify'
-import { triggerConfetti } from '@/components/site/kids-effects'
+import { triggerConfetti } from '@/features/shared/kids-effects'
 
 interface Reward {
   id: string

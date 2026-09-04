@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Camera } from 'lucide-react'
-import { EASE, Reveal, Stagger, StaggerItem } from './motion-reveal'
+import { EASE, Reveal, Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 export interface GalleryMedia {
   id: string
@@ -47,7 +47,7 @@ export function SessionGallery() {
             لحظات من <span className="text-gradient-gold">حصصنا الحقيقية</span>
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            صور من حصص مباشرة داخل منصة منهل — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
+            صور من حصص مباشرة داخل منصة درس — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
           </p>
         </Reveal>
 

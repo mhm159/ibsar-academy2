@@ -76,7 +76,7 @@ export async function sendWhatsAppOtp(params: {
     : purpose === 'RESET' ? 'إعادة تعيين كلمة المرور'
     : 'التحقق'
 
-  const body = `*🎓 منصة منهل* — Dars Academy
+  const body = `*🎓 منصة درس* — Dars Academy
 
 مرحباً بك 👋
 رمز التحقق الخاص بـ ${purposeText} هو:
@@ -89,7 +89,7 @@ export async function sendWhatsAppOtp(params: {
 إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة فوراً.
 
 —
-تم الإرسال تلقائياً من منصة منهل | Dars Academy`
+تم الإرسال تلقائياً من منصة درس | Dars Academy`
 
   try {
     const message = await c.messages.create({

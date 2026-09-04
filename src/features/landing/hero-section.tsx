@@ -15,7 +15,7 @@ import {
   fadeUpItem,
   scaleInItem,
   staggerContainer,
-} from './motion-reveal'
+} from '@/features/shared/motion-reveal'
 
 export function HeroSection() {
   const { settings } = useSiteSettings()
@@ -34,10 +34,10 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-pharaonic pt-12 pb-20 lg:pt-20 lg:pb-32"
+      className="relative overflow-hidden bg-gradient-to-br from-night via-[#24317F] to-[#101A45] pt-12 pb-20 lg:pt-20 lg:pb-32"
     >
       {/* Decorative hieroglyph pattern overlay */}
-      <div className="absolute inset-0 bg-hieroglyphs opacity-60 pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 bg-hieroglyphs opacity-25 pointer-events-none" aria-hidden />
 
       {/* Floating decorative blobs (CSS float + scroll parallax) */}
       <motion.div
@@ -94,7 +94,7 @@ export function HeroSection() {
 
             {/* Title — lines blur in one after another */}
             <motion.h1
-              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight"
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight text-white"
               variants={{
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
@@ -113,7 +113,7 @@ export function HeroSection() {
 
             <motion.p
               variants={fadeUpItem}
-              className="mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              className="mt-6 text-base sm:text-lg lg:text-xl text-white/80 leading-relaxed max-w-2xl mx-auto lg:mx-0"
             >
               {settings['hero.subtitle']}
             </motion.p>
@@ -136,9 +136,9 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto gap-2 text-base h-12 px-7 glass border-gold/30 hover:bg-gold/10"
+                  className="w-full sm:w-auto gap-2 text-base h-12 px-7 border-white/30 bg-white/10 backdrop-blur-md hover:bg-white/15 hover:border-gold/40 text-white"
                 >
-                  <PlayCircle className="h-5 w-5 text-azure" />
+                  <PlayCircle className="h-5 w-5 text-gold" />
                   {settings['hero.cta.secondary']}
                 </Button>
               </Link>
@@ -147,7 +147,7 @@ export function HeroSection() {
             {/* Trust line */}
             <motion.div
               variants={fadeUpItem}
-              className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-muted-foreground"
+              className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-white/70"
             >
               <ShieldCheck className="h-4 w-4 text-emerald-egypt" />
               <span>{settings['hero.trust']}</span>
@@ -164,12 +164,12 @@ export function HeroSection() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 + i * 0.1, duration: 0.5, ease: EASE }}
-                  className="neu-sm rounded-2xl p-4 text-center"
+                  className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-4 text-center"
                 >
                   <dt className="text-2xl sm:text-3xl font-extrabold text-gradient-gold font-display">
                     <CountUp key={stat.value} value={stat.value} />
                   </dt>
-                  <dd className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                  <dd className="mt-1 text-xs sm:text-sm text-white/70">
                     {stat.label}
                   </dd>
                 </motion.div>

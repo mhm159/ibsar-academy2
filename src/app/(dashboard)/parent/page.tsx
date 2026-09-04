@@ -18,8 +18,8 @@ import { StatCard, PageHeader, TrackBadge, StarRating, StatusBadge, EmptyState }
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useMode } from '@/components/use-mode'
-import { Mascot, triggerConfetti } from '@/components/site/kids-effects'
-import { SeasonalBanner } from '@/components/site/seasonal-banner'
+import { Mascot, triggerConfetti } from '@/features/shared/kids-effects'
+import { SeasonalBanner } from '@/features/shared/seasonal-banner'
 import { BookTrialModal } from '@/components/dashboard/book-trial-modal'
 import { useSyncedData } from '@/hooks/use-synced-data'
 
@@ -120,7 +120,7 @@ function ProOverview({ data }: { data: OverviewData }) {
       <SeasonalBanner />
       <PageHeader
         title="مرحباً بك 👋"
-        description="نظرة عامة على نشاط أبنائك في منصة منهل"
+        description="نظرة عامة على نشاط أبنائك في منصة درس"
         action={
           <div className="flex flex-wrap items-center gap-2">
             <BookTrialModal students={data.students} />

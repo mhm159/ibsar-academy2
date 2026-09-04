@@ -2,8 +2,8 @@
 
 import { Quote, Star } from 'lucide-react'
 import { useHomeData } from '@/hooks/use-home-data'
-import { SectionHeading } from './tracks-section'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 export function TestimonialsSection() {
   const { testimonials } = useHomeData()
@@ -13,7 +13,7 @@ export function TestimonialsSection() {
         <SectionHeading
           eyebrow="قصص نجاح"
           title="ماذا يقول أولياء الأمور؟"
-          description="آلاف العائلات وثقت بمنصة منهل لتعلّم أبنائها. هذه بعض قصصهم."
+          description="آلاف العائلات وثقت بمنصة درس لتعلّم أبنائها. هذه بعض قصصهم."
         />
 
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

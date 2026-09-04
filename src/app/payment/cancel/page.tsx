@@ -3,8 +3,8 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { XCircle, ArrowRight, RotateCcw } from 'lucide-react'
-import { Logo } from '@/components/site/logo'
-import { ThemeToggle } from '@/components/site/theme-toggle'
+import { Logo } from '@/features/shared/logo'
+import { ThemeToggle } from '@/features/shared/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 

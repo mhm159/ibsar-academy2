@@ -7,8 +7,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { FAQS } from '@/lib/constants'
-import { SectionHeading } from './tracks-section'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 export function FaqSection() {
   return (

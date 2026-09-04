@@ -125,9 +125,9 @@ async function sendOtp(params: {
 }): Promise<void> {
   const subject =
     params.channel === 'EMAIL'
-      ? `رمز التحقق — منصة منهل`
+      ? `رمز التحقق — منصة درس`
       : undefined
-  const body = `رمز التحقق الخاص بك في منصة منهل هو: ${params.code}
+  const body = `رمز التحقق الخاص بك في منصة درس هو: ${params.code}
 صالح لمدة 5 دقائق فقط.
 إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة.`
 

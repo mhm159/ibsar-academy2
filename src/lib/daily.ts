@@ -38,7 +38,7 @@ export function isDailyConfigured(): boolean {
 
 /**
  * Create a Daily.co room for a session.
- * Room name = `manhal-{sessionId}` (deterministic, idempotent).
+ * Room name = `dars-{sessionId}` (deterministic, idempotent).
  */
 export async function createDailyRoom(params: {
   sessionId: string

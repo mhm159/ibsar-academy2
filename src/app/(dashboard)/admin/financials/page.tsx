@@ -80,6 +80,7 @@ export default function AdminFinancialsPage() {
 function FinancialsView() {
   const [data, setData] = useState<Financials | null>(null)
   const [loading, setLoading] = useState(true)
+  const [feePercent, setFeePercent] = useState<number | null>(null)
 
   useEffect(() => {
     fetch('/api/dashboard/admin/financials')
@@ -89,6 +90,14 @@ function FinancialsView() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+    fetch('/api/site/settings')
+      .then((r) => r.json())
+      .then((d) => {
+        const raw = d?.settings?.['payment.platformFeePercent']
+        const n = raw != null ? Number(raw) : NaN
+        if (!Number.isNaN(n)) setFeePercent(n)
+      })
+      .catch(() => {})
   }, [])
 
   if (loading || !data) {
@@ -123,7 +132,7 @@ function FinancialsView() {
         />
         <StatCard
           icon={Coins}
-          label="عمولة المنصة (15%)"
+          label={feePercent != null ? `عمولة المنصة (${feePercent}%)` : 'عمولة المنصة'}
           value={fmtEGP(s.totalPlatformFeeEGP)}
           hint={fmtUSD(s.totalPlatformFeeUSD)}
           color="var(--gold)"
@@ -301,7 +310,7 @@ function FinancialsView() {
                 </div>
               </div>
               <div className="space-y-3">
-                <Row label="عمولة المنصة (15% من كل معاملة)" value={fmtEGP(s.totalPlatformFeeEGP)} valueClass="text-gold" />
+                <Row label={feePercent != null ? `عمولة المنصة (${feePercent}% من كل معاملة)` : 'عمولة المنصة (من كل معاملة)'} value={fmtEGP(s.totalPlatformFeeEGP)} valueClass="text-gold" />
                 <Row label="مسحوب للمعلمين" value={fmtEGP(s.totalPaidOutEGP)} valueClass="text-kids-teal" />
                 <Row label="ضمان محتجز" value={fmtEGP(s.heldEscrowEGP)} valueClass="text-gold" />
                 <div className="border-t border-border/50 pt-3">

@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useMode } from '@/components/use-mode'
-import { triggerConfetti } from '@/components/site/kids-effects'
+import { triggerConfetti } from '@/features/shared/kids-effects'
 import { playCoin, playLevelUp, isSoundEnabled } from '@/lib/sounds'
 import { notify } from '@/lib/notify'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'

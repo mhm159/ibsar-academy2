@@ -84,7 +84,7 @@ const TEMPLATES: Record<NotificationType, (params: Record<string, string>) => No
   }),
   TEACHER_APPROVED: (p) => ({
     title: '🎉 تم اعتماد حسابك!',
-    body: 'مرحباً بك في منصة منهل! تم اعتماد حسابك كمعلم.',
+    body: 'مرحباً بك في منصة درس! تم اعتماد حسابك كمعلم.',
     link: '/teacher',
   }),
   TEACHER_REJECTED: (p) => ({
@@ -143,7 +143,7 @@ const TEMPLATES: Record<NotificationType, (params: Record<string, string>) => No
     link: '/admin/escrow',
   }),
   WELCOME: (p) => ({
-    title: '🎉 مرحباً بك في منصة منهل!',
+    title: '🎉 مرحباً بك في منصة درس!',
     body: `أهلاً ${p.name}! نحن سعداء بانضمامك إلينا.`,
     link: '/',
   }),
@@ -208,7 +208,7 @@ export async function sendNotification(
 
   // 2. WhatsApp (skip during quiet hours unless forced)
   if (user.phone && (whatsappEnabled || options.forceWhatsApp) && !inQuietHours) {
-    const waMessage = `🎓 *منصة منهل*
+    const waMessage = `🎓 *منصة درس*
 
 *${template.title}*
 

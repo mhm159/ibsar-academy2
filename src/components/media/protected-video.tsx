@@ -81,7 +81,7 @@ export function ProtectedVideo({
       .catch(() => {})
   }, [viewer])
 
-  const label = useMemo(() => (viewer ? `${viewer} • منصة منهل` : 'منصة منهل'), [viewer])
+  const label = useMemo(() => (viewer ? `${viewer} • منصة درس` : 'منصة درس'), [viewer])
 
   if (!src || status === 'denied') {
     return (

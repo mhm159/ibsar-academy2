@@ -7,12 +7,12 @@
  *   3. Admin approves payout OR auto-release after 24h → escrow RELEASED
  *   4. Teacher requests payout → admin processes → Payout COMPLETED
  *
- * Platform fee: 15% (default) — deducted from teacher share
+ * Platform fee: 15% by default — deducted from teacher share (editable in admin settings).
  */
 
 import { db } from '@/lib/db'
 import { computeSplit } from './currency'
-import { PLATFORM_FEE_PERCENT } from './config'
+import { getPlatformFeeFraction } from './fee'
 
 /**
  * Create an escrow record when a payment is confirmed (PAID).
@@ -43,7 +43,7 @@ export async function createEscrowForTransaction(
     return { ok: false, error: 'المعاملة غير مرتبطة بمعلم' }
   }
 
-  const split = computeSplit(tx.amountEGP, tx.amountUSD, PLATFORM_FEE_PERCENT)
+  const split = computeSplit(tx.amountEGP, tx.amountUSD, await getPlatformFeeFraction())
 
   const escrow = await db.escrow.create({
     data: {

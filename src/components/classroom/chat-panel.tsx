@@ -6,7 +6,7 @@ import { Send, Loader2, MessageCircle, Paperclip } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { ChatMessagePayload, PresenceUser } from './use-realtime-classroom'
+import type { ChatMessagePayload, PresenceUser } from '@/types/classroom'
 
 interface ChatPanelProps {
   messages: ChatMessagePayload[]

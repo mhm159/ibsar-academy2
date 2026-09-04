@@ -3,9 +3,9 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { Menu, X, GraduationCap } from 'lucide-react'
-import { Logo } from './logo'
-import { ThemeToggle } from './theme-toggle'
-import { KidsModeToggle } from '@/components/site/kids-mode-toggle'
+import { Logo } from '@/features/shared/logo'
+import { ThemeToggle } from '@/features/shared/theme-toggle'
+import { KidsModeToggle } from '@/features/shared/kids-mode-toggle'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +43,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className="flex items-center transition-transform hover:scale-[1.02]"
-            aria-label="الصفحة الرئيسية — منصة منهل"
+            aria-label="الصفحة الرئيسية — منصة درس"
           >
             <Logo size={42} />
           </Link>
@@ -54,7 +54,12 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-gold/10"
+                className={cn(
+                  'relative px-4 py-2 text-sm font-medium transition-colors rounded-lg',
+                  scrolled
+                    ? 'text-foreground/80 hover:text-foreground hover:bg-gold/10'
+                    : 'text-white/85 hover:text-white hover:bg-white/10',
+                )}
               >
                 {link.label}
               </Link>
@@ -66,7 +71,11 @@ export function SiteHeader() {
             <KidsModeToggle />
             <ThemeToggle />
             <Link href="/auth/login" className="hidden sm:block">
-              <Button variant="ghost" size="sm" className="font-medium">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn('font-medium', scrolled ? '' : 'text-white hover:text-white hover:bg-white/10')}
+              >
                 تسجيل الدخول
               </Button>
             </Link>
@@ -80,7 +89,7 @@ export function SiteHeader() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden rounded-full"
+              className={cn('lg:hidden rounded-full', scrolled ? '' : 'text-white hover:text-white hover:bg-white/10')}
               aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}

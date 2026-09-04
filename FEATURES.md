@@ -1,4 +1,4 @@
-# مزايا النظام الكاملة — منصة منهل | Manhal Academy
+# مزايا النظام الكاملة — منصة درس | Dars Academy
 
 <div dir="rtl">
 
@@ -149,7 +149,7 @@
 - **إصدار الروابط**: `/api/media/token?file=...` بعد تسجيل الدخول فقط.
 - **البث المحمي**: `/api/media/file?p&e&s` يتحقق من (1) التوقيع + الانتهاء (2) الصلاحية ثم يبث مع دعم **HTTP Range** (بحث/تقديم) واستجابة 206.
 - **فحص الصلاحية** (`canAccessMedia`): أدمن/مشرف/معلم دائماً؛ ولي الأمر فقط إذا كان له طالب بحجز **CONFIRMED**.
-- **مشغّل محمي** (`ProtectedVideo`): watermark باسم المشاهد (من `/api/auth/me`، الافتراضي "منصة منهل") + `controlsList=nodownload` + تعطيل Picture-in-Picture + منع زر الفأرة الأيمن/السحب.
+- **مشغّل محمي** (`ProtectedVideo`): watermark باسم المشاهد (من `/api/auth/me`، الافتراضي "منصة درس") + `controlsList=nodownload` + تعطيل Picture-in-Picture + منع زر الفأرة الأيمن/السحب.
 - **عزل وسائط الحصص**: `SessionMedia` لإدارة ملفات الحصص.
 
 ---

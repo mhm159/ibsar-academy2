@@ -1,12 +1,12 @@
 @echo off
 chcp 65001 >nul
-title منصة منهل - تشغيل المنصة
+title منصة درس - تشغيل المنصة
 color 0E
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════╗
 echo  ║                                                          ║
-echo  ║          🎓 منصة منهل | Manhal Academy               ║
+echo  ║          🎓 منصة درس | Dars Academy                  ║
 echo  ║          تشغيل المنصة الكاملة من ملف واحد                ║
 echo  ║                                                          ║
 echo  ╚══════════════════════════════════════════════════════════╝
@@ -173,6 +173,6 @@ if %USE_BUN% equ 1 (
 :: عند الإيقاف
 echo.
 echo  🛑 تم إيقاف المنصة
-echo  💡 لإيقاف خدمة الغرفة الافتراضية، أغلق نافذة "Manhal Classroom Service"
+echo  💡 لإيقاف خدمة الغرفة الافتراضية، أغلق نافذة "Dars Classroom Service"
 echo.
 pause

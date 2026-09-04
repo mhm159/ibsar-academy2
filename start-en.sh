@@ -1,5 +1,5 @@
 #!/bin/bash
-# Manhal Academy - Full Platform Launcher (English)
+# Dars Academy - Full Platform Launcher (English)
 # Usage: ./start-en.sh
 
 set -e

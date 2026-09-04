@@ -16,7 +16,7 @@ async function main() {
     admin = await db.user.create({
       data: {
         phone: adminPhone,
-        email: 'admin@ibsar-academy.com',
+        email: 'admin@dars-academy.com',
         role: 'ADMIN',
         name: 'إدارة الأكاديمية',
         nameAr: 'إدارة الأكاديمية',
@@ -30,7 +30,7 @@ async function main() {
   } else if (admin.role !== 'ADMIN') {
     admin = await db.user.update({
       where: { id: admin.id },
-      data: { role: 'ADMIN', name: 'إدارة الأكاديمية', email: 'admin@ibsar-academy.com' },
+      data: { role: 'ADMIN', name: 'إدارة الأكاديمية', email: 'admin@dars-academy.com' },
     })
     console.log('✅ تم تحديث حساب الإدارة (كان ' + admin.role + ')')
   } else {

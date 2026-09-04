@@ -142,7 +142,7 @@ export async function analyzeStudentBehavior(
 
   try {
     const zai = await ZAI.create()
-    const systemPrompt = `أنت مستشار تعليمي خبير في منصة منهل للأطفال.
+    const systemPrompt = `أنت مستشار تعليمي خبير في منصة درس للأطفال.
 حلل بيانات الطفل التالية واكتب:
 1. وصف مختصر بالعربية لحالته (جملة-جملتين)
 2. توصية عملية لولي الأمر (جملة واحدة)

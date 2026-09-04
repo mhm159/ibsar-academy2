@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { UserPlus, MessageSquare, CalendarCheck, Rocket } from 'lucide-react'
-import { SectionHeading } from './tracks-section'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 const STEPS = [
   {

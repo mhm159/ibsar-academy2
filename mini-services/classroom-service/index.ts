@@ -1,5 +1,5 @@
 /**
- * Manhal Academy — Classroom Realtime Service
+ * Dars Academy — Classroom Realtime Service
  *
  * Socket.io server on port 3003 that handles:
  *   - Realtime chat messages (per session room)
@@ -255,7 +255,7 @@ io.on('connection', (socket) => {
 })
 
 httpServer.listen(PORT, () => {
-  console.log(`✓ Manhal Classroom Service running on port ${PORT}`)
+  console.log(`✓ Dars Classroom Service running on port ${PORT}`)
   console.log(`  Handshake check: http://localhost:${PORT}/?EIO=4&transport=polling`)
 })
 

@@ -8,8 +8,8 @@ import { PRICING_PLANS, COUNTRIES } from '@/lib/constants'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { SectionHeading } from './tracks-section'
-import { EASE, Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { EASE, Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 export function PricingSection() {
   const [currency, setCurrency] = useState<'EGP' | 'USD'>('EGP')

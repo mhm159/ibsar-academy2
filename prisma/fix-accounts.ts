@@ -16,7 +16,7 @@ async function main() {
       phone: '+201000000001',
       role: 'ADMIN',
       name: 'إدارة الأكاديمية',
-      email: 'admin@ibsar-academy.com',
+      email: 'admin@dars-academy.com',
     },
     {
       phone: '+201000000010',

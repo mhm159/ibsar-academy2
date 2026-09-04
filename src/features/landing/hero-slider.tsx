@@ -1,11 +1,11 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { EASE } from './motion-reveal'
+import { EASE } from '@/features/shared/motion-reveal'
 
 export interface SiteBanner {
   id: string

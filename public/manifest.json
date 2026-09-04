@@ -1,18 +1,18 @@
 {
-  "name": "منصة منهل",
-  "short_name": "منهل",
+  "name": "منصة درس",
+  "short_name": "درس",
   "description": "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5F0E8",
-  "theme_color": "#C9A84C",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1B2A6B",
   "lang": "ar",
   "dir": "rtl",
   "icons": [
     {
-      "src": "/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

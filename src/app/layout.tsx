@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Tajawal, Cairo } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { PopupNotificationContainer } from "@/components/site/popup-notification";
-import { CookieConsent } from "@/components/site/cookie-consent";
+import { PopupNotificationContainer } from "@/features/shared/popup-notification";
+import { CookieConsent } from "@/features/shared/cookie-consent";
 import Script from "next/script";
 
 const tajawal = Tajawal({
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Dars Academy" }],
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.svg",
+    icon: "/logo.png",
   },
   openGraph: {
     title: "منصة درس | Dars Academy",

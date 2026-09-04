@@ -1,5 +1,5 @@
 # ============================================================
-# Manhal Academy — production stack
+# Dars Academy — production stack
 #
 #   app    : Next.js (Next 16) on :3000 — SQLite + uploads
 #   socket : socket.io classroom service on :3003

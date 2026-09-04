@@ -7,8 +7,8 @@ import { useTracks } from '@/lib/tracks-store'
 import { useHomeData } from '@/hooks/use-home-data'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { SectionHeading } from './tracks-section'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 export function TeachersSection() {
   const tracks = useTracks()

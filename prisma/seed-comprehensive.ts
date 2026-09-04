@@ -1,5 +1,5 @@
 /**
- * منصة منهل — بذر بيانات شاملة لاختبار كل ميزات البرنامج
+ * منصة درس — بذر بيانات شاملة لاختبار كل ميزات البرنامج
  *
  * ينشئ:
  *   - 1 admin
@@ -31,7 +31,7 @@ async function main() {
     where: { phone: '+201000000001' },
     update: {},
     create: {
-      phone: '+201000000001', email: 'admin@manhal-academy.com', role: 'ADMIN',
+      phone: '+201000000001', email: 'admin@dars-academy.com', role: 'ADMIN',
       name: 'إدارة الأكاديمية', country: 'EG', city: 'القاهرة',
       emailVerified: new Date(), phoneVerified: new Date(),
     },
@@ -479,7 +479,7 @@ async function main() {
     { type: 'PAYOUT_COMPLETED', title: '✅ تم تحويل السحب', body: 'تم تحويل 170 ج.م لمحفظتك' },
     { type: 'BEHAVIOR_ALERT', title: '⚠️ تنبيه سلوك', body: 'انخفاض في التفاعل' },
     { type: 'REVIEW_RECEIVED', title: '⭐ تقييم جديد', body: 'حصلت على 5 نجوم' },
-    { type: 'WELCOME', title: '🎉 مرحباً بك!', body: 'أهلاً بك في منصة منهل' },
+    { type: 'WELCOME', title: '🎉 مرحباً بك!', body: 'أهلاً بك في منصة درس' },
   ]
 
   for (let i = 0; i < 15; i++) {

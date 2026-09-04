@@ -1,5 +1,5 @@
 #!/bin/sh
-# Manhal Academy — container entrypoint
+# Dars Academy — container entrypoint
 # - Persists the SQLite DB at /data/custom.db (named volume `manhal-db`)
 # - Seeds it from the bundled copy on first boot
 # - Keeps the schema in sync with `prisma db push`

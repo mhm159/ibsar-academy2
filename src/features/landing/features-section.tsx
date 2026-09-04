@@ -10,8 +10,8 @@ import {
   HeartHandshake,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { SectionHeading } from './tracks-section'
-import { Stagger, StaggerItem } from './motion-reveal'
+import { SectionHeading } from '@/features/landing/tracks-section'
+import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
 
 const FEATURES = [
   {
