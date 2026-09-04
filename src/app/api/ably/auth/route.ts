@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Ably from 'ably/promises'
+import * as Ably from 'ably'
 import { getSession } from '@/lib/auth'
 
 export async function GET(req: NextRequest) {
