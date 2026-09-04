@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "tailwindcss";
+@import "tw-animate-css";
+
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
@@ -15,19 +18,6 @@
   --font-display: var(--font-cairo);
   --font-mono: var(--font-mono);
 
-  /* Brand palette (mapped to shadcn token system) */
-  --color-gold: var(--gold);
-  --color-gold-foreground: var(--gold-foreground);
-  --color-azure: var(--azure);
-  --color-azure-foreground: var(--azure-foreground);
-  --color-ivory: var(--ivory);
-  --color-emerald-egypt: var(--emerald-egypt);
-  --color-night: var(--night);
-  --color-kids-red: var(--kids-red);
-  --color-kids-teal: var(--kids-teal);
-  --color-kids-yellow: var(--kids-yellow);
-
-  /* shadcn semantic tokens */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -68,113 +58,97 @@
   --radius-2xl: calc(var(--radius) + 8px);
 }
 
-/* ============ LIGHT (default — Ivory base) ============ */
+/* ============ LIGHT (Dars Turquoise Base) ============ */
 :root {
-  --radius: 0.875rem;
+  --radius: 1rem;
 
   /* Brand palette */
-  --gold: #C9A84C;
-  --gold-foreground: #1a1208;
-  --azure: #1B6CA8;
-  --azure-foreground: #f0f7ff;
-  --ivory: #F5F0E8;
-  --emerald-egypt: #2D6A4F;
-  --night: #0F1923;
-  --kids-red: #FF6B6B;
-  --kids-teal: #4ECDC4;
-  --kids-yellow: #FFE66D;
+  --dars-turquoise: #0D9488;
+  --dars-purple: #7C3AED;
+  --dars-green: #10B981;
+  --slate-50: #F8FAFC;
+  --slate-900: #0F172A;
 
-  /* Semantic tokens — Egyptian palette */
-  --background: #F5F0E8;            /* ivory */
-  --foreground: #0F1923;            /* night */
+  /* Semantic tokens ?? Dars palette */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
   --card: #FFFFFF;
-  --card-foreground: #0F1923;
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #0F1923;
+  --popover-foreground: #0F172A;
 
-  /* Primary = Pharaonic gold */
-  --primary: #C9A84C;
-  --primary-foreground: #1a1208;
-  /* Secondary = Nile azure */
-  --secondary: #1B6CA8;
-  --secondary-foreground: #f0f7ff;
-  /* Accent = Emerald */
-  --accent: #2D6A4F;
-  --accent-foreground: #f0fff6;
+  /* Primary = Turquoise */
+  --primary: #0D9488;
+  --primary-foreground: #FFFFFF;
+  /* Secondary = Purple */
+  --secondary: #7C3AED;
+  --secondary-foreground: #FFFFFF;
+  /* Accent = Green */
+  --accent: #10B981;
+  --accent-foreground: #FFFFFF;
 
-  --muted: #ECE5D8;
-  --muted-foreground: #6b5d45;
-  --destructive: #c0392b;
-  --destructive-foreground: #ffffff;
-  --border: #DDD3BE;
-  --input: #DDD3BE;
-  --ring: #C9A84C;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #0D9488;
 
-  --chart-1: #C9A84C;
-  --chart-2: #1B6CA8;
-  --chart-3: #2D6A4F;
-  --chart-4: #FF6B6B;
-  --chart-5: #4ECDC4;
+  --chart-1: #0D9488;
+  --chart-2: #7C3AED;
+  --chart-3: #10B981;
+  --chart-4: #F59E0B;
+  --chart-5: #3B82F6;
 
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #0F1923;
-  --sidebar-primary: #C9A84C;
-  --sidebar-primary-foreground: #1a1208;
-  --sidebar-accent: #F5F0E8;
-  --sidebar-accent-foreground: #0F1923;
-  --sidebar-border: #DDD3BE;
-  --sidebar-ring: #C9A84C;
+  --sidebar-foreground: #0F172A;
+  --sidebar-primary: #0D9488;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F1F5F9;
+  --sidebar-accent-foreground: #0F172A;
+  --sidebar-border: #E2E8F0;
+  --sidebar-ring: #0D9488;
 }
 
-/* ============ DARK (Night base) ============ */
+/* ============ DARK (Slate Base) ============ */
 .dark {
-  --gold: #E0C56E;
-  --gold-foreground: #1a1208;
-  --azure: #4A9DD8;
-  --azure-foreground: #0a1929;
-  --ivory: #1a2330;
-  --emerald-egypt: #52B788;
-  --night: #0F1923;
-  --kids-red: #FF8585;
-  --kids-teal: #6FE0D7;
-  --kids-yellow: #FFE66D;
+  --background: #0F172A;
+  --foreground: #F8FAFC;
+  --card: #1E293B;
+  --card-foreground: #F8FAFC;
+  --popover: #1E293B;
+  --popover-foreground: #F8FAFC;
 
-  --background: #0F1923;
-  --foreground: #F5F0E8;
-  --card: #16222E;
-  --card-foreground: #F5F0E8;
-  --popover: #16222E;
-  --popover-foreground: #F5F0E8;
+  --primary: #14B8A6;
+  --primary-foreground: #022C22;
+  --secondary: #8B5CF6;
+  --secondary-foreground: #FFFFFF;
+  --accent: #10B981;
+  --accent-foreground: #022C22;
 
-  --primary: #E0C56E;
-  --primary-foreground: #1a1208;
-  --secondary: #4A9DD8;
-  --secondary-foreground: #0a1929;
-  --accent: #52B788;
-  --accent-foreground: #0a1f15;
+  --muted: #334155;
+  --muted-foreground: #94A3B8;
+  --destructive: #F87171;
+  --destructive-foreground: #000000;
+  --border: #334155;
+  --input: #334155;
+  --ring: #14B8A6;
 
-  --muted: #1E2D3A;
-  --muted-foreground: #9aa3ad;
-  --destructive: #e74c3c;
-  --destructive-foreground: #ffffff;
-  --border: #2A3B47;
-  --input: #2A3B47;
-  --ring: #E0C56E;
+  --chart-1: #14B8A6;
+  --chart-2: #8B5CF6;
+  --chart-3: #10B981;
+  --chart-4: #FBBF24;
+  --chart-5: #60A5FA;
 
-  --chart-1: #E0C56E;
-  --chart-2: #4A9DD8;
-  --chart-3: #52B788;
-  --chart-4: #FF8585;
-  --chart-5: #6FE0D7;
-
-  --sidebar: #16222E;
-  --sidebar-foreground: #F5F0E8;
-  --sidebar-primary: #E0C56E;
-  --sidebar-primary-foreground: #1a1208;
-  --sidebar-accent: #1E2D3A;
-  --sidebar-accent-foreground: #F5F0E8;
-  --sidebar-border: #2A3B47;
-  --sidebar-ring: #E0C56E;
+  --sidebar: #1E293B;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-primary: #14B8A6;
+  --sidebar-primary-foreground: #022C22;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #F8FAFC;
+  --sidebar-border: #334155;
+  --sidebar-ring: #14B8A6;
 }
 
 /* ============================================================
@@ -184,7 +158,7 @@
   * {
     border-color: var(--border);
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--gold) 60%, var(--muted)) var(--muted);
+    scrollbar-color: var(--primary) var(--muted);
   }
   html {
     scroll-behavior: smooth;

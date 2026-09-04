@@ -1,16 +1,16 @@
 /**
- * Manhal Academy — Brand constants & app-wide config
+ * Dars — Brand constants & app-wide config
  * Single source of truth for branding, tracks, currencies, etc.
  */
 
 export const APP = {
-  name: "منصة منهل",
-  nameEn: "Manhal Academy",
-  tagline: "مَنهَل.. عِلمٌ بلا حدود",
-  taglineEn: "Knowledge without limits",
+  name: "منصة درس",
+  nameEn: "Dars Academy",
+  tagline: "تجربة تعليمية ملهمة ومبتكرة",
+  taglineEn: "Inspiring Educational Experience",
   description:
-    "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي، تقدم دروساً عامة في البرمجة، الروبوتيكس، الحساب الذهني، والمواد الدراسية المختلفة — أونلاين وبجودة عالية.",
-  url: "https://manhal-academy.vercel.app",
+    "منصة تعليمية رائدة تقدم فصولاً افتراضية تفاعلية، وبرامج تعليمية متطورة تلبي احتياجات الطلاب بمعايير جودة عالية وأساليب مبتكرة.",
+  url: "https://dars-academy.com",
   supportEmail: "support@manhal-academy.com",
   supportPhone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",

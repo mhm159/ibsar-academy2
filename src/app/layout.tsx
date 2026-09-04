@@ -21,12 +21,12 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "منصة منهل | Manhal Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
+  title: "منصة درس | Dars Academy — تعلّم البرمجة والروبوتيكس والحساب الذهني",
   description:
     "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي. تدريس البرمجة، الروبوتيكس، والحساب الذهني أونلاين مع نخبة المعلمين ونظام دفع محلي ودولي آمن.",
   keywords: [
-    "منصة منهل",
-    "Manhal Academy",
+    "منصة درس",
+    "Dars Academy",
     "تعليم الأطفال",
     "البرمجة للأطفال",
     "الروبوتيكس",
@@ -36,30 +36,30 @@ export const metadata: Metadata = {
     "العالم العربي",
     "كورسات برمجة",
   ],
-  authors: [{ name: "Manhal Academy" }],
+  authors: [{ name: "Dars Academy" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "منصة منهل | Manhal Academy",
+    title: "منصة درس | Dars Academy",
     description:
       "منصة تعليمية متكاملة للأطفال لتعلّم البرمجة والروبوتيكس والحساب الذهني أونلاين.",
-    siteName: "Manhal Academy",
+    siteName: "Dars Academy",
     type: "website",
     locale: "ar_EG",
   },
   twitter: {
     card: "summary_large_image",
-    title: "منصة منهل",
+    title: "منصة درس",
     description: "تعلّم البرمجة والروبوتيكس والحساب الذهني للأطفال أونلاين.",
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F5F0E8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F1923" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F172A" },
   ],
   width: "device-width",
   initialScale: 1,

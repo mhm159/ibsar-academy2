@@ -7,7 +7,7 @@ interface LogoProps {
   size?: number
 }
 
-/** Manhal Academy brand logo — Eye of Horus inspired mark + wordmark */
+/** Dars Brand Logo - Organic overlapping leaves/pages symbolizing growth and learning */
 export function Logo({ className, showText = true, size = 40 }: LogoProps) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
@@ -18,35 +18,47 @@ export function Logo({ className, showText = true, size = 40 }: LogoProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
-        aria-label="شعار منصة منهل"
-        className="shrink-0"
+        aria-label="شعار منصة درس"
+        className="shrink-0 drop-shadow-sm transition-transform hover:scale-105"
       >
         <defs>
-          <linearGradient id="manhalGoldLogo" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#E8D488" />
-            <stop offset="0.5" stopColor="#C9A84C" />
-            <stop offset="1" stopColor="#A8842F" />
+          <linearGradient id="darsTurquoise" x1="10" y1="50" x2="32" y2="14" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#0D9488" />
+            <stop offset="1" stopColor="#14B8A6" />
           </linearGradient>
-          <linearGradient id="manhalAzureLogo" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#4A9DD8" />
-            <stop offset="1" stopColor="#1B6CA8" />
+          <linearGradient id="darsPurple" x1="54" y1="50" x2="32" y2="14" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#7C3AED" />
+            <stop offset="1" stopColor="#A78BFA" />
           </linearGradient>
+          <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0F172A" floodOpacity="0.1" />
+          </filter>
         </defs>
-        <path d="M4 32 C 16 16, 48 16, 60 32 C 48 48, 16 48, 4 32 Z" fill="url(#manhalGoldLogo)" opacity="0.18" />
-        <path d="M8 32 C 18 20, 46 20, 56 32 C 46 44, 18 44, 8 32 Z" stroke="url(#manhalGoldLogo)" strokeWidth="2.5" fill="none" />
-        <circle cx="32" cy="32" r="10" fill="url(#manhalAzureLogo)" />
-        <circle cx="32" cy="32" r="10" stroke="#C9A84C" strokeWidth="1.5" fill="none" />
-        <circle cx="32" cy="32" r="4.5" fill="#0F1923" />
-        <circle cx="34.5" cy="29.5" r="1.6" fill="#FFE66D" />
-        <circle cx="32" cy="10" r="2" fill="url(#manhalGoldLogo)" />
-        <line x1="32" y1="12" x2="32" y2="18" stroke="url(#manhalGoldLogo)" strokeWidth="1.5" strokeLinecap="round" />
+        
+        {/* Left Leaf / Page (Turquoise) */}
+        <path 
+          d="M32 50 C 18 50, 10 38, 10 26 C 10 14, 22 14, 32 14 C 32 26, 32 38, 32 50 Z" 
+          fill="url(#darsTurquoise)" 
+          filter="url(#softShadow)"
+        />
+        
+        {/* Right Leaf / Page (Purple) with overlap multiply effect */}
+        <path 
+          d="M32 50 C 46 50, 54 38, 54 26 C 54 14, 42 14, 32 14 C 32 26, 32 38, 32 50 Z" 
+          fill="url(#darsPurple)" 
+          opacity="0.9"
+        />
+
+        {/* Center ascending dots symbolizing growth/ideas */}
+        <circle cx="32" cy="22" r="3.5" fill="#FFFFFF" />
+        <circle cx="32" cy="34" r="2.5" fill="#FFFFFF" opacity="0.6" />
       </svg>
       {showText && (
         <span className="flex flex-col leading-none">
-          <span className="font-display font-extrabold text-lg tracking-tight">
-            {APP.name}
+          <span className="font-display font-extrabold text-xl tracking-tight text-primary">
+            درس
           </span>
-          <span className="text-[0.65rem] font-medium text-muted-foreground tracking-wide">
+          <span className="text-[0.65rem] font-bold text-secondary tracking-widest uppercase">
             {APP.nameEn}
           </span>
         </span>
@@ -54,5 +66,3 @@ export function Logo({ className, showText = true, size = 40 }: LogoProps) {
     </span>
   )
 }
-
-/* TODO(phase-2): Add animated logo variant for auth pages and dashboard sidebar. */
