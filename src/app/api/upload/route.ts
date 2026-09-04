@@ -1,25 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { ensureMediaDir, MEDIA_DIR } from '@/lib/media'
-import fs from 'fs/promises'
-import path from 'path'
-import crypto from 'crypto'
 
-/**
- * POST /api/upload
- * Body: { file: "base64data", type: "avatar|video|diploma|material", fileName: "original.jpg" }
- *
- * Images (and other small files) are saved to /public/uploads/<hash>.<ext>.
- * VIDEOS are saved to MEDIA_DIR (protected, outside `public/`) and referenced
- * via /media/<fileName> — they can only be played through a short-lived signed
- * URL from /api/media/token (see src/lib/media.ts).
- *
- * Returns: { url: "/uploads/<hash>.<ext>" } or { url: "/media/<hash>.<ext>" }
- *
- * Restrictions:
- * - Max 5MB for images, 50MB for videos
- * - Allowed: jpg, png, webp, gif, pdf, mp4, webm
- */
 export async function POST(req: NextRequest) {
   const session = await getSession()
   if (!session) {
@@ -30,31 +11,28 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json()
   } catch {
-    return NextResponse.json({ error: 'صيغة غير صحيحة' }, { status: 400 })
+    return NextResponse.json({ error: 'خطأ في قراءة البيانات' }, { status: 400 })
   }
 
   const { file, type, fileName } = body
   if (!file || !type || !fileName) {
-    return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 422 })
+    return NextResponse.json({ error: 'بيانات مفقودة' }, { status: 422 })
   }
 
-  // Validate type
   const allowedTypes = ['avatar', 'video', 'diploma', 'material', 'banner', 'session-media', 'track']
   if (!allowedTypes.includes(type)) {
-    return NextResponse.json({ error: 'نوع غير صالح' }, { status: 422 })
+    return NextResponse.json({ error: 'نوع ملف غير صالح' }, { status: 422 })
   }
 
-  // Extract base64 data + extension
   const matches = file.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/)
   if (!matches) {
-    return NextResponse.json({ error: 'صيغة base64 غير صحيحة' }, { status: 422 })
+    return NextResponse.json({ error: 'صيغة base64 غير صالحة' }, { status: 422 })
   }
 
   const mimeType = matches[1]
   const base64Data = matches[2]
   const buffer = Buffer.from(base64Data, 'base64')
 
-  // Size limits
   const maxBytes = type === 'video' ? 50 * 1024 * 1024 : 5 * 1024 * 1024
   if (buffer.length > maxBytes) {
     return NextResponse.json(
@@ -63,56 +41,42 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Allowed mime types
-  const allowedMimes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/gif',
-    'application/pdf',
-    'video/mp4',
-    'video/webm',
-  ]
-  if (!allowedMimes.includes(mimeType)) {
-    return NextResponse.json(
-      { error: `نوع ملف غير مسموح: ${mimeType}` },
-      { status: 422 },
-    )
-  }
-
-  // Generate filename
   const ext = mimeType.split('/')[1].replace('jpeg', 'jpg')
-  const hash = crypto.randomBytes(8).toString('hex')
-  const prefix = type === 'avatar' ? 'avatar' : type === 'video' ? 'video' : type === 'diploma' ? 'diploma' : type === 'banner' ? 'banner' : type === 'session-media' ? 'session' : type === 'track' ? 'track' : 'material'
-  const newFileName = `${prefix}_${session.userId}_${hash}.${ext}`
+  const newFileName = `${type}_${session.userId}_${Date.now()}.${ext}`
 
-  // Videos go to the protected media dir (outside public/); everything else
-  // stays in public/uploads as before.
-  const isVideo = mimeType.startsWith('video/')
-  const uploadDir = isVideo ? MEDIA_DIR : path.join(process.cwd(), 'public', 'uploads')
-  const filePath = path.join(uploadDir, newFileName)
+  const formData = new FormData()
+  formData.append('file', new Blob([buffer], { type: mimeType }), newFileName)
+  formData.append('fileName', newFileName)
+  formData.append('type', type)
+
+  // الرابط لملف PHP في استضافتك
+  const hostingerUploadUrl = process.env.HOSTINGER_UPLOAD_URL || "https://yourdomain.com/upload.php"
+  const mediaSecret = process.env.MEDIA_SECRET || "dev-media-secret-change-me"
 
   try {
-    // Ensure dir exists
-    if (isVideo) {
-      await ensureMediaDir()
-    } else {
-      await fs.mkdir(uploadDir, { recursive: true })
+    const uploadRes = await fetch(hostingerUploadUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${mediaSecret}`
+      },
+      body: formData
+    })
+
+    const hostingerData = await uploadRes.json()
+
+    if (!uploadRes.ok) {
+      throw new Error(hostingerData.error || 'فشل الرفع')
     }
-    // Write file
-    await fs.writeFile(filePath, buffer)
+
+    return NextResponse.json({
+      ok: true,
+      url: hostingerData.url,
+      type,
+      size: buffer.length,
+      mimeType,
+    })
   } catch (err) {
-    console.error('[upload] Write error:', err)
-    return NextResponse.json({ error: 'فشل حفظ الملف' }, { status: 500 })
+    console.error('[upload] Hostinger error:', err)
+    return NextResponse.json({ error: 'حدث خطأ أثناء الرفع إلى الخادم الخارجي' }, { status: 500 })
   }
-
-  const url = isVideo ? `/media/${newFileName}` : `/uploads/${newFileName}`
-
-  return NextResponse.json({
-    ok: true,
-    url,
-    type,
-    size: buffer.length,
-    mimeType,
-  })
 }

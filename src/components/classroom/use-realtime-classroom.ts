@@ -1,311 +1,172 @@
-'use client'
-
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { io, Socket } from 'socket.io-client'
+import Ably from 'ably/promises'
+import { ChatMessagePayload, CursorPayload, PresenceUser, WhiteboardUpdatePayload } from '@/types/classroom'
 
-export interface PresenceUser {
-  userId: string
-  name: string
-  role: string
-  cursorColor: string
-  joinedAt: number
-}
+const CURSOR_COLORS = ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899']
 
-export interface ChatMessagePayload {
-  sessionId: string
-  messageId: string
-  userId: string
-  senderName: string
-  senderRole: string
-  text: string
-  attachmentUrl?: string
-  attachmentType?: string
-  createdAt: string
-}
-
-export interface WhiteboardUpdatePayload {
-  sessionId: string
-  elements: any[]
-  appState?: any
-}
-
-export interface CursorPayload {
-  userId: string
-  name: string
-  color: string
-  x: number
-  y: number
-}
-
-interface UseRealtimeClassroomOptions {
-  sessionId: string | null
-  userId: string | null
-  userName: string | null
-  userRole: string | null
-}
-
-/**
- * useRealtimeClassroom — connects to the socket.io classroom service
- * (port 3003 via Caddy XTransformPort) and exposes chat, presence,
- * whiteboard, and cursor events.
- */
-export function useRealtimeClassroom({
-  sessionId,
-  userId,
-  userName,
-  userRole,
-}: UseRealtimeClassroomOptions) {
-  const socketRef = useRef<Socket | null>(null)
+export function useRealtimeClassroom(sessionId?: string, userId?: string, userName?: string, userRole?: string) {
   const [connected, setConnected] = useState(false)
+  const ablyRef = useRef<Ably.Realtime | null>(null)
+  const channelRef = useRef<Ably.RealtimeChannel | null>(null)
+
   const [presence, setPresence] = useState<PresenceUser[]>([])
-  const [yourCursorColor, setYourCursorColor] = useState<string>('#C9A84C')
+  const [yourCursorColor, setYourCursorColor] = useState<string>(CURSOR_COLORS[0])
   const [messages, setMessages] = useState<ChatMessagePayload[]>([])
   const [whiteboardElements, setWhiteboardElements] = useState<any[]>([])
   const [cursors, setCursors] = useState<Map<string, CursorPayload>>(new Map())
-  // Code Sandbox state
-  const [codeContent, setCodeContent] = useState<string>('# مرحباً! اكتب كودك هنا\nprint("Hello, Manhal Academy!")')
+  const [codeContent, setCodeContent] = useState<string>('# مرحباً بك!\nprint("Hello, Manhal Academy!")')
   const [codeLanguage, setCodeLanguage] = useState<string>('python')
   const [codeLocked, setCodeLocked] = useState<boolean>(false)
-  // Educational platforms + lesson content (broadcast by teacher)
   const [platformUrl, setPlatformUrl] = useState<string | null>(null)
   const [lessonContent, setLessonContent] = useState<string>('')
 
-  // Connect on mount
   useEffect(() => {
-    if (!sessionId || !userId) return
+    if (!sessionId || !userId || !userName) return
 
-    // CRITICAL: connect via Caddy with XTransformPort=3003
-    const socket = io('/?XTransformPort=3003', {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 10,
-    })
-    socketRef.current = socket
+    // Choose random color
+    const color = CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)]
+    setYourCursorColor(color)
 
-    socket.on('connect', () => {
-      setConnected(true)
-      // Join the session room
-      socket.emit('session:join', {
-        sessionId,
-        userId,
-        name: userName ?? 'مشارك',
-        role: userRole ?? 'PARENT',
-      })
-    })
+    const client = new Ably.Realtime({ authUrl: '/api/ably/auth' })
+    ablyRef.current = client
 
-    socket.on('disconnect', () => setConnected(false))
-    socket.on('connect_error', () => setConnected(false))
+    const channel = client.channels.get(`classroom:${sessionId}`)
+    channelRef.current = channel
+
+    client.connection.on('connected', () => setConnected(true))
+    client.connection.on('disconnected', () => setConnected(false))
+    client.connection.on('failed', () => setConnected(false))
 
     // Presence
-    socket.on('session:joined', (payload: { users: PresenceUser[]; yourCursorColor: string }) => {
-      setPresence(payload.users)
-      setYourCursorColor(payload.yourCursorColor)
-    })
-    socket.on('presence:update', (payload: { users: PresenceUser[] }) => {
-      setPresence(payload.users)
-    })
-    socket.on('user:joined', () => {
-      // presence:update will follow
-    })
-    socket.on('user:left', () => {
-      // presence:update will follow
-    })
+    const presenceData = { userId, name: userName, role: userRole ?? 'PARENT', cursorColor: color }
+    channel.presence.enter(presenceData)
 
-    // Chat
-    socket.on('chat:message', (msg: ChatMessagePayload) => {
-      setMessages((prev) => {
-        // Dedupe by messageId
-        if (prev.some((m) => m.messageId === msg.messageId)) return prev
-        return [...prev, msg]
+    channel.presence.subscribe((msg) => {
+      channel.presence.get((err, members) => {
+        if (members) {
+          const currentUsers: PresenceUser[] = members.map(m => ({
+            userId: m.data.userId,
+            name: m.data.name,
+            role: m.data.role,
+            cursorColor: m.data.cursorColor,
+            isOnline: true
+          }))
+          setPresence(currentUsers)
+        }
       })
     })
 
-    // Whiteboard
-    socket.on('whiteboard:update', (payload: WhiteboardUpdatePayload) => {
-      setWhiteboardElements(payload.elements)
-    })
-    socket.on('whiteboard:state', (payload: { elements: any[]; appState?: any }) => {
-      setWhiteboardElements(payload.elements)
-    })
-    socket.on('whiteboard:request-state', () => {
-      // If we're the teacher, respond with current state (handled in component)
-      // This hook just notifies via callback below
-      window.dispatchEvent(new CustomEvent('whiteboard:request-state'))
+    // Subscriptions
+    channel.subscribe('chat:message', (msg) => {
+      const payload = msg.data as ChatMessagePayload
+      setMessages((prev) => prev.some(m => m.messageId === payload.messageId) ? prev : [...prev, payload])
     })
 
-    // Cursors
-    socket.on('cursor:move', (payload: CursorPayload) => {
-      setCursors((prev) => {
-        const next = new Map(prev)
-        next.set(payload.userId, payload)
-        return next
-      })
+    channel.subscribe('whiteboard:update', (msg) => {
+      setWhiteboardElements(msg.data.elements)
     })
 
-    // Code Sandbox
-    socket.on('code:update', (payload: { sessionId: string; code: string; language: string }) => {
-      setCodeContent(payload.code)
-      setCodeLanguage(payload.language)
-    })
-    socket.on('code:lock', (payload: { locked: boolean }) => {
-      setCodeLocked(payload.locked)
+    channel.subscribe('whiteboard:state', (msg) => {
+      if (msg.data.toUserId === userId) {
+        setWhiteboardElements(msg.data.elements)
+      }
     })
 
-    // Educational platforms + lesson content (teacher broadcasts, students receive)
-    socket.on('platform:update', (payload: { url: string | null }) => {
-      setPlatformUrl(payload.url)
-    })
-    socket.on('lesson:update', (payload: { content: string }) => {
-      setLessonContent(payload.content)
+    channel.subscribe('whiteboard:request-state', (msg) => {
+      window.dispatchEvent(new CustomEvent('whiteboard:request-state', { detail: { fromUserId: msg.data.fromUserId } }))
     })
 
-    // AI Focus Tracking
-    socket.on('focus:alert', (payload: { sessionId: string; userId: string; name: string }) => {
-      // Dispatch a custom event so the UI can show a toast
-      window.dispatchEvent(new CustomEvent('focus:alert', { detail: payload }))
+    channel.subscribe('cursor:move', (msg) => {
+      const payload = msg.data as CursorPayload
+      if (payload.userId !== userId) {
+        setCursors((prev) => {
+          const next = new Map(prev)
+          next.set(payload.userId, payload)
+          return next
+        })
+      }
+    })
+
+    channel.subscribe('code:update', (msg) => {
+      setCodeContent(msg.data.code)
+      setCodeLanguage(msg.data.language)
+    })
+
+    channel.subscribe('code:lock', (msg) => {
+      setCodeLocked(msg.data.locked)
+    })
+
+    channel.subscribe('platform:update', (msg) => {
+      setPlatformUrl(msg.data.url)
+    })
+
+    channel.subscribe('lesson:update', (msg) => {
+      setLessonContent(msg.data.content)
+    })
+
+    channel.subscribe('focus:alert', (msg) => {
+      window.dispatchEvent(new CustomEvent('focus:alert', { detail: msg.data }))
     })
 
     return () => {
-      socket.disconnect()
-      socketRef.current = null
+      channel.presence.leave()
+      client.close()
       setConnected(false)
       setPresence([])
-      setMessages([])
       setCursors(new Map())
-      setCodeLocked(false)
-      setPlatformUrl(null)
-      setLessonContent('')
     }
   }, [sessionId, userId, userName, userRole])
 
-  // Send chat message (broadcast + persist handled by caller)
-  const sendChatMessage = useCallback(
-    (msg: Omit<ChatMessagePayload, 'sessionId' | 'userId' | 'senderName' | 'senderRole'>) => {
-      if (!socketRef.current || !sessionId || !userId || !userName) return
-      const payload: ChatMessagePayload = {
-        ...msg,
-        sessionId,
-        userId,
-        senderName: userName,
-        senderRole: userRole ?? 'PARENT',
-      }
-      socketRef.current.emit('chat:send', payload)
-    },
-    [sessionId, userId, userName, userRole],
-  )
+  const sendChatMessage = useCallback((msg: Omit<ChatMessagePayload, 'sessionId' | 'userId' | 'senderName' | 'senderRole'>) => {
+      if (!channelRef.current || !sessionId || !userId || !userName) return
+      const payload: ChatMessagePayload = { ...msg, sessionId, userId, senderName: userName, senderRole: userRole ?? 'PARENT' }
+      channelRef.current.publish('chat:message', payload)
+    }, [sessionId, userId, userName, userRole])
 
-  // Broadcast whiteboard update (teacher only)
-  const sendWhiteboardUpdate = useCallback(
-    (elements: any[], appState?: any) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('whiteboard:update', { sessionId, elements, appState })
-    },
-    [sessionId],
-  )
+  const sendWhiteboardUpdate = useCallback((elements: any[], appState?: any) => {
+      channelRef.current?.publish('whiteboard:update', { sessionId, elements, appState })
+    }, [sessionId])
 
-  // Respond to whiteboard state request (teacher sends state to new joiner)
-  const respondWhiteboardState = useCallback(
-    (toSocketId: string, elements: any[], appState?: any) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('whiteboard:send-state', {
-        sessionId,
-        toSocketId,
-        elements,
-        appState,
-      })
-    },
-    [sessionId],
-  )
+  const respondWhiteboardState = useCallback((toSocketId: string, elements: any[], appState?: any) => {
+      // toSocketId is basically toUserId in Ably implementation
+      channelRef.current?.publish('whiteboard:state', { sessionId, toUserId: toSocketId, elements, appState })
+    }, [sessionId])
 
-  // Request current whiteboard state (new joiner asks)
   const requestWhiteboardState = useCallback(() => {
-    if (!socketRef.current || !sessionId) return
-    socketRef.current.emit('whiteboard:request-state', { sessionId })
-  }, [sessionId])
+      channelRef.current?.publish('whiteboard:request-state', { sessionId, fromUserId: userId })
+    }, [sessionId, userId])
 
-  // Broadcast cursor move
-  const sendCursorMove = useCallback(
-    (x: number, y: number) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('cursor:move', { sessionId, x, y })
-    },
-    [sessionId],
-  )
+  const sendCursorMove = useCallback((x: number, y: number) => {
+      channelRef.current?.publish('cursor:move', { sessionId, userId, x, y })
+    }, [sessionId, userId])
 
-  // Broadcast code update (any participant can write unless locked)
-  const sendCodeUpdate = useCallback(
-    (code: string, language: string) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('code:update', { sessionId, code, language })
-    },
-    [sessionId],
-  )
+  const sendCodeUpdate = useCallback((code: string, language: string) => {
+      channelRef.current?.publish('code:update', { sessionId, code, language })
+    }, [sessionId])
 
-  // Teacher locks/unlocks code editing for students
-  const sendCodeLock = useCallback(
-    (locked: boolean) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('code:lock', { sessionId, locked })
+  const sendCodeLock = useCallback((locked: boolean) => {
+      channelRef.current?.publish('code:lock', { sessionId, locked })
       setCodeLocked(locked)
-    },
-    [sessionId],
-  )
+    }, [sessionId])
 
-  // AI Focus Tracking: send alert when student is distracted
-  const sendFocusAlert = useCallback(
-    (name: string) => {
-      if (!socketRef.current || !sessionId || !userId) return
-      socketRef.current.emit('focus:alert', { sessionId, userId, name })
-    },
-    [sessionId, userId],
-  )
+  const sendFocusAlert = useCallback((name: string) => {
+      channelRef.current?.publish('focus:alert', { sessionId, userId, name })
+    }, [sessionId, userId])
 
-  // Teacher broadcasts which educational platform students should open
-  const sendPlatformUpdate = useCallback(
-    (url: string) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('platform:update', { sessionId, url })
-    },
-    [sessionId],
-  )
+  const sendPlatformUpdate = useCallback((url: string) => {
+      channelRef.current?.publish('platform:update', { sessionId, url })
+    }, [sessionId])
 
-  // Teacher broadcasts lesson content to students
-  const sendLessonUpdate = useCallback(
-    (content: string) => {
-      if (!socketRef.current || !sessionId) return
-      socketRef.current.emit('lesson:update', { sessionId, content })
-    },
-    [sessionId],
-  )
+  const sendLessonUpdate = useCallback((content: string) => {
+      channelRef.current?.publish('lesson:update', { sessionId, content })
+    }, [sessionId])
 
   return {
-    connected,
-    presence,
-    yourCursorColor,
-    messages,
-    setMessages,
-    whiteboardElements,
-    setWhiteboardElements,
-    cursors,
-    sendChatMessage,
-    sendWhiteboardUpdate,
-    respondWhiteboardState,
-    requestWhiteboardState,
-    sendCursorMove,
-    // Code Sandbox
-    codeContent,
-    setCodeContent,
-    codeLanguage,
-    setCodeLanguage,
-    codeLocked,
-    sendCodeUpdate,
-    sendCodeLock,
-    sendFocusAlert,
-    // Educational platforms + lesson
-    platformUrl,
-    lessonContent,
-    sendPlatformUpdate,
-    sendLessonUpdate,
+    connected, presence, yourCursorColor, messages, setMessages,
+    whiteboardElements, setWhiteboardElements, cursors,
+    sendChatMessage, sendWhiteboardUpdate, respondWhiteboardState, requestWhiteboardState, sendCursorMove,
+    codeContent, setCodeContent, codeLanguage, setCodeLanguage, codeLocked,
+    sendCodeUpdate, sendCodeLock, sendFocusAlert,
+    platformUrl, lessonContent, sendPlatformUpdate, sendLessonUpdate,
   }
 }
