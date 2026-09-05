@@ -31,10 +31,10 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 w-full transition-all duration-300',
+        'sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-300',
         scrolled
-          ? 'glass-strong shadow-[0_8px_30px_rgba(15,25,35,0.08)]'
-          : 'bg-transparent',
+          ? 'border-border bg-background/90 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.12)]'
+          : 'border-transparent bg-background/60',
       )}
     >
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -42,7 +42,7 @@ export function SiteHeader() {
           {/* Right (RTL: logo on right) */}
           <Link
             href="/"
-            className="flex items-center transition-transform hover:scale-[1.02]"
+            className="flex items-center rounded-full transition-transform hover:scale-[1.02]"
             aria-label="الصفحة الرئيسية — منصة درس"
           >
             <Logo size={42} />
@@ -54,12 +54,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  'relative px-4 py-2 text-sm font-medium transition-colors rounded-lg',
-                  scrolled
-                    ? 'text-foreground/80 hover:text-foreground hover:bg-gold/10'
-                    : 'text-white/85 hover:text-white hover:bg-white/10',
-                )}
+                className="relative rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 {link.label}
               </Link>
@@ -71,16 +66,12 @@ export function SiteHeader() {
             <KidsModeToggle />
             <ThemeToggle />
             <Link href="/auth/login" className="hidden sm:block">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn('font-medium', scrolled ? '' : 'text-white hover:text-white hover:bg-white/10')}
-              >
+              <Button variant="ghost" size="sm" className="rounded-full font-medium text-primary hover:bg-primary/10">
                 تسجيل الدخول
               </Button>
             </Link>
             <Link href="/auth/register/student" className="hidden sm:block">
-              <Button size="sm" className="gap-1.5 shine relative overflow-hidden bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-lg hover:shadow-gold/30">
+              <Button size="sm" className="gap-1.5 rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90">
                 <GraduationCap className="h-4 w-4" />
                 ابدأ التعلّم
               </Button>
@@ -89,7 +80,7 @@ export function SiteHeader() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn('lg:hidden rounded-full', scrolled ? '' : 'text-white hover:text-white hover:bg-white/10')}
+              className="lg:hidden rounded-full hover:bg-primary/10"
               aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
@@ -102,26 +93,26 @@ export function SiteHeader() {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="lg:hidden glass-strong border-t border-border/50">
+        <div className="lg:hidden border-t border-border bg-background">
           <nav className="container mx-auto max-w-7xl px-4 py-4 flex flex-col gap-1" aria-label="التنقل للموبايل">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-foreground/90 hover:text-foreground rounded-lg hover:bg-gold/10 transition-colors"
+                className="rounded-xl px-4 py-3 text-sm font-medium text-foreground/90 transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 {link.label}
               </Link>
             ))}
-            <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/50">
+            <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border">
               <Link href="/auth/login" onClick={() => setOpen(false)}>
-                <Button variant="outline" size="sm" className="w-full">
+                <Button variant="outline" size="sm" className="w-full rounded-full">
                   تسجيل الدخول
                 </Button>
               </Link>
               <Link href="/auth/register/student" onClick={() => setOpen(false)}>
-                <Button size="sm" className="w-full bg-gradient-to-l from-gold to-[#E8D488] text-night">
+                <Button size="sm" className="w-full rounded-full bg-primary text-primary-foreground shadow-sm">
                   ابدأ التعلّم
                 </Button>
               </Link>

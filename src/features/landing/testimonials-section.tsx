@@ -19,15 +19,15 @@ export function TestimonialsSection() {
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {testimonials.slice(0, 8).map((tm, i) => (
             <StaggerItem key={tm.id ?? `${tm.name}-${i}`} className="h-full">
-              <figure className="group relative p-6 rounded-3xl glass border-gold/15 hover:border-gold/40 hover-bounce transition-colors flex flex-col h-full">
-                <Quote className="absolute top-4 left-4 h-8 w-8 text-gold/20 group-hover:text-gold/40 transition-colors" aria-hidden />
+              <figure className="group relative p-6 rounded-3xl border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(79,70,229,0.45)] flex flex-col h-full">
+                <Quote className="absolute top-4 left-4 h-8 w-8 text-primary/15 group-hover:text-primary/30 transition-colors" aria-hidden />
 
                 {/* Rating */}
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: 5 }).map((_, idx) => (
                     <Star
                       key={idx}
-                      className={`h-4 w-4 ${idx < tm.rating ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`}
+                      className={`h-4 w-4 ${idx < tm.rating ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground/30'}`}
                     />
                   ))}
                 </div>
@@ -36,8 +36,8 @@ export function TestimonialsSection() {
                   "{tm.text}"
                 </blockquote>
 
-                <figcaption className="mt-4 pt-4 border-t border-border/50 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gold/30 to-azure/30 flex items-center justify-center text-xl shrink-0">
+                <figcaption className="mt-4 pt-4 border-t border-border/60 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center text-xl shrink-0">
                     {tm.avatar}
                   </div>
                   <div className="flex flex-col leading-tight">

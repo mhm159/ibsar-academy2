@@ -29,17 +29,17 @@ export function CtaSection() {
               transition: { duration: 0.6, ease: EASE, staggerChildren: 0.12, delayChildren: 0.15 },
             },
           }}
-          className="relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden neu"
+          className="relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-40px_rgba(79,70,229,0.55)]"
         >
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-azure via-night to-emerald-egypt" aria-hidden />
-          <div className="absolute inset-0 bg-hieroglyphs opacity-30" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#4338CA] to-[#7C3AED]" aria-hidden />
+          <div className="absolute inset-0 bg-hieroglyphs opacity-20" aria-hidden />
           <div
-            className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-gold/30 blur-3xl animate-float-soft"
+            className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl animate-float-soft"
             aria-hidden
           />
           <div
-            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-kids-teal/20 blur-3xl animate-float-soft"
+            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-tertiary-container/40 blur-3xl animate-float-soft"
             style={{ animationDelay: '3s' }}
             aria-hidden
           />
@@ -49,7 +49,7 @@ export function CtaSection() {
               variants={fadeUpItem}
               className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-4 py-1.5 text-sm font-medium mb-6 border border-white/20"
             >
-              <Sparkles className="h-4 w-4 text-kids-yellow" />
+              <Sparkles className="h-4 w-4 text-amber-300" />
               <span>جرّب أول حصة مجاناً</span>
             </motion.div>
 
@@ -75,7 +75,7 @@ export function CtaSection() {
               <Link href="/auth/register/student">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-xl hover:shadow-gold/50 transition-all shine relative overflow-hidden"
+                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 rounded-full bg-white text-primary shadow-xl shadow-black/20 hover:bg-white/90 transition-all"
                 >
                   {buttonLabel}
                   <ArrowLeft className="h-5 w-5" />
@@ -85,7 +85,7 @@ export function CtaSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20 hover:text-white"
+                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 rounded-full bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20 hover:text-white"
                 >
                   انضم كمعلم
                 </Button>

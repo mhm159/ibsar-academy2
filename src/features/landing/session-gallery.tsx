@@ -39,12 +39,12 @@ export function SessionGallery() {
     <section id="gallery" className="bg-pharaonic py-16 lg:py-24">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center mb-10">
-          <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-4">
-            <Camera className="h-4 w-4 text-gold" />
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4">
+            <Camera className="h-4 w-4" />
             من داخل الحصص
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-extrabold">
-            لحظات من <span className="text-gradient-gold">حصصنا الحقيقية</span>
+            لحظات من <span className="text-gradient-primary">حصصنا الحقيقية</span>
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
             صور من حصص مباشرة داخل منصة درس — تعليم ممتع، تفاعل حقيقي، وإبداع بلا حدود.
@@ -56,7 +56,7 @@ export function SessionGallery() {
             <StaggerItem key={m.id}>
               <button
                 onClick={() => setActive(m)}
-                className="group relative aspect-[4/3] overflow-hidden rounded-2xl glass border border-gold/15 focus:outline-none focus:ring-2 focus:ring-gold/50"
+                className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-card shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 hover:shadow-[0_20px_45px_-20px_rgba(79,70,229,0.45)] transition-shadow"
               >
                 <img
                   src={m.url}

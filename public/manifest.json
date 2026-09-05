@@ -4,8 +4,8 @@
   "description": "منصة تعليمية متكاملة للأطفال في مصر والعالم العربي",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8FAFC",
-  "theme_color": "#1B2A6B",
+  "background_color": "#F7F8FC",
+  "theme_color": "#4F46E5",
   "lang": "ar",
   "dir": "rtl",
   "icons": [

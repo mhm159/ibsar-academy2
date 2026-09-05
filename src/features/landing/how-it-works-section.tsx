@@ -49,7 +49,7 @@ export function HowItWorksSection() {
         <div className="mt-14 relative">
           {/* Connecting line (desktop) */}
           <div
-            className="hidden lg:block absolute top-12 right-[12.5%] left-[12.5%] h-0.5 bg-gradient-to-l from-transparent via-gold/40 to-transparent"
+            className="hidden lg:block absolute top-12 right-[12.5%] left-[12.5%] h-0.5 bg-gradient-to-l from-transparent via-primary/25 to-transparent"
             aria-hidden
           />
 
@@ -61,7 +61,7 @@ export function HowItWorksSection() {
                 y={32}
                 duration={0.55}
               >
-                {/* Icon circle */}
+                {/* Icon circle — M3 tonal */}
                 <motion.div
                   className="relative mx-auto mb-5 w-24 h-24"
                   whileHover={{ scale: 1.06, rotate: -2 }}
@@ -69,12 +69,11 @@ export function HowItWorksSection() {
                   transition={{ type: 'spring', stiffness: 300, damping: 16 }}
                 >
                   <div
-                    className="absolute inset-0 rounded-full neu"
-                    aria-hidden
-                  />
-                  <div
-                    className="relative w-24 h-24 rounded-full flex items-center justify-center glass-strong border-2"
-                    style={{ borderColor: `color-mix(in srgb, ${step.color} 50%, transparent)` }}
+                    className="w-24 h-24 rounded-full flex items-center justify-center border-2"
+                    style={{
+                      borderColor: `color-mix(in srgb, ${step.color} 35%, var(--border))`,
+                      background: `color-mix(in srgb, ${step.color} 10%, var(--card))`,
+                    }}
                   >
                     <step.icon className="h-9 w-9" style={{ color: step.color }} strokeWidth={2} />
                   </div>

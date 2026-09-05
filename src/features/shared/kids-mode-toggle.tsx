@@ -36,7 +36,7 @@ export function KidsModeToggle() {
         className={cn(
           'h-8 px-3 rounded-full text-xs font-bold transition-all flex items-center gap-1',
           !isKids
-            ? 'bg-gradient-to-l from-gold to-[#E8D488] text-night shadow-sm'
+            ? 'bg-foreground text-background shadow-sm'
             : 'text-muted-foreground hover:text-foreground',
         )}
         aria-label="الوضع الاحترافي"

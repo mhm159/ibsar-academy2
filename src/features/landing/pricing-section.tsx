@@ -26,13 +26,13 @@ export function PricingSection() {
 
         {/* Currency toggle */}
         <div className="mt-8 flex justify-center">
-          <div className="inline-flex p-1 rounded-full glass border border-gold/20 neu-inset">
+          <div className="inline-flex p-1 rounded-full border border-border bg-muted/60">
             <button
               onClick={() => setCurrency('EGP')}
               className={cn(
                 'px-5 py-2 rounded-full text-sm font-bold transition-all',
                 currency === 'EGP'
-                  ? 'bg-gradient-to-l from-gold to-[#E8D488] text-night shadow-md'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'text-muted-foreground hover:text-foreground',
               )}
             >
@@ -43,7 +43,7 @@ export function PricingSection() {
               className={cn(
                 'px-5 py-2 rounded-full text-sm font-bold transition-all',
                 currency === 'USD'
-                  ? 'bg-gradient-to-l from-gold to-[#E8D488] text-night shadow-md'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'text-muted-foreground hover:text-foreground',
               )}
             >
@@ -64,16 +64,16 @@ export function PricingSection() {
               >
                 <Card
                   className={cn(
-                    'h-full p-7 relative overflow-hidden transition-all',
+                    'h-full p-7 relative overflow-hidden rounded-3xl transition-all duration-300',
                     plan.highlight
-                      ? 'glass-strong border-2 border-gold shadow-2xl shadow-gold/20'
-                      : 'glass border-gold/15 hover:border-gold/40',
+                      ? 'border-2 border-primary bg-card shadow-[0_24px_60px_-24px_rgba(79,70,229,0.45)] lg:scale-[1.02]'
+                      : 'border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_rgba(15,23,42,0.05)] hover:border-primary/40 hover:-translate-y-1',
                   )}
                 >
                   {plan.highlight && (
                     <>
-                      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-l from-gold via-[#E8D488] to-gold" />
-                      <div className="absolute top-4 left-4 inline-flex items-center gap-1 bg-gold text-night text-[0.65rem] font-extrabold px-2.5 py-1 rounded-full">
+                      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-l from-primary via-[#818CF8] to-primary" />
+                      <div className="absolute top-4 left-4 inline-flex items-center gap-1 bg-primary text-white text-[0.65rem] font-extrabold px-2.5 py-1 rounded-full shadow-sm">
                         <Sparkles className="h-3 w-3" />
                         الأكثر اختياراً
                       </div>
@@ -90,7 +90,7 @@ export function PricingSection() {
                     <div className="flex items-end justify-center gap-1">
                       <motion.span
                         key={currency}
-                        className="text-5xl font-extrabold font-display text-gradient-gold"
+                        className="text-5xl font-extrabold font-display text-primary"
                         initial={{ opacity: 0, y: 10, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ duration: 0.4, ease: EASE }}
@@ -110,7 +110,7 @@ export function PricingSection() {
                         <span
                           className={cn(
                             'inline-flex items-center justify-center h-5 w-5 rounded-full shrink-0 mt-0.5',
-                            plan.highlight ? 'bg-gold text-night' : 'bg-emerald-egypt/15 text-emerald-egypt',
+                            plan.highlight ? 'bg-primary text-white' : 'bg-emerald-egypt/15 text-emerald-egypt',
                           )}
                         >
                           <Check className="h-3 w-3" strokeWidth={3} />
@@ -123,10 +123,10 @@ export function PricingSection() {
                   <Link href="/auth/register/student" className="block">
                     <Button
                       className={cn(
-                        'w-full h-12 text-base gap-1.5',
+                        'w-full h-12 text-base gap-1.5 rounded-full',
                         plan.highlight
-                          ? 'bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-lg hover:shadow-gold/40'
-                          : 'glass border-gold/30 hover:bg-gold/10',
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90'
+                          : 'border-border bg-card hover:border-primary/40',
                       )}
                       variant={plan.highlight ? 'default' : 'outline'}
                     >
@@ -162,7 +162,7 @@ export function PricingSection() {
 
 function PaymentBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center px-4 py-2 rounded-xl glass border-gold/15 text-xs font-bold text-foreground/80">
+    <span className="inline-flex items-center px-4 py-2 rounded-xl border border-border bg-card text-xs font-bold text-foreground/80 shadow-sm">
       {label}
     </span>
   )

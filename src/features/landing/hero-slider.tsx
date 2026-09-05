@@ -55,7 +55,7 @@ export function HeroSlider() {
   return (
     <section className="relative overflow-hidden bg-pharaonic pt-6 pb-2">
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl glass border border-gold/20 shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-[0_24px_60px_-28px_rgba(79,70,229,0.45)]">
           {/* Slide */}
           <div className="relative min-h-[200px] sm:min-h-[260px] lg:min-h-[300px] overflow-hidden">
             {banners.map((b, i) => (
@@ -98,7 +98,7 @@ export function HeroSlider() {
                   }}
                 >
                   {b.badge && (
-                    <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-bold text-gold mb-4 border border-gold/30">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4 border border-primary/20">
                       <Sparkles className="h-3.5 w-3.5" />
                       {b.badge}
                     </div>
@@ -113,7 +113,7 @@ export function HeroSlider() {
                   {b.linkUrl && (
                     <Link
                       href={b.linkUrl}
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-gold to-[#E8D488] text-night font-bold text-sm px-5 py-2.5 hover:shadow-lg hover:shadow-gold/30 transition-shadow"
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-night font-bold text-sm shadow-lg hover:bg-white/90 transition-colors"
                     >
                       اكتشف المزيد
                       <ChevronLeft className="h-4 w-4" />
@@ -153,7 +153,7 @@ export function HeroSlider() {
                     aria-label={`الشريحة ${i + 1}`}
                     className={cn(
                       'h-2 rounded-full transition-all',
-                      i === index ? 'w-6 bg-gold' : 'w-2 bg-white/40 hover:bg-white/70',
+                      i === index ? 'w-6 bg-primary' : 'w-2 bg-white/40 hover:bg-white/70',
                     )}
                   />
                 ))}

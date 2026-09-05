@@ -34,18 +34,18 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-gradient-to-br from-night via-[#24317F] to-[#101A45] pt-12 pb-20 lg:pt-20 lg:pb-32"
+      className="relative overflow-hidden bg-gradient-to-b from-primary/10 via-background to-background pt-12 pb-20 lg:pt-24 lg:pb-32"
     >
-      {/* Decorative hieroglyph pattern overlay */}
-      <div className="absolute inset-0 bg-hieroglyphs opacity-25 pointer-events-none" aria-hidden />
+      {/* Subtle dot grid pattern */}
+      <div className="absolute inset-0 bg-hieroglyphs opacity-40 pointer-events-none" aria-hidden />
 
-      {/* Floating decorative blobs (CSS float + scroll parallax) */}
+      {/* Floating decorative blobs (M3 container tints + scroll parallax) */}
       <motion.div
         className="absolute top-20 -left-16 w-72 h-72 pointer-events-none"
         style={{ y: blobY1 }}
         aria-hidden
       >
-        <div className="w-72 h-72 rounded-full bg-gold/20 blur-3xl animate-float-soft" />
+        <div className="w-72 h-72 rounded-full bg-primary/15 blur-3xl animate-float-soft" />
       </motion.div>
       <motion.div
         className="absolute bottom-10 -right-16 w-96 h-96 pointer-events-none"
@@ -53,7 +53,7 @@ export function HeroSection() {
         aria-hidden
       >
         <div
-          className="w-96 h-96 rounded-full bg-azure/20 blur-3xl animate-float-soft"
+          className="w-96 h-96 rounded-full bg-secondary-container/50 blur-3xl animate-float-soft"
           style={{ animationDelay: '2s' }}
         />
       </motion.div>
@@ -63,7 +63,7 @@ export function HeroSection() {
         aria-hidden
       >
         <div
-          className="w-64 h-64 rounded-full bg-kids-teal/15 blur-3xl animate-float-soft"
+          className="w-64 h-64 rounded-full bg-tertiary-container/60 blur-3xl animate-float-soft"
           style={{ animationDelay: '4s' }}
         />
       </motion.div>
@@ -77,12 +77,12 @@ export function HeroSection() {
             animate="visible"
             variants={staggerContainer}
           >
-            {/* Badge */}
+            {/* Badge — M3 tonal chip */}
             <motion.div variants={fadeUpItem}>
-              <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium mb-6 border-glow">
-                <Sparkles className="h-4 w-4 text-gold" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/15 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+                <Sparkles className="h-4 w-4" />
                 <span>{settings['hero.badge']}</span>
-                <span className="hidden sm:inline-flex items-center gap-0.5 text-gold">
+                <span className="hidden sm:inline-flex items-center gap-0.5 text-amber-500">
                   <Star className="h-3 w-3 fill-current" />
                   <Star className="h-3 w-3 fill-current" />
                   <Star className="h-3 w-3 fill-current" />
@@ -94,7 +94,7 @@ export function HeroSection() {
 
             {/* Title — lines blur in one after another */}
             <motion.h1
-              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight text-white"
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.15] tracking-tight text-foreground"
               variants={{
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
@@ -103,22 +103,22 @@ export function HeroSection() {
               <motion.span variants={blurRevealItem} className="block">
                 {settings['hero.title.line1']}
               </motion.span>
-              <motion.span variants={blurRevealItem} className="block text-gradient-gold">
+              <motion.span variants={blurRevealItem} className="block text-gradient-primary">
                 {settings['hero.title.line2']}
               </motion.span>
-              <motion.span variants={blurRevealItem} className="block text-gradient-azure-gold">
+              <motion.span variants={blurRevealItem} className="block text-gradient-gold">
                 {settings['hero.title.line3']}
               </motion.span>
             </motion.h1>
 
             <motion.p
               variants={fadeUpItem}
-              className="mt-6 text-base sm:text-lg lg:text-xl text-white/80 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              className="mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0"
             >
               {settings['hero.subtitle']}
             </motion.p>
 
-            {/* CTAs */}
+            {/* CTAs — M3 filled + tonal */}
             <motion.div
               variants={fadeUpItem}
               className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
@@ -126,7 +126,7 @@ export function HeroSection() {
               <Link href="/auth/register/student">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 text-base h-12 px-7 bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-xl hover:shadow-gold/40 transition-all shine relative overflow-hidden"
+                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all"
                 >
                   {settings['hero.cta.primary']}
                   <ArrowLeft className="h-5 w-5" />
@@ -136,9 +136,9 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto gap-2 text-base h-12 px-7 border-white/30 bg-white/10 backdrop-blur-md hover:bg-white/15 hover:border-gold/40 text-white"
+                  className="w-full sm:w-auto gap-2 text-base h-12 px-8 rounded-full border-border bg-card hover:border-primary/40"
                 >
-                  <PlayCircle className="h-5 w-5 text-gold" />
+                  <PlayCircle className="h-5 w-5 text-primary" />
                   {settings['hero.cta.secondary']}
                 </Button>
               </Link>
@@ -147,13 +147,13 @@ export function HeroSection() {
             {/* Trust line */}
             <motion.div
               variants={fadeUpItem}
-              className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-white/70"
+              className="mt-6 flex items-center justify-center lg:justify-start gap-2 text-sm text-muted-foreground"
             >
               <ShieldCheck className="h-4 w-4 text-emerald-egypt" />
               <span>{settings['hero.trust']}</span>
             </motion.div>
 
-            {/* Stats — count up when they enter the viewport */}
+            {/* Stats — M3 elevated cards */}
             <motion.dl
               variants={fadeUpItem}
               className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0"
@@ -164,12 +164,12 @@ export function HeroSection() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 + i * 0.1, duration: 0.5, ease: EASE }}
-                  className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-4 text-center"
+                  className="rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.05),0_4px_14px_rgba(15,23,42,0.06)] p-4 text-center"
                 >
-                  <dt className="text-2xl sm:text-3xl font-extrabold text-gradient-gold font-display">
+                  <dt className="text-2xl sm:text-3xl font-extrabold text-primary font-display">
                     <CountUp key={stat.value} value={stat.value} />
                   </dt>
-                  <dd className="mt-1 text-xs sm:text-sm text-white/70">
+                  <dd className="mt-1 text-xs sm:text-sm text-muted-foreground">
                     {stat.label}
                   </dd>
                 </motion.div>
@@ -202,8 +202,8 @@ function HeroVisual() {
   const tracks = useTracks()
   return (
     <div className="relative aspect-square max-w-md mx-auto">
-      {/* Main glass card — classroom mock */}
-      <div className="absolute inset-0 glass-strong rounded-[2rem] p-6 neu shadow-2xl">
+      {/* Main elevated card — classroom mock */}
+      <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-border bg-card p-6 shadow-[0_24px_60px_-24px_rgba(79,70,229,0.30)]">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -215,9 +215,9 @@ function HeroVisual() {
         </div>
 
         {/* Video tile */}
-        <div className="rounded-2xl bg-gradient-to-br from-azure/20 to-gold/20 p-5 mb-3 neu-inset">
+        <div className="rounded-2xl bg-muted/70 p-5 mb-3">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-azure to-emerald-egypt flex items-center justify-center text-2xl shrink-0">
+            <div className="h-12 w-12 rounded-full bg-primary-container flex items-center justify-center text-2xl shrink-0">
               👩‍🏫
             </div>
             <div className="flex-1 min-w-0">
@@ -232,16 +232,16 @@ function HeroVisual() {
         </div>
 
         {/* Whiteboard mock */}
-        <div className="rounded-2xl bg-card p-4 mb-3 neu-sm">
+        <div className="rounded-2xl bg-muted/50 p-4 mb-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-muted-foreground">السبورة التفاعلية</span>
-            <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-gold/20 text-gold font-bold">5 + 3 = ?</span>
+            <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-tertiary-container text-tertiary font-bold">5 + 3 = ?</span>
           </div>
           <div className="grid grid-cols-5 gap-1.5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square rounded-md bg-gradient-to-br from-gold/30 to-azure/30 flex items-center justify-center text-lg"
+                className="aspect-square rounded-md bg-primary-container/70 flex items-center justify-center text-lg"
               >
                 {i < 5 ? '🟡' : i < 8 ? '🔵' : ''}
               </div>
@@ -250,14 +250,14 @@ function HeroVisual() {
         </div>
 
         {/* Progress bar */}
-        <div className="rounded-2xl bg-card p-3 neu-sm">
+        <div className="rounded-2xl bg-muted/50 p-3">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-bold text-muted-foreground">تقدّم الطالب</span>
             <span className="text-xs font-bold text-emerald-egypt">78%</span>
           </div>
           <div className="h-2 rounded-full bg-muted overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-l from-gold via-emerald-egypt to-azure rounded-full"
+              className="h-full rounded-full bg-gradient-to-r from-primary to-secondary-container"
               initial={{ width: 0 }}
               animate={{ width: '78%' }}
               transition={{ duration: 1.5, delay: 0.8, ease: 'easeOut' }}
@@ -282,8 +282,8 @@ function HeroVisual() {
             transition={{ delay: 0.6 + i * 0.2, duration: 0.5, type: 'spring' }}
           >
             <div
-              className="glass-strong rounded-2xl px-4 py-2.5 flex items-center gap-2 neu-sm hover-bounce cursor-default"
-              style={{ borderColor: `color-mix(in srgb, ${track.color} 40%, transparent)` }}
+              className="rounded-2xl border border-border bg-card px-4 py-2.5 flex items-center gap-2 shadow-[0_10px_30px_-10px_rgba(15,23,42,0.25)] hover:translate-y-[-4px] transition-transform cursor-default"
+              style={{ borderColor: `color-mix(in srgb, ${track.color} 35%, var(--border))` }}
             >
               <span className="text-2xl">{track.emoji}</span>
               <div className="flex flex-col leading-none">
@@ -295,15 +295,15 @@ function HeroVisual() {
         )
       })}
 
-      {/* Floating badge */}
+      {/* Floating rating badge */}
       <motion.div
         className="absolute -top-6 left-4 z-20"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.5 }}
       >
-        <div className="glass-strong rounded-full px-3 py-1.5 flex items-center gap-1.5 neu-sm">
-          <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+        <div className="rounded-full border border-border bg-card px-3 py-1.5 flex items-center gap-1.5 shadow-md">
+          <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
           <span className="text-xs font-bold">4.9/5 تقييم</span>
         </div>
       </motion.div>

@@ -27,8 +27,9 @@ export function TracksSection() {
               <StaggerItem key={track.id}>
                 <Card
                   className={cn(
-                    'group relative overflow-hidden neu hover-bounce h-full p-7 border-0',
-                    'hover:shadow-2xl transition-shadow',
+                    'group relative overflow-hidden h-full p-7 rounded-3xl border-border bg-card',
+                    'shadow-[0_1px_2px_rgba(15,23,42,0.05),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-300',
+                    'hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(79,70,229,0.45)] hover:border-primary/30',
                   )}
                   style={{
                     // @ts-expect-error CSS custom prop
@@ -37,28 +38,28 @@ export function TracksSection() {
                 >
                   {/* Top gradient accent */}
                   <div
-                    className="absolute inset-x-0 top-0 h-1.5"
+                    className="absolute inset-x-0 top-0 h-1.5 rounded-t-3xl"
                     style={{ background: `linear-gradient(90deg, ${track.color}, transparent)` }}
                     aria-hidden
                   />
 
                   {/* Background watermark emoji */}
-                  <div className="absolute -bottom-6 -left-6 text-[8rem] opacity-[0.06] pointer-events-none select-none" aria-hidden>
+                  <div className="absolute -bottom-6 -left-6 text-[8rem] opacity-[0.05] pointer-events-none select-none" aria-hidden>
                     {track.emoji}
                   </div>
 
-                  {/* Icon */}
+                  {/* Icon — M3 tonal container */}
                   <div
-                    className="relative inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 neu-inset"
-                    style={{ color: track.color }}
+                    className="relative inline-flex items-center justify-center h-14 w-14 rounded-2xl mb-5"
+                    style={{ color: track.color, background: `color-mix(in srgb, ${track.color} 15%, transparent)` }}
                   >
-                    <Icon className="h-8 w-8" strokeWidth={2} />
+                    <Icon className="h-7 w-7" strokeWidth={2} />
                   </div>
 
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-display text-2xl font-bold">{track.name}</h3>
-                      <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-bold">
+                      <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant font-bold">
                         {track.ageRange} سنة
                       </span>
                     </div>
@@ -128,7 +129,7 @@ export function SectionHeading({
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-block px-3 py-1 rounded-full bg-gold/15 text-gold text-xs font-bold tracking-wide mb-3"
+          className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide mb-3"
         >
           {eyebrow}
         </motion.span>

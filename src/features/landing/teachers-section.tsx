@@ -25,7 +25,7 @@ export function TeachersSection() {
             description="نخبة مختارة من المعلمين المعتمدين في كل تخصص، بخبرة طويلة في تعليم الأطفال."
           />
           <Link href="/auth/register/teacher" className="shrink-0">
-            <Button variant="outline" className="glass border-gold/30 hover:bg-gold/10 gap-1.5">
+            <Button variant="outline" className="rounded-full border-border bg-card hover:border-primary/40 gap-1.5">
               انضم كمعلم
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -37,7 +37,7 @@ export function TeachersSection() {
             const teacherTracks = tracks.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
             return (
               <StaggerItem key={teacher.id} className="h-full">
-                <Card className="group h-full p-6 glass border-gold/15 hover:border-gold/40 hover-bounce transition-colors text-center">
+                <Card className="group h-full p-6 border border-border bg-card rounded-3xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(79,70,229,0.45)] text-center">
                   {/* Avatar */}
                   <motion.div
                     className="relative mx-auto mb-4 w-24 h-24"
@@ -45,13 +45,13 @@ export function TeachersSection() {
                     whileTap={{ scale: 0.96 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 16 }}
                   >
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/40 to-azure/40 blur-md group-hover:blur-lg transition-all" aria-hidden />
-                    <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-gold/20 to-azure/20 flex items-center justify-center text-5xl neu-inset">
+                    <div className="absolute inset-0 rounded-full bg-secondary-container/60 blur-md group-hover:blur-lg transition-all" aria-hidden />
+                    <div className="relative w-24 h-24 rounded-full bg-secondary-container/60 border border-secondary-container flex items-center justify-center text-5xl">
                       {teacher.avatar}
                     </div>
                     {/* Featured badge */}
                     {teacher.rating >= 4.9 && (
-                      <span className="absolute -bottom-1 -right-1 bg-gold text-night text-[0.6rem] font-extrabold px-2 py-0.5 rounded-full neu-sm">
+                      <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[0.6rem] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
                         مميّز
                       </span>
                     )}
@@ -64,7 +64,7 @@ export function TeachersSection() {
 
                   {/* Rating */}
                   <div className="flex items-center justify-center gap-1 mb-3">
-                    <Star className="h-4 w-4 fill-gold text-gold" />
+                    <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
                     <span className="text-sm font-bold">{teacher.rating}</span>
                     <span className="text-xs text-muted-foreground">({teacher.reviews})</span>
                   </div>

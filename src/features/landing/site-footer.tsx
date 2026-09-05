@@ -49,7 +49,7 @@ export function SiteFooter() {
   const slogan = settings['footer.slogan'] || APP.tagline
 
   return (
-    <footer className="mt-auto relative border-t border-white/10 bg-gradient-to-b from-night to-[#101A45] text-white">
+    <footer className="mt-auto relative border-t border-white/10 bg-gradient-to-b from-night to-[#111827] text-white">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid gap-10 lg:gap-8 lg:grid-cols-12">
           {/* Brand column */}
@@ -62,19 +62,19 @@ export function SiteFooter() {
             {/* Contact */}
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2 text-white/70">
-                <Phone className="h-4 w-4 text-gold shrink-0" />
+                <Phone className="h-4 w-4 text-amber-400 shrink-0" />
                 <span dir="ltr">{phone}</span>
               </li>
               <li className="flex items-center gap-2 text-white/70">
-                <Mail className="h-4 w-4 text-gold shrink-0" />
+                <Mail className="h-4 w-4 text-amber-400 shrink-0" />
                 <span dir="ltr">{email}</span>
               </li>
               <li className="flex items-center gap-2 text-white/70">
-                <MapPin className="h-4 w-4 text-gold shrink-0" />
+                <MapPin className="h-4 w-4 text-amber-400 shrink-0" />
                 <span>القاهرة، مصر</span>
               </li>
             </ul>
-            <p className="mt-3 text-sm font-semibold text-gold">{slogan}</p>
+            <p className="mt-3 text-sm font-semibold text-amber-400">{slogan}</p>
           </div>
 
           {/* Links columns */}
@@ -89,7 +89,7 @@ export function SiteFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-white/70 hover:text-gold transition-colors"
+                        className="text-sm text-white/70 hover:text-amber-400 transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -126,10 +126,10 @@ export function SiteFooter() {
             © {new Date().getFullYear()} {APP.name}. جميع الحقوق محفوظة.
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/privacy" className="hover:text-gold transition-colors">
+            <Link href="/privacy" className="hover:text-amber-400 transition-colors">
               سياسة الخصوصية
             </Link>
-            <Link href="/terms" className="hover:text-gold transition-colors">
+            <Link href="/terms" className="hover:text-amber-400 transition-colors">
               الشروط والأحكام
             </Link>
             <span className="hidden sm:inline">صُنع بـ ❤️ في مصر</span>

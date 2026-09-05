@@ -26,7 +26,7 @@ export function FaqSection() {
               <StaggerItem key={i}>
                 <AccordionItem
                   value={`faq-${i}`}
-                  className="glass border border-gold/15 rounded-2xl px-5 mb-3 data-[state=open]:border-gold/40 transition-colors overflow-hidden"
+                  className="border border-border bg-card rounded-2xl px-5 mb-3 data-[state=open]:border-primary/40 transition-colors overflow-hidden"
                 >
                   <AccordionTrigger className="text-right hover:no-underline py-5 text-base font-bold font-display">
                     {faq.q}
@@ -48,7 +48,7 @@ export function FaqSection() {
               href="https://wa.me/201000000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gold font-bold hover:underline"
+              className="text-primary font-bold hover:underline"
             >
               راسلنا على واتساب
             </a>
