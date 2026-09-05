@@ -59,9 +59,9 @@ export function DashboardShell({ role, children, title }: DashboardShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-pharaonic">
+    <div className="kider-dashboard min-h-screen flex flex-col bg-pharaonic">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 glass-strong border-b border-border/50">
+      <header className="sticky top-0 z-40 border-b border-primary/10 bg-card/95 shadow-sm backdrop-blur-xl">
         <div className="flex h-16 items-center gap-3 px-4 lg:px-6">
           {/* Mobile menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -136,7 +136,7 @@ export function DashboardShell({ role, children, title }: DashboardShellProps) {
 
       <div className="flex flex-1">
         {/* Desktop sidebar (RTL: right side) */}
-        <aside className="hidden lg:flex w-64 shrink-0 flex-col border-l border-border/50 bg-card/40 backdrop-blur-sm">
+        <aside className="hidden lg:flex w-64 shrink-0 flex-col border-l border-primary/10 bg-card">
           <SidebarContent
             navItems={navItems}
             pathname={pathname}
@@ -146,7 +146,7 @@ export function DashboardShell({ role, children, title }: DashboardShellProps) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 min-w-0 p-4 lg:p-6">
+        <main className="flex-1 min-w-0 p-4 lg:p-7">
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>

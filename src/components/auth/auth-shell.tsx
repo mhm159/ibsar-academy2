@@ -39,9 +39,10 @@ export function AuthShell({
   subtitle: string
 }) {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-pharaonic">
+    <div className="kider-auth min-h-screen flex flex-col lg:flex-row bg-pharaonic">
       {/* Brand panel (hidden on mobile) */}
-      <aside className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-night via-azure to-emerald-egypt">
+      <aside className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-night bg-[url('/kider/appointment.jpg')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-night/85" aria-hidden />
         <div className="absolute inset-0 bg-hieroglyphs opacity-30" aria-hidden />
         <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-gold/30 blur-3xl animate-float-soft" aria-hidden />
         <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-kids-teal/20 blur-3xl animate-float-soft" style={{ animationDelay: '3s' }} aria-hidden />

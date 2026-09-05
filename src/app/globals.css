@@ -674,3 +674,117 @@
  * TODO(phase-3): Add payment button states (escrow/pending/settled).
  * TODO(phase-4): Add classroom video layout utility classes.
  */
+
+/* ============================================================
+   Kider visual system — adapted to the existing application logic
+   ============================================================ */
+:root {
+  --radius: 1.25rem;
+  --primary: #FE5D37;
+  --primary-foreground: #FFFFFF;
+  --primary-container: #FFE1D9;
+  --on-primary-container: #7A210D;
+  --secondary: #E8F6F3;
+  --secondary-foreground: #103741;
+  --secondary-container: #D7F0EA;
+  --tertiary: #198754;
+  --tertiary-foreground: #FFFFFF;
+  --tertiary-container: #DDF5E8;
+  --background: #FFF9F7;
+  --foreground: #103741;
+  --card: #FFFFFF;
+  --card-foreground: #103741;
+  --popover: #FFFFFF;
+  --popover-foreground: #103741;
+  --muted: #FFF0EC;
+  --muted-foreground: #5F747A;
+  --border: #F1DDD7;
+  --input: #E8D5CF;
+  --ring: #FE5D37;
+  --gold: #FFC107;
+  --azure: #0DCAF0;
+  --night: #103741;
+  --emerald-egypt: #198754;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #103741;
+  --sidebar-primary: #FE5D37;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #FFF0EC;
+  --sidebar-accent-foreground: #A43218;
+  --sidebar-border: #F1DDD7;
+  --chart-1: #FE5D37;
+  --chart-2: #198754;
+  --chart-3: #FFC107;
+  --chart-4: #0DCAF0;
+  --chart-5: #8B5CF6;
+}
+
+.dark {
+  --primary: #FF8063;
+  --primary-foreground: #321007;
+  --primary-container: #73301F;
+  --on-primary-container: #FFE1D9;
+  --secondary: #203F46;
+  --secondary-foreground: #E7F6F8;
+  --secondary-container: #294C54;
+  --background: #0B292F;
+  --foreground: #F4FAFB;
+  --card: #103741;
+  --card-foreground: #F4FAFB;
+  --popover: #103741;
+  --popover-foreground: #F4FAFB;
+  --muted: #173F48;
+  --muted-foreground: #AAC0C5;
+  --border: #28515A;
+  --input: #365F67;
+  --ring: #FF8063;
+  --sidebar: #103741;
+  --sidebar-foreground: #F4FAFB;
+  --sidebar-primary: #FF8063;
+  --sidebar-primary-foreground: #321007;
+  --sidebar-accent: #244A52;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #28515A;
+}
+
+body {
+  background-image: radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--primary) 5%, transparent), transparent 24rem);
+}
+
+.kider-hero::before,
+.kider-hero::after {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 2;
+  height: 10px;
+  content: "";
+  background: url('/kider/bg-header-top.png') center repeat-x;
+}
+.kider-hero::before { top: 0; }
+.kider-hero::after {
+  bottom: 0;
+  height: 19px;
+  background-image: url('/kider/bg-header-bottom.png');
+}
+
+.kider-dashboard main [data-slot='card'],
+.kider-auth [data-slot='card'] {
+  box-shadow: 0 12px 34px -24px rgba(16, 55, 65, .42);
+}
+
+[data-slot='input'], [data-slot='textarea'], [data-slot='select-trigger'] {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 92%, var(--primary));
+}
+[data-slot='textarea'] { border-radius: 1.25rem; }
+
+table thead {
+  background: var(--muted);
+  color: var(--foreground);
+}
+table th:first-child { border-start-start-radius: 1rem; }
+table th:last-child { border-start-end-radius: 1rem; }
+
+@media (max-width: 640px) {
+  .kider-hero { min-height: 32rem; }
+}

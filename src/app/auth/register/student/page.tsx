@@ -1,266 +1,36 @@
 'use client'
-
-import * as React from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Loader2, Mail, Phone, ArrowLeft, User, MapPin } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { AuthShell } from '@/components/auth/auth-shell'
-import { OtpFlow } from '@/components/auth/otp-flow'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { COUNTRIES } from '@/lib/constants'
 import { notify } from '@/lib/notify'
 
-type Channel = 'SMS' | 'EMAIL' | 'WHATSAPP'
-type Step = 'FORM' | 'OTP'
-
 export default function RegisterStudentPage() {
-  const router = useRouter()
-  const [step, setStep] = React.useState<Step>('FORM')
-  const [channel, setChannel] = React.useState<Channel>('WHATSAPP')
-  const [target, setTarget] = React.useState('')
-  const [name, setName] = React.useState('')
-  const [country, setCountry] = React.useState('EG')
-  const [city, setCity] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target, channel, purpose: 'REGISTER' }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setError(data.error || 'فشل إرسال الرمز')
-        return
-      }
-      setStep('OTP')
-    } catch {
-      setError('تعذّر الاتصال بالخادم')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleVerified = async (verificationToken: string) => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          method: 'OTP',
-          channel,
-          target,
-          verificationToken,
-          role: 'PARENT',
-          name,
-          country,
-          city: city || undefined,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setError(data.error || 'فشل إنشاء الحساب')
-        setStep('FORM')
-        return
-      }
-      notify.success('تم إنشاء حساب ولي الأمر بنجاح!')
-      router.push('/parent')
-    } catch {
-      setError('تعذّر الاتصال بالخادم')
-      setStep('FORM')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <AuthShell
-      title="تسجيل ولي الأمر"
-      subtitle="أنشئ حساب ولي الأمر وأضف بيانات طفلك للبدء"
-    >
-      {step === 'FORM' ? (
-        <form onSubmit={handleSendOtp} className="space-y-5">
-          {/* Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name">الاسم الكامل لولي الأمر</Label>
-            <div className="relative">
-              <User className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
-              <Input
-                id="name"
-                placeholder="مثال: أحمد محمد"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                minLength={2}
-                className="h-12 text-base pr-11"
-              />
-            </div>
-          </div>
-
-          {/* Channel toggle */}
-          <div className="space-y-2">
-            <Label>طريقة التحقق</Label>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setChannel('SMS')}
-                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
-                  channel === 'SMS'
-                    ? 'border-gold bg-gold/10 text-gold'
-                    : 'border-border text-muted-foreground hover:border-gold/40'
-                }`}
-              >
-                <Phone className="h-4 w-4" />
-                SMS
-              </button>
-              <button
-                type="button"
-                onClick={() => setChannel('WHATSAPP')}
-                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
-                  channel === 'WHATSAPP'
-                    ? 'border-emerald-egypt bg-emerald-egypt/10 text-emerald-egypt'
-                    : 'border-border text-muted-foreground hover:border-emerald-egypt/40'
-                }`}
-              >
-                <span className="text-base">💬</span>
-                واتساب
-              </button>
-              <button
-                type="button"
-                onClick={() => setChannel('EMAIL')}
-                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-bold transition-all ${
-                  channel === 'EMAIL'
-                    ? 'border-gold bg-gold/10 text-gold'
-                    : 'border-border text-muted-foreground hover:border-gold/40'
-                }`}
-              >
-                <Mail className="h-4 w-4" />
-                البريد
-              </button>
-            </div>
-          </div>
-
-          {/* Target */}
-          <div className="space-y-2">
-            <Label htmlFor="target">
-              {channel === 'EMAIL' ? 'البريد الإلكتروني' : 'رقم الهاتف'}
-            </Label>
-            <Input
-              id="target"
-              type={channel === 'EMAIL' ? 'email' : 'tel'}
-              dir={channel === 'EMAIL' ? undefined : 'ltr'}
-              placeholder={channel === 'EMAIL' ? 'you@example.com' : '01012345678'}
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
-              required
-              className="h-12 text-base"
-            />
-            <p className="text-xs text-muted-foreground">
-              {channel === 'EMAIL'
-                ? 'سنرسل لك رمز تحقق عبر البريد'
-                : channel === 'WHATSAPP'
-                  ? 'سنرسل لك رمز تحقق عبر واتساب'
-                  : 'سنرسل لك رمز تحقق عبر رسالة نصية'}
-            </p>
-          </div>
-
-          {/* Country + City */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="country">الدولة</Label>
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger id="country" className="h-12">
-                  <SelectValue placeholder="اختر الدولة" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COUNTRIES.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>
-                      {c.flag} {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="city">المدينة</Label>
-              <div className="relative">
-                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="city"
-                  placeholder="اختياري"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="h-12 pr-10"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Terms */}
-          <label className="flex items-start gap-2 text-xs text-muted-foreground">
-            <input type="checkbox" required className="mt-0.5 accent-[var(--gold)]" />
-            <span>
-              أوافق على{' '}
-              <Link href="/terms" className="text-gold hover:underline">الشروط والأحكام</Link>
-              {' '}و{' '}
-              <Link href="/privacy" className="text-gold hover:underline">سياسة الخصوصية</Link>
-            </span>
-          </label>
-
-          {error && (
-            <p className="text-sm text-destructive bg-destructive/10 rounded-lg py-2 px-3">
-              {error}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            disabled={loading || !name || !target}
-            className="w-full h-12 text-base gap-2 bg-gradient-to-l from-gold to-[#E8D488] text-night hover:shadow-lg hover:shadow-gold/30"
-          >
-            {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <ArrowLeft className="h-5 w-5" />
-            )}
-            متابعة
-          </Button>
-        </form>
-      ) : (
-        <OtpFlow
-          target={target}
-          channel={channel}
-          purpose="REGISTER"
-          onVerified={handleVerified}
-          onChangeTarget={() => setStep('FORM')}
-        />
-      )}
-
-      <p className="mt-8 text-center text-sm text-muted-foreground">
-        لديك حساب بالفعل؟{' '}
-        <Link href="/auth/login" className="text-gold font-bold hover:underline">
-          سجّل الدخول
-        </Link>
-      </p>
-    </AuthShell>
-  )
+  const router=useRouter(); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [show,setShow]=useState(false)
+  const [form,setForm]=useState({name:'',channel:'EMAIL',target:'',password:'',confirm:'',country:'EG',city:''})
+  const set=(key:string,value:string)=>setForm(v=>({...v,[key]:value}))
+  async function submit(e:React.FormEvent){e.preventDefault();setError('');if(form.password!==form.confirm)return setError('كلمتا المرور غير متطابقتين');setLoading(true);try{const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...form,role:'PARENT'})});const data=await res.json();if(!res.ok)return setError(data.error||'تعذر إنشاء الحساب');notify.success('تم إنشاء حساب ولي الأمر');router.push('/parent')}catch{setError('تعذر الاتصال بالخادم')}finally{setLoading(false)}}
+  return <AuthShell title="حساب ولي أمر جديد" subtitle="تسجيل مباشر وآمن دون رموز تحقق">
+    <form onSubmit={submit} className="space-y-4">
+      <Field label="الاسم الكامل"><Input value={form.name} onChange={e=>set('name',e.target.value)} minLength={2} required className="h-12" autoComplete="name"/></Field>
+      <Field label="طريقة تسجيل الدخول"><Select value={form.channel} onValueChange={v=>set('channel',v)}><SelectTrigger className="h-12"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="EMAIL">البريد الإلكتروني</SelectItem><SelectItem value="SMS">رقم الهاتف</SelectItem></SelectContent></Select></Field>
+      <Field label={form.channel==='EMAIL'?'البريد الإلكتروني':'رقم الهاتف'}><Input type={form.channel==='EMAIL'?'email':'tel'} dir="ltr" value={form.target} onChange={e=>set('target',e.target.value)} required className="h-12" autoComplete={form.channel==='EMAIL'?'email':'tel'}/></Field>
+      <div className="grid gap-4 sm:grid-cols-2"><Field label="الدولة"><Select value={form.country} onValueChange={v=>set('country',v)}><SelectTrigger className="h-12"><SelectValue/></SelectTrigger><SelectContent>{COUNTRIES.map(c=><SelectItem key={c.code} value={c.code}>{c.flag} {c.name}</SelectItem>)}</SelectContent></Select></Field><Field label="المدينة"><Input value={form.city} onChange={e=>set('city',e.target.value)} className="h-12"/></Field></div>
+      <Field label="كلمة المرور"><Password value={form.password} onChange={v=>set('password',v)} show={show} toggle={()=>setShow(!show)} autoComplete="new-password"/></Field>
+      <Field label="تأكيد كلمة المرور"><Input type={show?'text':'password'} value={form.confirm} onChange={e=>set('confirm',e.target.value)} minLength={10} maxLength={128} required className="h-12" autoComplete="new-password"/></Field>
+      <p className="text-xs text-muted-foreground">استخدم 10 أحرف على الأقل، ويفضل مزج الحروف والأرقام والرموز.</p>
+      <label className="flex gap-2 text-xs text-muted-foreground"><input type="checkbox" required/><span>أوافق على <Link href="/terms" className="text-primary">الشروط</Link> و<Link href="/privacy-policy" className="text-primary">سياسة الخصوصية</Link></span></label>
+      {error&&<p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
+      <Button disabled={loading} className="h-12 w-full text-base">{loading?<Loader2 className="animate-spin"/>:<ArrowLeft/>}إنشاء الحساب</Button>
+    </form>
+    <p className="mt-7 text-center text-sm text-muted-foreground">لديك حساب؟ <Link href="/auth/login" className="font-bold text-primary">تسجيل الدخول</Link></p>
+  </AuthShell>
 }
-
-/* TODO(phase-2): After PARENT registration, redirect to a wizard that adds the first student profile.
- * TODO(phase-2): Add "referral code" field for growth campaigns. */
+function Field({label,children}:{label:string,children:React.ReactNode}){return <div className="space-y-2"><Label>{label}</Label>{children}</div>}
+function Password({value,onChange,show,toggle,autoComplete}:{value:string,onChange:(v:string)=>void,show:boolean,toggle:()=>void,autoComplete:string}){return <div className="relative"><Input type={show?'text':'password'} value={value} onChange={e=>onChange(e.target.value)} minLength={10} maxLength={128} required className="h-12 pl-12" autoComplete={autoComplete}/><button type="button" onClick={toggle} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">{show?<EyeOff className="size-5"/>:<Eye className="size-5"/>}</button></div>}
