@@ -3,6 +3,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import {
   createSessionToken,
+  getOtpSecret,
   isValidEmail,
   isValidPhone,
   normalizePhone,
@@ -143,7 +144,7 @@ function verifyVerificationToken(token: string): {
   if (parts.length !== 2) return null
   const [body, sig] = parts
   const expected = crypto
-    .createHmac('sha256', process.env.OTP_SECRET || 'dev-otp-secret')
+    .createHmac('sha256', getOtpSecret())
     .update(body)
     .digest('base64url')
   if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {

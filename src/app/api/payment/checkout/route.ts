@@ -297,10 +297,13 @@ export async function GET(req: NextRequest) {
   }
   const transaction = await db.transaction.findUnique({
     where: { id: tx },
-    select: { id: true, status: true, checkoutUrl: true, amountEGP: true, amountUSD: true, currency: true },
+    select: { id: true, userId: true, status: true, checkoutUrl: true, amountEGP: true, amountUSD: true, currency: true },
   })
   if (!transaction) {
     return NextResponse.json({ error: 'غير موجود' }, { status: 404 })
+  }
+  if (transaction.userId !== session.userId && session.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   }
   return NextResponse.json({ transaction })
 }

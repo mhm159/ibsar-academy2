@@ -3,6 +3,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import {
   createSessionToken,
+  getOtpSecret,
   isValidEmail,
   isValidPhone,
   normalizePhone,
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
 
   const body = parsed.data
   const normalized =
-    body.channel === 'SMS' ? normalizePhone(body.target) : body.target.trim().toLowerCase()
+    body.channel === 'SMS' || body.channel === 'WHATSAPP' ? normalizePhone(body.target) : body.target.trim().toLowerCase()
 
   // Verify the verification token
   const verified = verifyVerificationToken(body.verificationToken)
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
 
   // Ensure no duplicate
   const existing =
-    body.channel === 'SMS'
+    body.channel === 'SMS' || body.channel === 'WHATSAPP'
       ? await db.user.findFirst({ where: { phone: normalized } })
       : await db.user.findFirst({ where: { email: normalized } })
   if (existing) {
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
     const newUser = await tx.user.create({
       data: {
         email: body.channel === 'EMAIL' ? normalized : null,
-        phone: body.channel === 'SMS' ? normalized : null,
+        phone: body.channel === 'SMS' || body.channel === 'WHATSAPP' ? normalized : null,
         role: body.role,
         name: body.name,
         nameAr: body.nameAr,
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
         city: body.city,
         preferredLang: 'ar',
         emailVerified: body.channel === 'EMAIL' ? new Date() : null,
-        phoneVerified: body.channel === 'SMS' ? new Date() : null,
+        phoneVerified: body.channel === 'SMS' || body.channel === 'WHATSAPP' ? new Date() : null,
       },
     })
 
@@ -154,7 +155,7 @@ function verifyVerificationToken(token: string): {
   if (parts.length !== 2) return null
   const [body, sig] = parts
   const expected = crypto
-    .createHmac('sha256', process.env.OTP_SECRET || 'dev-otp-secret')
+    .createHmac('sha256', getOtpSecret())
     .update(body)
     .digest('base64url')
   if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {

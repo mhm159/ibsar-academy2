@@ -1,7 +1,6 @@
 import { SiteHeader } from '@/features/landing/site-header'
 import { SiteFooter } from '@/features/landing/site-footer'
-import { HeroSlider } from '@/features/landing/hero-slider'
-import { HeroSection } from '@/features/landing/hero-section'
+import { KiderHero } from '@/features/landing/kider-hero'
 import { TracksSection } from '@/features/landing/tracks-section'
 import { FeaturesSection } from '@/features/landing/features-section'
 import { HowItWorksSection } from '@/features/landing/how-it-works-section'
@@ -23,8 +22,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
       <main className="flex-1">
-        <HeroSlider />
-        <HeroSection />
+        <KiderHero />
         <TracksSection />
         <FeaturesSection />
         <HowItWorksSection />

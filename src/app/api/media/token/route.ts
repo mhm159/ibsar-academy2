@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 422 })
   }
 
-  if (!(await canAccessMedia(session.role, session.userId))) {
+  if (!(await canAccessMedia(session.role, session.userId, file))) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   }
 

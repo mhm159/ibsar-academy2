@@ -25,10 +25,18 @@ export function generateOtpCode(): string {
   return n.toString().padStart(6, '0')
 }
 
+export function getOtpSecret(): string {
+  const secret = process.env.OTP_SECRET
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('OTP_SECRET must be set in production')
+  }
+  return secret || 'dev-otp-secret'
+}
+
 /** Hash an OTP code before storing (so a DB leak doesn't expose codes) */
 export function hashOtp(code: string): string {
   return crypto
-    .createHmac('sha256', process.env.OTP_SECRET || 'dev-otp-secret')
+    .createHmac('sha256', getOtpSecret())
     .update(code)
     .digest('hex')
 }

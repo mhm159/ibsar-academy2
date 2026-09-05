@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { createEscrowForTransaction } from '@/lib/payment/escrow'
+import { getSession } from '@/lib/auth'
 import { z } from 'zod'
 
 const Body = z.object({
@@ -16,6 +17,13 @@ const Body = z.object({
  * When success=false: marks transaction FAILED.
  */
 export async function POST(req: NextRequest) {
+  const session = await getSession()
+  if (!session || session.role !== 'PARENT') {
+    return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
+  }
+  if (process.env.NODE_ENV === 'production' || process.env.PAYMENT_SANDBOX_ENABLED !== 'true') {
+    return NextResponse.json({ error: 'Sandbox غير مفعّل' }, { status: 403 })
+  }
   // Only allow in sandbox mode (no real provider keys)
   const paymobConfigured = !!process.env.PAYMOB_API_KEY
   const stripeConfigured = !!process.env.STRIPE_SECRET_KEY
@@ -67,6 +75,9 @@ export async function POST(req: NextRequest) {
 
   if (!transaction) {
     return NextResponse.json({ error: 'المعاملة غير موجودة' }, { status: 404 })
+  }
+  if (transaction.userId !== session.userId) {
+    return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   }
 
   if (transaction.status === 'PAID') {

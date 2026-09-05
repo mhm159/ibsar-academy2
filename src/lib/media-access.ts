@@ -8,9 +8,9 @@ import { db } from '@/lib/db'
  *   booking (i.e. they are an active paying customer).
  * - Everyone else: denied.
  */
-export async function canAccessMedia(role: string, userId: string): Promise<boolean> {
+export async function canAccessMedia(role: string, userId: string, fileName?: string): Promise<boolean> {
   if (role === 'ADMIN' || role === 'SUPERVISOR' || role === 'TEACHER') return true
-  if (role !== 'PARENT') return false
+  if (role !== 'PARENT' || !fileName) return false
 
   const parent = await db.parent.findUnique({
     where: { userId },
@@ -22,6 +22,12 @@ export async function canAccessMedia(role: string, userId: string): Promise<bool
     where: {
       studentId: { in: parent.students.map((s) => s.id) },
       status: 'CONFIRMED',
+      session: {
+        OR: [
+          { media: { some: { url: { endsWith: fileName }, isPublished: true } } },
+          { course: { lessons: { some: { contentUrl: { endsWith: fileName }, isPublished: true } } } },
+        ],
+      },
     },
     select: { id: true },
   })

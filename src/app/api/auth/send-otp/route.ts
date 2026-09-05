@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   const { target, channel, purpose } = parsed.data
 
   // Validate target format
-  if (channel === 'SMS') {
+  if (channel === 'SMS' || channel === 'WHATSAPP') {
     if (!isValidPhone(target)) {
       return NextResponse.json(
         { error: 'رقم الهاتف غير صحيح. مثال: 01012345678 أو +201012345678' },
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const normalized = channel === 'SMS' ? normalizePhone(target) : target.trim().toLowerCase()
+  const normalized = channel === 'SMS' || channel === 'WHATSAPP' ? normalizePhone(target) : target.trim().toLowerCase()
 
   // Rate-limit: max 3 OTPs per target per 5 minutes
   const recent = await db.otpCode.count({
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   // For LOGIN/RESET, ensure an account exists for this target
   if (purpose === 'LOGIN' || purpose === 'RESET') {
     const user =
-      channel === 'SMS'
+      channel === 'SMS' || channel === 'WHATSAPP'
         ? await db.user.findFirst({ where: { phone: normalized } })
         : await db.user.findFirst({ where: { email: normalized } })
     if (!user) {
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
   // REGISTER: ensure target isn't already taken
   const existing =
-    channel === 'SMS'
+    channel === 'SMS' || channel === 'WHATSAPP'
       ? await db.user.findFirst({ where: { phone: normalized } })
       : await db.user.findFirst({ where: { email: normalized } })
   if (existing) {

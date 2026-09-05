@@ -23,6 +23,19 @@ export async function POST(req: NextRequest) {
   if (!allowedTypes.includes(type)) {
     return NextResponse.json({ error: 'نوع ملف غير صالح' }, { status: 422 })
   }
+  if (['banner', 'track'].includes(type) && session.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'غير مصرح بهذا النوع من الرفع' }, { status: 403 })
+  }
+
+  const allowedMimeByType: Record<string, Set<string>> = {
+    avatar: new Set(['image/jpeg', 'image/png', 'image/webp']),
+    banner: new Set(['image/jpeg', 'image/png', 'image/webp']),
+    track: new Set(['image/jpeg', 'image/png', 'image/webp']),
+    diploma: new Set(['application/pdf', 'image/jpeg', 'image/png']),
+    video: new Set(['video/mp4', 'video/webm']),
+    material: new Set(['application/pdf', 'image/jpeg', 'image/png', 'video/mp4', 'video/webm']),
+    'session-media': new Set(['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm']),
+  }
 
   const matches = file.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/)
   if (!matches) {
@@ -30,6 +43,9 @@ export async function POST(req: NextRequest) {
   }
 
   const mimeType = matches[1]
+  if (!allowedMimeByType[type]?.has(mimeType)) {
+    return NextResponse.json({ error: 'نوع الملف غير مسموح' }, { status: 422 })
+  }
   const base64Data = matches[2]
   const buffer = Buffer.from(base64Data, 'base64')
 
@@ -51,7 +67,10 @@ export async function POST(req: NextRequest) {
 
   // الرابط لملف PHP في استضافتك
   const hostingerUploadUrl = process.env.HOSTINGER_UPLOAD_URL || "https://yourdomain.com/upload.php"
-  const mediaSecret = process.env.MEDIA_SECRET || "dev-media-secret-change-me"
+  const mediaSecret = process.env.MEDIA_SECRET
+  if (!mediaSecret || !process.env.HOSTINGER_UPLOAD_URL) {
+    return NextResponse.json({ error: 'خدمة رفع الملفات غير مهيأة بأمان' }, { status: 503 })
+  }
 
   try {
     const uploadRes = await fetch(hostingerUploadUrl, {

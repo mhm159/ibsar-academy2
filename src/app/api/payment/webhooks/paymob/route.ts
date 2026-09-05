@@ -19,14 +19,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid json' }, { status: 400 })
   }
 
-  // Verify HMAC signature if configured
-  const hmacHeader = req.headers.get('x-paymob-hmac') ?? undefined
+  // Fail closed: production payment callbacks are never trusted without both
+  // the configured secret and the provider signature.
+  const hmacHeader = req.headers.get('x-paymob-hmac') ?? req.nextUrl.searchParams.get('hmac') ?? undefined
   const hmacSecret = process.env.PAYMOB_HMAC_SECRET
-  if (hmacSecret && hmacHeader) {
-    if (!verifyPayMobHmac(body, hmacHeader)) {
-      console.error('[paymob-webhook] HMAC verification failed')
-      return NextResponse.json({ error: 'invalid signature' }, { status: 401 })
-    }
+  if (!hmacSecret || !hmacHeader || !verifyPayMobHmac(body, hmacHeader)) {
+    console.error('[paymob-webhook] Missing or invalid HMAC signature')
+    return NextResponse.json({ error: 'invalid signature' }, { status: 401 })
   }
 
   const event = parsePayMobWebhook(body)
@@ -45,6 +44,14 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'PAID') {
     if (transaction.status !== 'PAID') {
+      if (event.currency !== transaction.currency || event.amountCents !== transaction.amountEGP) {
+        console.error('[paymob-webhook] Amount or currency mismatch', {
+          transactionId: transaction.id,
+          expectedAmount: transaction.amountEGP,
+          receivedAmount: event.amountCents,
+        })
+        return NextResponse.json({ error: 'payment mismatch' }, { status: 422 })
+      }
       await db.transaction.update({
         where: { id: transaction.id },
         data: { status: 'PAID', providerRef: event.paymobTransactionId },

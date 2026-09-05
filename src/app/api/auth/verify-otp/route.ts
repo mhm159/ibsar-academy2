@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { consumeOtp, isValidEmail, isValidPhone, normalizePhone } from '@/lib/auth'
+import { consumeOtp, getOtpSecret, isValidEmail, isValidPhone, normalizePhone } from '@/lib/auth'
 import { z } from 'zod'
 
 const Body = z.object({
@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
 
   const { target, code, channel, purpose } = parsed.data
   const normalized =
-    channel === 'SMS' ? normalizePhone(target) : target.trim().toLowerCase()
+    channel === 'SMS' || channel === 'WHATSAPP' ? normalizePhone(target) : target.trim().toLowerCase()
 
   // sanity-check format before consuming
-  if (channel === 'SMS' && !isValidPhone(target)) {
+  if ((channel === 'SMS' || channel === 'WHATSAPP') && !isValidPhone(target)) {
     return NextResponse.json({ error: 'رقم الهاتف غير صحيح' }, { status: 422 })
   }
   if (channel === 'EMAIL' && !isValidEmail(target)) {
@@ -78,7 +78,7 @@ function signVerificationToken(payload: {
   userId?: string
 }): string {
   // Reuse the OTP secret; in production set a dedicated VERIFICATION_SECRET.
-  const secret = process.env.OTP_SECRET || 'dev-otp-secret'
+  const secret = getOtpSecret()
   const body = Buffer.from(
     JSON.stringify({
       ...payload,

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     return new Response('الرابط منتهي أو غير صالح', { status: 401 })
   }
 
-  if (!(await canAccessMedia(session.role, session.userId))) {
+  if (!(await canAccessMedia(session.role, session.userId, p))) {
     return new Response('غير مصرح', { status: 403 })
   }
 
