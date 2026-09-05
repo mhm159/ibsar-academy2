@@ -9,10 +9,12 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function TeachersSection() {
   const tracks = useTracks()
   const { teachers } = useHomeData()
+  const { settings } = useSiteSettings()
   return (
     <section id="teachers" className="py-20 lg:py-28 bg-pharaonic relative overflow-hidden">
       <div className="absolute inset-0 bg-hieroglyphs opacity-40 pointer-events-none" aria-hidden />
@@ -20,9 +22,9 @@ export function TeachersSection() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
           <SectionHeading
             align="start"
-            eyebrow="نخبة المعلمين"
-            title="معلمون يُحبّون ما يفعلون"
-            description="نخبة مختارة من المعلمين المعتمدين في كل تخصص، بخبرة طويلة في تعليم الأطفال."
+            eyebrow={settings['teachers.eyebrow']}
+            title={settings['teachers.title']}
+            description={settings['teachers.description']}
           />
           <Link href="/auth/register/teacher" className="shrink-0">
             <Button variant="outline" className="rounded-full border-border bg-card hover:border-primary/40 gap-1.5">

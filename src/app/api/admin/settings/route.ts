@@ -39,7 +39,7 @@ export async function GET() {
 
   return NextResponse.json({
     settings,
-    groups: ['HERO', 'CTA', 'FOOTER', 'GENERAL'],
+    groups: ['HERO', 'JOURNEY', 'SECTIONS', 'CTA', 'FOOTER', 'PAYMENT', 'GENERAL'],
     definitions: SITE_SETTING_DEFS,
   })
 }

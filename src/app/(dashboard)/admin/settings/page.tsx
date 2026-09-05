@@ -13,6 +13,8 @@ import { SITE_SETTING_DEFS, DEFAULT_SITE_SETTINGS, type SiteSettingDef } from '@
 
 const GROUP_LABELS: Record<string, string> = {
   HERO: 'الواجهة الرئيسية (الهيرو)',
+  JOURNEY: 'رحلة الطالب والكروت',
+  SECTIONS: 'عناوين أقسام الصفحة الرئيسية',
   CTA: 'شريط الدعوة للانضمام',
   FOOTER: 'التذييل (الفوتر)',
   GENERAL: 'عام',
@@ -73,7 +75,7 @@ function SettingsEditor() {
       setDirty(false)
       // refresh public cache
       try {
-        localStorage.removeItem('dars:site-settings')
+        localStorage.removeItem('dars:site-settings:v2')
       } catch { /* ignore */ }
       return true
     } catch {
@@ -103,7 +105,7 @@ function SettingsEditor() {
     )
   }
 
-  const groups = ['HERO', 'CTA', 'FOOTER', 'PAYMENT', 'GENERAL'] as const
+  const groups = ['HERO', 'JOURNEY', 'SECTIONS', 'CTA', 'FOOTER', 'PAYMENT', 'GENERAL'] as const
 
   return (
     <>

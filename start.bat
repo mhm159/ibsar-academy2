@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 
 rem Dars Academy local launcher - ASCII only for maximum CMD compatibility.
 cd /d "%~dp0"
@@ -32,14 +32,19 @@ if not exist "package.json" (
     goto :failed
 )
 
-netstat -ano 2>nul | findstr /R /C:":3001 .*LISTENING" >nul
+set "APP_PORT=3001"
+:find_port
+netstat -ano 2>nul | findstr /R /C:":!APP_PORT! .*LISTENING" >nul
 if not errorlevel 1 (
-    echo.
-    echo [ERROR] Port 3001 is already in use.
-    echo Close the previous server window, then run start.bat again.
-    echo To inspect it, run: netstat -ano ^| findstr :3001
-    goto :failed
+    echo [NOTICE] Port !APP_PORT! is already in use.
+    set /a APP_PORT+=1
+    if !APP_PORT! GTR 3010 (
+        echo [ERROR] No free port was found between 3001 and 3010.
+        goto :failed
+    )
+    goto :find_port
 )
+echo [OK] Port !APP_PORT! is available.
 
 if not exist ".env" (
     if not exist ".env.example" (
@@ -77,12 +82,17 @@ if not exist "node_modules\.prisma\client\default.js" (
 
 echo.
 echo ============================================================
-echo [READY] Starting the website at http://127.0.0.1:3001
+echo [READY] Starting the website at http://127.0.0.1:!APP_PORT!
 echo [STOP]  Press Ctrl+C to stop the server.
 echo ============================================================
 echo.
 
-call npm.cmd run dev
+set "NEXT_DIST_DIR=.next-dev-!APP_PORT!"
+
+rem Open the browser after Next.js has had a few seconds to start.
+start "" /b powershell.exe -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 5; Start-Process 'http://127.0.0.1:!APP_PORT!/'"
+
+call node_modules\.bin\next.cmd dev -p !APP_PORT! --webpack
 set "APP_EXIT=%ERRORLEVEL%"
 
 if not "%APP_EXIT%"=="0" (

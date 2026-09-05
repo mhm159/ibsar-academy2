@@ -4,46 +4,48 @@ import { motion } from 'framer-motion'
 import { UserPlus, MessageSquare, CalendarCheck, Rocket } from 'lucide-react'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const STEPS = [
   {
     icon: UserPlus,
     step: '01',
-    title: 'سجّل طفلك',
-    description: 'أنشئ حساب ولي أمر، أضف بيانات طفلك واختر المادة المناسبة لعمره ومستواه.',
+    title: 'أخبرنا بما تحتاجه',
+    description: 'أنشئ حساباً وحدد الصف والمادة والمنهج والهدف والوقت والميزانية المناسبة.',
     color: 'var(--azure)',
   },
   {
     icon: MessageSquare,
     step: '02',
-    title: 'تقييم أولي مجاني',
-    description: 'جلسة تعارف وتقييم (15 دقيقة) لتحديد مستوى الطفل واختيار المعلم الأنسب.',
+    title: 'اكتشف المعلمين',
+    description: 'قارن الخبرة والتخصص والتقييمات والأسعار، واختر من تشعر أنه يفهم طالبك.',
     color: 'var(--gold)',
   },
   {
     icon: CalendarCheck,
     step: '03',
-    title: 'احجز جدولك',
-    description: 'اختر باقة، حدّد المواعيد الأسبوعية، وادفع بأمان عبر PayMob أو Stripe.',
+    title: 'جرّب واحجز بأمان',
+    description: 'ابدأ بحصة تجريبية، ثم ثبت الموعد والخطة وادفع بالطريقة المناسبة لبلدك.',
     color: 'var(--emerald-egypt)',
   },
   {
     icon: Rocket,
     step: '04',
-    title: 'ابدأ التعلّم',
-    description: 'ادخل الغرفة الافتراضية، تابع التقدّم، واحصل على شهادة معتمدة في نهاية كل مستوى.',
+    title: 'تابع وتطور',
+    description: 'يحضر الطالب حصصه ويتابع ولي الأمر التقارير، بينما يبني المعلم سمعته ودخله.',
     color: 'var(--kids-red)',
   },
 ]
 
 export function HowItWorksSection() {
+  const { settings } = useSiteSettings()
   return (
     <section id="how" className="py-20 lg:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="كيف نعمل"
-          title="أربع خطوات بسيطة نحو مستقبل طفلك"
-          description="من التسجيل حتى أول حصة مباشرة — رحلة سهلة ومدروسة."
+          eyebrow={settings['how.eyebrow']}
+          title={settings['how.title']}
+          description={settings['how.description']}
         />
 
         <div className="mt-14 relative">

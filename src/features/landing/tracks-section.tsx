@@ -6,18 +6,20 @@ import { useTracks } from '@/lib/tracks-store'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const ICONS = { Code2, Bot, Calculator }
 
 export function TracksSection() {
   const tracks = useTracks()
+  const { settings } = useSiteSettings()
   return (
     <section id="tracks" className="py-20 lg:py-28 relative">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="موادنا التعليمية"
-          title="مسارات تصنع مستقبل طفلك"
-          description="نُعلّم مهارات القرن الواحد والعشرين بأسلوب عربي ممتع ومناسب لكل فئة عمرية، مع متابعة فردية وتقييم مستمر."
+          eyebrow={settings['tracks.eyebrow']}
+          title={settings['tracks.title']}
+          description={settings['tracks.description']}
         />
 
         <Stagger className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">

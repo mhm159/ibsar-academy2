@@ -12,55 +12,57 @@ import {
 import { Card } from '@/components/ui/card'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const FEATURES = [
   {
     icon: Video,
-    title: 'غرفة افتراضية متكاملة',
-    description: 'فيديو + صوت + سبورة تفاعلية + تسجيل تلقائي لكل حصة لمراجعتها لاحقاً.',
+    title: 'معلم مناسب لا مجرد نتيجة بحث',
+    description: 'صفحات مهنية واضحة وتصنيف حسب المادة والصف والمنهج والخبرة والتقييم لمقارنة أفضل.',
     color: 'var(--azure)',
   },
   {
     icon: ShieldCheck,
-    title: 'بيئة آمنة للطفل',
-    description: 'فلتر للحظر التلقائي للروابط الخارجية، ومراقبة من ولي الأمر لكل جلسة.',
+    title: 'حجز ودفع يحفظ الحقوق',
+    description: 'مواعيد منظمة ومدفوعات موثقة وسياسات واضحة تحمي الطالب والمعلم طوال الرحلة.',
     color: 'var(--emerald-egypt)',
   },
   {
     icon: GraduationCap,
-    title: 'معلمون مختصون',
-    description: 'نخبة من المعلمين المعتمدين في كل مادة، بخبرة تزيد عن 5 سنوات مع الأطفال.',
+    title: 'جميع المراحل والمواد',
+    description: 'من التأسيس إلى الثانوية، ومن المواد المدرسية واللغات إلى المهارات والاختبارات.',
     color: 'var(--gold)',
   },
   {
     icon: Wallet,
-    title: 'دفع مرن وآمن',
-    description: 'PayMob في مصر (بطاقات + فوري + محافظ) و Stripe للخليج. ضمان استرجاع كامل.',
+    title: 'سعر مناسب لبلدك',
+    description: 'خطط مرنة وعملة محلية وخيارات دفع متعددة، مع عرض التكلفة بوضوح قبل الحجز.',
     color: 'var(--kids-red)',
   },
   {
     icon: Languages,
-    title: 'عربي أولاً',
-    description: 'منصة عربية بالكامل، بمنهج عربي يناسب طبيعة الطفل المصري والعربي.',
+    title: 'وطن عربي بلا حدود',
+    description: 'تعلّم مع معلم من أي دولة عربية، واختر المنهج واللهجة والموعد الأنسب لك.',
     color: 'var(--kids-teal)',
   },
   {
     icon: HeartHandshake,
-    title: 'متابعة فردية',
-    description: 'تقييم أسبوعي، تقرير شهري، وخطة تعلّم مخصّصة لكل طفل حسب مستواه.',
+    title: 'متابعة تطمئن ولي الأمر',
+    description: 'الحضور والواجبات والتقييم والتقارير والحجوزات في لوحة واحدة سهلة وواضحة.',
     color: 'var(--kids-yellow)',
   },
 ]
 
 export function FeaturesSection() {
+  const { settings } = useSiteSettings()
   return (
     <section id="features" className="py-20 lg:py-28 bg-pharaonic relative overflow-hidden">
       <div className="absolute inset-0 bg-hieroglyphs opacity-50 pointer-events-none" aria-hidden />
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="لماذا إبداع؟"
-          title="كل ما يحتاجه طفلك في مكان واحد"
-          description="بُنيت المنصة بمعايير عالمية وتصميم عربي يُلامس احتياجات أولياء الأمور في مصر والعالم العربي."
+          eyebrow={settings['features.eyebrow']}
+          title={settings['features.title']}
+          description={settings['features.description']}
         />
 
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

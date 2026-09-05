@@ -4,16 +4,18 @@ import { Quote, Star } from 'lucide-react'
 import { useHomeData } from '@/hooks/use-home-data'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function TestimonialsSection() {
   const { testimonials } = useHomeData()
+  const { settings } = useSiteSettings()
   return (
     <section id="testimonials" className="py-20 lg:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="قصص نجاح"
-          title="ماذا يقول أولياء الأمور؟"
-          description="آلاف العائلات وثقت بمنصة درس لتعلّم أبنائها. هذه بعض قصصهم."
+          eyebrow={settings['testimonials.eyebrow']}
+          title={settings['testimonials.title']}
+          description={settings['testimonials.description']}
         />
 
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

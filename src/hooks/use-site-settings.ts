@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { DEFAULT_SITE_SETTINGS } from '@/lib/site-settings'
 
-const CACHE_KEY = 'dars:site-settings'
+const CACHE_KEY = 'dars:site-settings:v2'
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 interface SiteSettingsState {

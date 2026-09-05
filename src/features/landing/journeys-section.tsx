@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Award, CalendarCheck, ChartNoAxesCombined, PlayCircle, ShieldCheck } from 'lucide-react'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const JOURNEYS = [
   { image: '/kider/classes-1.jpg', icon: PlayCircle, title: 'يكتشف ويجرّب', text: 'حصة تجريبية تساعدنا على فهم المستوى والميول قبل اختيار المسار.', label: 'البداية الذكية', color: '#FE5D37' },
@@ -14,13 +15,19 @@ const JOURNEYS = [
 ]
 
 export function JourneysSection() {
+  const { settings } = useSiteSettings()
+  const journeys = JOURNEYS.map((item, index) => ({
+    ...item,
+    title: settings[`journey.${index + 1}.title`] || item.title,
+    text: settings[`journey.${index + 1}.text`] || item.text,
+  }))
   return (
     <section id="journeys" className="relative overflow-hidden py-20 lg:py-28">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(254,93,55,.08),transparent_26rem)]" />
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading eyebrow="رحلة متكاملة لطفلك" title="من أول فضول… إلى إنجاز يستحق الاحتفال" description="وظّفنا تجربة المنصة حول الطفل وولي الأمر؛ كل مرحلة واضحة، وكل خطوة لها هدف يمكن متابعته." />
+        <SectionHeading eyebrow={settings['journey.eyebrow']} title={settings['journey.title']} description={settings['journey.description']} />
         <Stagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {JOURNEYS.map((item, index) => (
+          {journeys.map((item, index) => (
             <StaggerItem key={item.title} className="h-full">
               <article className="kider-class-card group h-full overflow-hidden rounded-[2rem] bg-card shadow-[0_18px_50px_-32px_rgba(16,55,65,.55)]" style={{ '--journey': item.color } as CSSProperties}>
                 <div className="relative mx-auto mt-5 size-44 overflow-hidden rounded-full border-[7px] border-white shadow-lg sm:size-48">
@@ -37,7 +44,7 @@ export function JourneysSection() {
             </StaggerItem>
           ))}
         </Stagger>
-        <div className="mt-10 text-center"><Link href="/auth/register/student" className="inline-flex items-center gap-2 rounded-full bg-[#103741] px-6 py-3 font-bold text-white transition hover:-translate-y-1 hover:bg-primary">أنشئ رحلة طفلك <ArrowLeft className="size-4" /></Link></div>
+        <div className="mt-10 text-center"><Link href="/auth/register/student" className="inline-flex items-center gap-2 rounded-full bg-[#103741] px-6 py-3 font-bold text-white transition hover:-translate-y-1 hover:bg-primary">{settings['journey.button']} <ArrowLeft className="size-4" /></Link></div>
       </div>
     </section>
   )
