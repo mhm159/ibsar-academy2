@@ -19,7 +19,7 @@ export function TestimonialsSection() {
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {testimonials.slice(0, 8).map((tm, i) => (
             <StaggerItem key={tm.id ?? `${tm.name}-${i}`} className="h-full">
-              <figure className="group relative p-6 rounded-3xl border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(79,70,229,0.45)] flex flex-col h-full">
+              <figure className="kider-testimonial-card group relative p-6 rounded-[2rem] border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(16,55,65,.45)] flex flex-col h-full">
                 <Quote className="absolute top-4 left-4 h-8 w-8 text-primary/15 group-hover:text-primary/30 transition-colors" aria-hidden />
 
                 {/* Rating */}
@@ -37,9 +37,7 @@ export function TestimonialsSection() {
                 </blockquote>
 
                 <figcaption className="mt-4 pt-4 border-t border-border/60 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center text-xl shrink-0">
-                    {tm.avatar}
-                  </div>
+                  <img src={`/kider/testimonial-${(i % 3) + 1}.jpg`} alt={tm.name} className="size-12 shrink-0 rounded-full border-2 border-primary/20 object-cover" loading="lazy" />
                   <div className="flex flex-col leading-tight">
                     <span className="text-sm font-bold">{tm.name}</span>
                     <span className="text-xs text-muted-foreground">{tm.location}</span>

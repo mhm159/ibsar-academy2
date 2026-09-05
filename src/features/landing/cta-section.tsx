@@ -32,7 +32,8 @@ export function CtaSection() {
           className="relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-40px_rgba(79,70,229,0.55)]"
         >
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#4338CA] to-[#7C3AED]" aria-hidden />
+          <img src="/kider/call-to-action.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-l from-[#103741]/95 via-[#103741]/85 to-primary/65" aria-hidden />
           <div className="absolute inset-0 bg-hieroglyphs opacity-20" aria-hidden />
           <div
             className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl animate-float-soft"

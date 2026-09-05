@@ -33,11 +33,11 @@ export function TeachersSection() {
         </div>
 
         <Stagger className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {teachers.map((teacher) => {
+          {teachers.map((teacher, teacherIndex) => {
             const teacherTracks = tracks.filter((t) => (teacher.tracks as readonly string[]).includes(t.id))
             return (
               <StaggerItem key={teacher.id} className="h-full">
-                <Card className="group h-full p-6 border border-border bg-card rounded-3xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(79,70,229,0.45)] text-center">
+                <Card className="kider-teacher-card group h-full overflow-hidden border-0 bg-card p-0 rounded-[2rem] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_55px_-25px_rgba(16,55,65,.55)] text-center">
                   {/* Avatar */}
                   <motion.div
                     className="relative mx-auto mb-4 w-24 h-24"
@@ -45,10 +45,8 @@ export function TeachersSection() {
                     whileTap={{ scale: 0.96 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 16 }}
                   >
-                    <div className="absolute inset-0 rounded-full bg-secondary-container/60 blur-md group-hover:blur-lg transition-all" aria-hidden />
-                    <div className="relative w-24 h-24 rounded-full bg-secondary-container/60 border border-secondary-container flex items-center justify-center text-5xl">
-                      {teacher.avatar}
-                    </div>
+                    <div className="absolute -inset-2 rounded-full bg-primary/15 blur-md group-hover:blur-lg transition-all" aria-hidden />
+                    <img src={`/kider/team-${(teacherIndex % 3) + 1}.jpg`} alt={teacher.name} className="relative size-24 rounded-full border-[5px] border-white object-cover shadow-lg" loading="lazy" />
                     {/* Featured badge */}
                     {teacher.rating >= 4.9 && (
                       <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[0.6rem] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
@@ -57,7 +55,7 @@ export function TeachersSection() {
                     )}
                   </motion.div>
 
-                  <h3 className="font-display text-lg font-bold mb-0.5">{teacher.name}</h3>
+                  <div className="px-6 pb-6"><h3 className="font-display text-lg font-bold mb-0.5">{teacher.name}</h3>
                   <p className="text-xs text-muted-foreground mb-3 min-h-[2.5rem]">
                     {teacher.title}
                   </p>
@@ -101,6 +99,7 @@ export function TeachersSection() {
                         {track.name}
                       </span>
                     ))}
+                  </div>
                   </div>
                 </Card>
               </StaggerItem>

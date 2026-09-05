@@ -2,6 +2,7 @@ import { SiteHeader } from '@/features/landing/site-header'
 import { SiteFooter } from '@/features/landing/site-footer'
 import { KiderHero } from '@/features/landing/kider-hero'
 import { TracksSection } from '@/features/landing/tracks-section'
+import { JourneysSection } from '@/features/landing/journeys-section'
 import { FeaturesSection } from '@/features/landing/features-section'
 import { HowItWorksSection } from '@/features/landing/how-it-works-section'
 import { TeachersSection } from '@/features/landing/teachers-section'
@@ -23,6 +24,7 @@ export default function Home() {
       <SiteHeader />
       <main className="flex-1">
         <KiderHero />
+        <JourneysSection />
         <TracksSection />
         <FeaturesSection />
         <HowItWorksSection />

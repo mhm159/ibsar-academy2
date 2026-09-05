@@ -788,3 +788,30 @@ table th:last-child { border-start-end-radius: 1rem; }
 @media (max-width: 640px) {
   .kider-hero { min-height: 32rem; }
 }
+
+.kider-class-card {
+  border: 1px solid color-mix(in srgb, var(--journey) 32%, var(--border));
+  border-top: 5px solid var(--journey);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+.kider-class-card:hover { transform: translateY(-8px); }
+.kider-class-card:nth-child(even) { margin-top: 1rem; }
+.kider-teacher-card { border-bottom: 5px solid color-mix(in srgb, var(--primary) 72%, white); }
+.kider-teacher-card > div:first-child { margin-top: 1.5rem; }
+.kider-testimonial-card::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 1.75rem;
+  bottom: -12px;
+  width: 24px;
+  height: 24px;
+  background: var(--card);
+  border-inline-start: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: rotate(-45deg);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+
+@media (max-width: 1023px) {
+  .kider-class-card:nth-child(even) { margin-top: 0; }
+}

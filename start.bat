@@ -1,178 +1,103 @@
 @echo off
-chcp 65001 >nul
-title منصة درس - تشغيل المنصة
+setlocal EnableExtensions
+
+rem Dars Academy local launcher - ASCII only for maximum CMD compatibility.
+cd /d "%~dp0"
+title Dars Academy - Local Server
 color 0E
 
 echo.
-echo  ╔══════════════════════════════════════════════════════════╗
-echo  ║                                                          ║
-echo  ║          🎓 منصة درس | Dars Academy                  ║
-echo  ║          تشغيل المنصة الكاملة من ملف واحد                ║
-echo  ║                                                          ║
-echo  ╚══════════════════════════════════════════════════════════╝
+echo ============================================================
+echo                 DARS ACADEMY LOCAL SERVER
+echo ============================================================
 echo.
 
-:: التحقق من تثبيت Node.js
-where node >nul 2>&1
-if %errorlevel% neq 0 (
-    echo  ❌ Node.js غير مثبت. حمل من: https://nodejs.org
+where node.exe >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Node.js is not installed or is not available in PATH.
+    echo Download the LTS version from: https://nodejs.org/
+    goto :failed
+)
+
+where npm.cmd >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] npm.cmd is not available in PATH.
+    echo Reinstall the Node.js LTS version and try again.
+    goto :failed
+)
+
+if not exist "package.json" (
+    echo [ERROR] package.json was not found.
+    echo Run this file from the project root directory.
+    goto :failed
+)
+
+netstat -ano 2>nul | findstr /R /C:":3001 .*LISTENING" >nul
+if not errorlevel 1 (
     echo.
-    pause
-    exit /b 1
+    echo [ERROR] Port 3001 is already in use.
+    echo Close the previous server window, then run start.bat again.
+    echo To inspect it, run: netstat -ano ^| findstr :3001
+    goto :failed
 )
 
-:: التحقق من تثبيت Bun (اختياري)
-where bun >nul 2>&1
-if %errorlevel% neq 0 (
-    echo  ⚠️  Bun غير مثبت - سيتم استخدام npm
-    set USE_BUN=0
-) else (
-    echo  ✅ Bun مثبت - سيتم استخدامه للأداء الأسرع
-    set USE_BUN=1
-)
-echo.
-
-:: التحقق من وجود ملف .env
 if not exist ".env" (
-    echo  📝 إنشاء ملف .env من القالب...
-    copy .env.example .env >nul
-    echo  ✅ تم إنشاء .env - عدّل القيم قبل الإنتاج
-    echo.
-)
-
-:: الخطوة 1: تثبيت الحزم
-echo  ══════════════════════════════════════════════════════════
-echo  📦 الخطوة 1/5: تثبيت الحزم...
-echo  ══════════════════════════════════════════════════════════
-if %USE_BUN% equ 1 (
-    bun install
-) else (
-    npm install
-)
-if %errorlevel% neq 0 (
-    echo  ❌ فشل تثبيت الحزم
-    pause
-    exit /b 1
-)
-echo  ✅ تم تثبيت الحزم
-echo.
-
-:: الخطوة 2: توليد Prisma Client
-echo  ══════════════════════════════════════════════════════════
-echo  🗄️  الخطوة 2/5: توليد Prisma Client...
-echo  ══════════════════════════════════════════════════════════
-if %USE_BUN% equ 1 (
-    bun run db:generate
-) else (
-    npx prisma generate
-)
-if %errorlevel% neq 0 (
-    echo  ❌ فشل توليد Prisma
-    pause
-    exit /b 1
-)
-echo  ✅ تم توليد Prisma Client
-echo.
-
-:: الخطوة 3: دفع قاعدة البيانات
-echo  ══════════════════════════════════════════════════════════
-echo  💾 الخطوة 3/5: إنشاء قاعدة البيانات...
-echo  ══════════════════════════════════════════════════════════
-if %USE_BUN% equ 1 (
-    bun run db:push
-) else (
-    npx prisma db push
-)
-if %errorlevel% neq 0 (
-    echo  ❌ فشل إنشاء قاعدة البيانات
-    pause
-    exit /b 1
-)
-echo  ✅ تم إنشاء قاعدة البيانات
-echo.
-
-:: الخطوة 4: بذر البيانات الأولية
-echo  ══════════════════════════════════════════════════════════
-echo  🌱 الخطوة 4/5: بذر البيانات الأولية (معلمين + طلاب + حصص)...
-echo  ══════════════════════════════════════════════════════════
-if exist "prisma\db\custom.db" (
-    echo  ✅ قاعدة البيانات موجودة مسبقاً، سيتم الحفاظ على بياناتك وتخطي عملية بذر البيانات.
-    echo.
-) else (
-    echo  🌱 نقوم بزرع البيانات لأول مرة...
-    if %USE_BUN% equ 1 (
-        bun run prisma/seed.ts
-    ) else (
-        npx tsx prisma/seed.ts
+    if not exist ".env.example" (
+        echo [ERROR] Both .env and .env.example are missing.
+        goto :failed
     )
-    echo  ✅ تم بذر البيانات الأولية
-    echo.
-
-
-:: بذر بيانات الدفع والعملات
-echo  🌱 بذر بيانات الدفع والعملات...
-if not exist "prisma\db\custom.db" (
-    if %USE_BUN% equ 1 (
-        bun run prisma/seed-payments.ts 2>nul
-    ) else (
-        npx tsx prisma/seed-payments.ts 2>nul
+    echo [SETUP] Creating .env from .env.example...
+    copy /Y ".env.example" ".env" >nul
+    if errorlevel 1 (
+        echo [ERROR] Could not create .env.
+        goto :failed
     )
-    echo  ✅ تم بذر بيانات الدفع
+    echo [NOTICE] Review the values in .env before production use.
 )
-echo.
 
-:: بذر بيانات الـ Gamification
-echo  🌱 بذر النقاط والأوسمة...
-if not exist "prisma\db\custom.db" (
-    if %USE_BUN% equ 1 (
-        bun run prisma/seed-gamification.ts 2>nul
-    ) else (
-        npx tsx prisma/seed-gamification.ts 2>nul
+if not exist "node_modules\.bin\next.cmd" (
+    echo [SETUP] Installing project dependencies...
+    call npm.cmd install
+    if errorlevel 1 (
+        echo [ERROR] Dependency installation failed.
+        goto :failed
     )
-    echo  ✅ تم بذر النقاط والأوسمة
-)
-echo.
-
-:: الخطوة 5: تشغيل الخوادم
-echo  ══════════════════════════════════════════════════════════
-echo  🚀 الخطوة 5/5: تشغيل الخوادم...
-echo  ══════════════════════════════════════════════════════════
-:: 3. تشغيل خدمات الـ Microservices (تم إيقاف classroom-service لأنه تم استبداله بـ Ably)
-echo  [+] ...
-
-echo  ⏳ انتظار 3 ثوانٍ...
-timeout /t 3 /nobreak >nul
-
-echo  🌐 تشغيل المنصة الرئيسية (Port 3000)...
-echo.
-echo  ╔══════════════════════════════════════════════════════════╗
-echo  ║                                                          ║
-echo  ║  ✅ المنصة جاهزة!                                        ║
-echo  ║                                                          ║
-echo  ║  🌐 افتح المتصفح على:  http://localhost:3000             ║
-echo  ║                                                          ║
-echo  ║  📋 حسابات تجريبية:                                     ║
-echo  ║                                                          ║
-echo  ║  👑 إدارة:      01000000001                              ║
-echo  ║  👩‍🏫 معلم:       01000000010                              ║
-echo  ║  👨‍👩‍👧 ولي أمر:   01012345678                              ║
-echo  ║                                                          ║
-echo  ║  💡 رمز OTP سيظهر في صندوق أصفر بالواجهة                 ║
-echo  ║                                                          ║
-echo  ║  🛑 لإيقاف المنصة: اضغط Ctrl+C                          ║
-echo  ║                                                          ║
-echo  ╚══════════════════════════════════════════════════════════╝
-echo.
-
-if %USE_BUN% equ 1 (
-    bun run dev
 ) else (
-    npm run dev
+    echo [OK] Project dependencies are available.
 )
 
-:: عند الإيقاف
+if not exist "node_modules\.prisma\client\default.js" (
+    echo [SETUP] Generating Prisma Client for the first run...
+    call node_modules\.bin\prisma.cmd generate
+    if errorlevel 1 (
+        echo [ERROR] Prisma Client generation failed.
+        goto :failed
+    )
+)
+
 echo.
-echo  🛑 تم إيقاف المنصة
-echo  💡 لإيقاف خدمة الغرفة الافتراضية، أغلق نافذة "Dars Classroom Service"
+echo ============================================================
+echo [READY] Starting the website at http://127.0.0.1:3001
+echo [STOP]  Press Ctrl+C to stop the server.
+echo ============================================================
 echo.
+
+call npm.cmd run dev
+set "APP_EXIT=%ERRORLEVEL%"
+
+if not "%APP_EXIT%"=="0" (
+    echo.
+    echo [ERROR] The development server stopped with code %APP_EXIT%.
+    goto :failed
+)
+
+echo.
+echo [DONE] The server has stopped.
 pause
+exit /b 0
+
+:failed
+echo.
+echo Startup did not complete. Review the message above.
+pause
+exit /b 1
