@@ -55,6 +55,11 @@ const FEATURES = [
 
 export function FeaturesSection() {
   const { settings } = useSiteSettings()
+  const features = FEATURES.map((feature, index) => ({
+    ...feature,
+    title: settings[`features.${index + 1}.title`] || feature.title,
+    description: settings[`features.${index + 1}.text`] || feature.description,
+  }))
   return (
     <section id="features" className="py-20 lg:py-28 bg-pharaonic relative overflow-hidden">
       <div className="absolute inset-0 bg-hieroglyphs opacity-50 pointer-events-none" aria-hidden />
@@ -66,7 +71,7 @@ export function FeaturesSection() {
         />
 
         <Stagger className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((feature) => (
+          {features.map((feature) => (
             <StaggerItem key={feature.title} className="h-full">
               <Card className="group h-full p-6 rounded-2xl border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_20px_45px_-22px_rgba(79,70,229,0.45)]">
                 <motion.div

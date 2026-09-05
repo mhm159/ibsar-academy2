@@ -10,18 +10,20 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { EASE, Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function PricingSection() {
   const [currency, setCurrency] = useState<'EGP' | 'USD'>('EGP')
+  const { settings } = useSiteSettings()
 
   return (
     <section id="pricing" className="py-20 lg:py-28 bg-pharaonic relative overflow-hidden">
       <div className="absolute inset-0 bg-hieroglyphs opacity-40 pointer-events-none" aria-hidden />
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="باقات الأسعار"
-          title="استثمر في مستقبل طفلك"
-          description="باقات مرنة تناسب كل احتياج. بدون رسوم خفية، مع ضمان استرجاع خلال أول حصتين."
+          eyebrow={settings['pricing.eyebrow']}
+          title={settings['pricing.title']}
+          description={settings['pricing.description']}
         />
 
         {/* Currency toggle */}

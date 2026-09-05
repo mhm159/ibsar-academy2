@@ -39,6 +39,11 @@ const STEPS = [
 
 export function HowItWorksSection() {
   const { settings } = useSiteSettings()
+  const steps = STEPS.map((step, index) => ({
+    ...step,
+    title: settings[`how.${index + 1}.title`] || step.title,
+    description: settings[`how.${index + 1}.text`] || step.description,
+  }))
   return (
     <section id="how" className="py-20 lg:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -56,7 +61,7 @@ export function HowItWorksSection() {
           />
 
           <Stagger className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative">
-            {STEPS.map((step) => (
+            {steps.map((step) => (
               <StaggerItem
                 key={step.step}
                 className="relative text-center"

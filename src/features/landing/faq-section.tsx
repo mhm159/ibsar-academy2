@@ -9,20 +9,26 @@ import {
 import { FAQS } from '@/lib/constants'
 import { SectionHeading } from '@/features/landing/tracks-section'
 import { Stagger, StaggerItem } from '@/features/shared/motion-reveal'
+import { useSiteSettings } from '@/hooks/use-site-settings'
 
 export function FaqSection() {
+  const { settings } = useSiteSettings()
+  const faqs = FAQS.map((faq, index) => ({
+    q: settings[`faq.${index + 1}.q`] || faq.q,
+    a: settings[`faq.${index + 1}.a`] || faq.a,
+  }))
   return (
     <section id="faq" className="py-20 lg:py-28">
       <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="الأسئلة الشائعة"
-          title="عندك سؤال؟ احنا هنا"
-          description="جمعنا لك أكثر الأسئلة شيوعاً من أولياء الأمور. لو ما لقيتش إجابتك، تواصل معنا."
+          eyebrow={settings['faq.eyebrow']}
+          title={settings['faq.title']}
+          description={settings['faq.description']}
         />
 
         <Stagger className="mt-12" gap={0.07}>
           <Accordion type="single" collapsible defaultValue="faq-0" className="space-y-3">
-            {FAQS.map((faq, i) => (
+            {faqs.map((faq, i) => (
               <StaggerItem key={i}>
                 <AccordionItem
                   value={`faq-${i}`}
